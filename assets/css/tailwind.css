@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito&family=Nunito+Sans&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hide-scrollbars {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+
+  &::-webkit-scrollbar {
+    @apply w-0 h-0 bg-transparent;
+  }
+}
+
+.thin-scrollbars {
+  scrollbar-color: rgba(0 0 0 / 0.5) rgba(0 0 0 / 0)
+}
+
+.dark .thin-scrollbars {
+  scrollbar-color: rgba(255 255 255 / 0.5) rgba(0 0 0 / 0)
+}
+
+.thin-scrollbars {
+  scrollbar-width: thin;
+
+  overflow: overlay;
+  &::-webkit-scrollbar {
+    @apply w-1 h-1;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-black bg-opacity-50 dark:bg-white dark:bg-opacity-50;
+  }
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  @apply opacity-0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  @apply transition-opacity duration-300 ease-linear;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  @apply scale-0;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+  @apply transition-transform duration-300 ease-in;
+}
+
+.slide-left-enter-from,
+.slide-left-leave-to,
+.slide-left-uni-enter-from,
+.slide-right-uni-leave-to {
+  @apply translate-x-full;
+}
+
+.slide-right-enter-from,
+.slide-right-leave-to,
+.slide-right-uni-enter-from,
+.slide-left-uni-leave-to {
+  @apply -translate-x-full;
+}
+
+.slide-left-enter-active,
+.slide-left-uni-enter-active,
+.slide-right-enter-active,
+.slide-right-uni-enter-active {
+  @apply transition-transform duration-300 ease-out;
+}
+
+.slide-left-leave-active,
+.slide-left-uni-leave-active,
+.slide-right-leave-active,
+.slide-right-uni-leave-active {
+  @apply transition-transform duration-300 ease-in;
+}
+
+.rotate-cw-enter-from,
+.rotate-cw-in-enter-from,
+.rotate-cw-leave-to,
+.rotate-cw-out-leave-to {
+  @apply -rotate-180;
+}
+
+.rotate-ccw-enter-from,
+.rotate-ccw-in-enter-from,
+.rotate-ccw-leave-to,
+.rotate-ccw-out-leave-to {
+  @apply rotate-180;
+}
+
+.rotate-cw-enter-active,
+.rotate-cw-in-enter-active,
+.rotate-ccw-enter-active,
+.rotate-ccw-in-enter-active,
+.rotate-cw-leave-active,
+.rotate-cw-out-leave-active,
+.rotate-ccw-leave-active,
+.rotate-ccw-out-leave-active {
+  @apply transition-transform duration-300 ease-in;
+}
+
+.list-move {
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+.list-enter-active,
+.list-leave-active {
+  @apply transition duration-300 ease-out;
+}
+
+.list-enter-from,
+.list-leave-to {
+  @apply opacity-0 translate-x-full;
+}
+
+.input-default {
+  @apply px-2 bg-white dark:bg-black rounded-lg border-2 focus:border-2
+  focus:outline-none border-gray-500 dark:border-gray-400 focus:border-black focus:dark:border-white
+  text-black dark:text-white caret-black dark:caret-white cursor-text
+}

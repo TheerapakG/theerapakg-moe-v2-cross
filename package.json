@@ -1,0 +1,45 @@
+{
+  "private": true,
+  "scripts": {
+    "dev:redis": "cd ./.redis && redis-server",
+    "dev:site": "nuxi dev",
+    "dev:app": "yarn tauri dev",
+    "dev": "concurrently --kill-others \"yarn:dev:site\" \"yarn:dev:app\"",
+    "build:site": "nuxi build",
+    "build:app": "yarn tauri build",
+    "build": "yarn generate:site && yarn build:app",
+    "generate:site": "nuxi generate",
+    "start:site": "node .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "@nuxt/test-utils-edge": "^3.0.0-rc.4",
+    "@nuxtjs/color-mode": "^3.0.3",
+    "@nuxtjs/tailwindcss": "^5.0.4",
+    "@pinia/nuxt": "^0.4.0",
+    "@rushstack/eslint-patch": "^1.1.4",
+    "@tauri-apps/cli": "^1.0.0-rc.13",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "@vue/eslint-config-typescript": "^11.0.0",
+    "@vueuse/core": "^9.1.0",
+    "@vueuse/nuxt": "^9.1.0",
+    "axe-core": "^4.4.2",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-nuxt": "^3.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "nuxt": "npm:nuxt3@3.0.0-rc.3",
+    "nuxt-lodash": "^2.2.0",
+    "pinia": "^2.0.18",
+    "postcss-custom-properties": "^12.1.8",
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.4",
+    "vitest": "^0.21.1"
+  },
+  "dependencies": {
+    "@heroicons/vue": "^1.0.6",
+    "@tauri-apps/api": "^1.0.0-rc.6",
+    "monaco-editor": "^0.34.0"
+  }
+}
