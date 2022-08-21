@@ -12,6 +12,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ["@heroicons/vue"],
   },
+  app: {
+    baseURL: "/",
+  },
   nitro: {
     storage: {
       redis: {
