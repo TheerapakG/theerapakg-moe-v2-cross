@@ -26,7 +26,7 @@ export default defineNuxtConfig({
     },
   },
   experimental: {
-    externalVue: true,
+    // externalVue: true,
   },
   autoImports: {
     dirs: ["store"],
