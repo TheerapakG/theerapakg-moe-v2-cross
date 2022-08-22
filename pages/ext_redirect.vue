@@ -7,7 +7,9 @@ const route = useRoute();
 
 const toastStore = useToastStore("layout");
 
-const target = route.query.path ? decodeURI(route.query.path as string) : null;
+const target = route.query.path
+  ? decodeURIComponent(route.query.path as string)
+  : null;
 
 onMounted(async () => {
   if (process.client) {

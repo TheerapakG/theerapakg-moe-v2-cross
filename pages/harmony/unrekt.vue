@@ -2,7 +2,7 @@
 await navigateTo({
   path: "/ext_redirect",
   query: {
-    path: encodeURI("https://explorer.harmony.one/tools/approvals"),
+    path: encodeURIComponent("https://explorer.harmony.one/tools/approvals"),
   },
 });
 </script>

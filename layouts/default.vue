@@ -48,7 +48,7 @@ useHead({
 
 const menu = ref<InstanceType<typeof SideBar> | null>(null);
 
-const sideBarPaths = ["/"];
+const sideBarPaths = ["/", "/github/"];
 
 const routeInfos = computed(() =>
   useMap(sideBarPaths, (path: string) => routeStore.info(path).value)

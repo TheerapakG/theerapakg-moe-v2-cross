@@ -1,11 +1,10 @@
 import fs from "fs";
 import path from "path";
+import { useRedis } from "~/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
   try {
-    const dir = await useStorage().getItem(
-      `redis:file:${event.context.params.file}`
-    );
+    const dir = await useRedis().get(`file:${event.context.params.id}`);
 
     if (dir) {
       return {
@@ -13,7 +12,7 @@ export default defineEventHandler(async (event) => {
         value: {
           name: path.basename(dir),
           size: (await fs.promises.stat(dir)).size,
-          url: `/api/file/download/${event.context.params.file}`,
+          url: `/api/file/download/${event.context.params.id}`,
         },
       };
     }
