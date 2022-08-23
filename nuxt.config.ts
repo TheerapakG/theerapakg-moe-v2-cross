@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
     "nuxt-lodash",
+    "./modules/routeLogging",
   ],
   build: {
     transpile: ["@heroicons/vue"],

@@ -1,5 +1,24 @@
 import { RouteRecordNormalized } from "vue-router";
 
+type Hook<F extends () => void> = F | F[];
+
+const callHook = <
+  Args extends Array<unknown>,
+  F extends (...args: Args) => void
+>(
+  hook: Hook<F> | null,
+  ...args: Args
+) => {
+  if (!hook) return;
+  if (!Array.isArray(hook)) {
+    hook(...args);
+    return;
+  }
+  hook.map((h) => {
+    h(...args);
+  });
+};
+
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook("app:mounted", () => {
     const pageStore = usePageStore();
@@ -29,22 +48,22 @@ export default defineNuxtPlugin((nuxtApp) => {
         onBeforeEnter: (el: Element) => {
           console.log("pageTransitioningIn");
           pageStore.transitioningIn = true;
-          pageTransitionBeforeEnter?.(el);
+          callHook(pageTransitionBeforeEnter, el);
         },
         onAfterEnter: (el: Element) => {
           console.log("pageTransitionedIn");
           pageStore.transitioningIn = false;
-          pageTransitionAfterEnter?.(el);
+          callHook(pageTransitionAfterEnter, el);
         },
         onBeforeLeave: (el: Element) => {
           console.log("pageTransitioningOut");
           pageStore.transitioningOut = true;
-          pageTransitionBeforeLeave?.(el);
+          callHook(pageTransitionBeforeLeave, el);
         },
         onAfterLeave: (el: Element) => {
           console.log("pageTransitionedOut");
           pageStore.transitioningOut = false;
-          pageTransitionAfterLeave?.(el);
+          callHook(pageTransitionAfterLeave, el);
         },
       });
     });
