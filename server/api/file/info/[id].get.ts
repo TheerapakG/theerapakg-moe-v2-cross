@@ -15,16 +15,19 @@ export default defineEventHandler(async (event) => {
         .sismember(`${user}:perms`, "perms:file:view")
         .sismember(`file:${event.context.params.id}:perms:view`, user)
         .exec()
-    )[1].some((i) => i > 0)
+    ).some(([err, res]) => !err && res > 0)
   ) {
     try {
-      const dir = await useRedis().get(`file:${event.context.params.id}`);
+      const { dir, owner } = await useRedis().hgetall(
+        `file:${event.context.params.id}`
+      );
 
       if (dir) {
         return {
           status: 0,
           value: {
             name: path.basename(dir),
+            owner,
             size: (await fs.promises.stat(dir)).size,
             url: `/api/file/download/${event.context.params.id}`,
           },

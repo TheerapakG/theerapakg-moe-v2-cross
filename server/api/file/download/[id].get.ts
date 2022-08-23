@@ -14,10 +14,13 @@ export default defineEventHandler(async (event) => {
         .sismember(`${user}:perms`, "perms:file:view")
         .sismember(`file:${event.context.params.id}:perms:view`, user)
         .exec()
-    )[1].some((i) => i > 0)
+    ).some(([err, res]) => !err && res > 0)
   ) {
     try {
-      const dir = await useRedis().get(`file:${event.context.params.id}`);
+      const dir = await useRedis().hget(
+        `file:${event.context.params.id}`,
+        "dir"
+      );
 
       if (dir) {
         return sendStream(event, fs.createReadStream(dir));

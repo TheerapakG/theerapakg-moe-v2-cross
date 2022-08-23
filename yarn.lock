@@ -399,7 +399,7 @@
     methods "^1.1.2"
     path-to-regexp "^6.1.0"
 
-"@mapbox/node-pre-gyp@^1.0.5":
+"@mapbox/node-pre-gyp@^1.0.5", "@mapbox/node-pre-gyp@^1.0.9":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.9.tgz#09a8781a3a036151cdebbe8719d6f8b25d4058bc"
   integrity sha512-aDF3S3rK9Q2gey/WAttUlISduDItz5BU3306M9Eyv6/oS40aMprnopshtlKTykxRNIBEZuRMaZAnbrQ4QtKGyw==
@@ -675,6 +675,11 @@
     tailwind-config-viewer "^1.7.1"
     tailwindcss "^3.1.6"
     ufo "^0.8.5"
+
+"@phc/format@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@phc/format/-/format-1.0.0.tgz#b5627003b3216dc4362125b13f48a4daa76680e4"
+  integrity sha512-m7X9U6BG2+J+R1lSOdCiITLLrxm+cWlNI3HUFA92oLO77ObGNzaKdh8pMLqdZcshtkKuV84olNNXDfMc4FezBQ==
 
 "@pinia/nuxt@^0.4.0":
   version "0.4.0"
@@ -1432,6 +1437,15 @@ arg@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/arg/-/arg-5.0.2.tgz#c81433cc427c92c4dcf4865142dbca6f15acd59c"
   integrity sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==
+
+argon2@^0.29.0:
+  version "0.29.0"
+  resolved "https://registry.yarnpkg.com/argon2/-/argon2-0.29.0.tgz#94b6ef96cbdbe9f3562523c7130552af4c8d25bb"
+  integrity sha512-J8XxGYjq90qohrN5ySXTIXJ2HyDjMOw3uXMOsWrHzKe9daT6TtFCCtrADz1wPFuDH2bOxumPwbgBhKa5AknIhw==
+  dependencies:
+    "@mapbox/node-pre-gyp" "^1.0.9"
+    "@phc/format" "^1.0.0"
+    node-addon-api "^5.0.0"
 
 argparse@^2.0.1:
   version "2.0.1"
@@ -4142,6 +4156,11 @@ nitropack@^0.4.24:
     unenv "^0.5.4"
     unimport "^0.6.7"
     unstorage "^0.5.6"
+
+node-addon-api@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-5.0.0.tgz#7d7e6f9ef89043befdb20c1989c905ebde18c501"
+  integrity sha512-CvkDw2OEnme7ybCykJpVcKH+uAOLV2qLqiyla128dN9TkEWfrYmxG6C2boDe5KcNQqZF3orkqzGgOMvZ/JNekA==
 
 node-domexception@^1.0.0:
   version "1.0.0"
