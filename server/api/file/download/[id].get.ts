@@ -1,4 +1,5 @@
 import fs from "fs";
+import _ from "lodash";
 import { useRedis } from "~/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
@@ -8,22 +9,25 @@ export default defineEventHandler(async (event) => {
       : "session:default"
   );
 
+  if (!user) {
+    return sendStream(event, "");
+  }
+
+  const [errs, [user_perm, file_perm, { dir, owner }]] = _.zip(
+    ...(await useRedis()
+      .multi()
+      .sismember(`${user}:perms`, "perms:file:view")
+      .sismember(`file:${event.context.params.id}:perms:view`, user)
+      .hgetall(`file:${event.context.params.id}`)
+      .exec())
+  ) as [Array<Error>, [number, number, { dir?: string; owner?: string }]];
+
   if (
-    user &&
-    (
-      await useRedis()
-        .multi()
-        .sismember(`${user}:perms`, "perms:file:view")
-        .sismember(`file:${event.context.params.id}:perms:view`, user)
-        .exec()
-    ).some(([err, res]) => !err && res > 0)
+    errs.every((e) => !e) &&
+    (user_perm > 0 || file_perm > 0 || owner === user) &&
+    dir
   ) {
     try {
-      const dir = await useRedis().hget(
-        `file:${event.context.params.id}`,
-        "dir"
-      );
-
       if (dir) {
         return sendStream(event, fs.createReadStream(dir));
       }

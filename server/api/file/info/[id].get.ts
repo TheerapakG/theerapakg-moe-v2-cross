@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import _ from "lodash";
 import { useRedis } from "~/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
@@ -16,20 +17,21 @@ export default defineEventHandler(async (event) => {
     };
   }
 
+  const [errs, [user_perm, file_perm, { dir, owner }]] = _.zip(
+    ...(await useRedis()
+      .multi()
+      .sismember(`${user}:perms`, "perms:file:view")
+      .sismember(`file:${event.context.params.id}:perms:view`, user)
+      .hgetall(`file:${event.context.params.id}`)
+      .exec())
+  ) as [Array<Error>, [number, number, { dir: string; owner: string }]];
+
   if (
-    (
-      await useRedis()
-        .multi()
-        .sismember(`${user}:perms`, "perms:file:view")
-        .sismember(`file:${event.context.params.id}:perms:view`, user)
-        .exec()
-    ).some(([err, res]) => !err && res > 0)
+    errs.every((e) => !e) &&
+    (user_perm > 0 || file_perm > 0 || owner === user) &&
+    dir
   ) {
     try {
-      const { dir, owner } = await useRedis().hgetall(
-        `file:${event.context.params.id}`
-      );
-
       if (dir) {
         return {
           status: 0,
