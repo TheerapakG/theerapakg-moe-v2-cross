@@ -5,7 +5,7 @@
     :class="{ 'color-mode-change': colorModeChange }"
   >
     <NuxtLayout ref="layout" class="w-full h-full inset-0">
-      <NuxtPage ref="page" class="w-full h-full inset-0 text-center" />
+      <NuxtPage ref="page" class="inset-0 text-center" />
       <div id="over-page" class="pointer-events-none absolute inset-0" />
     </NuxtLayout>
     <div id="over-app" class="pointer-events-none absolute inset-0" />

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { useRedis } from "~/utils/useRedis";
@@ -6,9 +7,18 @@ export default defineEventHandler(async (event) => {
   const body = await useBody(event);
 
   if (body.content) {
-    const user = await useRedis().get(`session:${body.session ?? "default"}`);
+    const user = await useRedis().get(
+      getCookie(event, "session_id")
+        ? `session:${getCookie(event, "session_id")}`
+        : "session:default"
+    );
 
-    console.log(user);
+    if (!user) {
+      return {
+        status: -2,
+        error: "session expired",
+      };
+    }
 
     if (
       user &&

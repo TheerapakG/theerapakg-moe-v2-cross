@@ -3,12 +3,20 @@ import path from "path";
 import { useRedis } from "~/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
-  const query = useQuery(event);
+  const user = await useRedis().get(
+    getCookie(event, "session_id")
+      ? `session:${getCookie(event, "session_id")}`
+      : "session:default"
+  );
 
-  const user = await useRedis().get(`session:${query.session ?? "default"}`);
+  if (!user) {
+    return {
+      status: -2,
+      error: "session expired",
+    };
+  }
 
   if (
-    user &&
     (
       await useRedis()
         .multi()

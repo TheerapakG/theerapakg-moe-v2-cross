@@ -2,7 +2,7 @@
   <div class="relative">
     <div
       ref="toastListElement"
-      class="relative -left-full w-[300%] max-h-full overflow-y-scroll hide-scrollbars pointer-events-auto"
+      class="relative -left-full w-[300%] max-h-full overflow-y-scroll hide-scrollbars"
     >
       <TransitionGroup
         name="list"
@@ -15,7 +15,7 @@
           :key="id"
           :toast-store-id="toastStoreId"
           :toast-id="(id as string)"
-          class="relative left-1/3 w-1/3"
+          class="relative left-1/3 w-1/3 pointer-events-auto"
         />
       </TransitionGroup>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-x-hidden">
-    <div class="absolute inset-x-8 top-24 md:top-8 bottom-0 overflow-x-hidden">
+    <div class="absolute inset-0 pt-24 md:pt-8 overflow-x-hidden">
       <NuxtErrorBoundary @error="spawnPageErrorToast">
         <slot />
       </NuxtErrorBoundary>
