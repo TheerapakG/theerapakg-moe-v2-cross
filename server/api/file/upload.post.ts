@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
           await useRedis()
             .multi()
             .hset(`file:${id}`, "dir", dir, "owner", user)
-            .sadd("file:ids", `file:${id}`)
+            .zadd("file:ids", 1, `file:${id}`)
             .exec();
 
           return {
