@@ -3,10 +3,15 @@ import { useRedis } from "~/utils/useRedis";
 export default defineEventHandler(async (event) => {
   const query = useQuery(event);
 
-  // TODO: proper auth
-  if (query.pass && query.pass === process.env.PASS) {
-    const start = parseInt(query.start as string) ?? 0;
-    const stop = start + (parseInt(query.count as string) ?? 10) - 1;
+  const user = await useRedis().get(`session:${query.session ?? "default"}`);
+
+  if (
+    user &&
+    (await useRedis().sismember(`${user}:perms`, "perms:file:list")) > 0
+  ) {
+    const start = query.start ? parseInt(query.start as string) : 0;
+    const stop =
+      start + (query.count ? parseInt(query.count as string) : 10) - 1;
     try {
       const ids = await useRedis().zrange("file:ids", start, stop);
 
@@ -21,6 +26,11 @@ export default defineEventHandler(async (event) => {
     } catch (err) {
       console.error(err);
     }
+  } else {
+    return {
+      status: -8,
+      error: "no permission",
+    };
   }
 
   return {
