@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
         const phash = await useRedis().hget(user, "phash");
 
         if (phash && (await argon2.verify(phash, body.pass))) {
+          console.log(`login attempt for user ${body.user}: PASS`);
           const sessionId = crypto.randomUUID();
           await useRedis()
             .multi()
@@ -32,6 +33,8 @@ export default defineEventHandler(async (event) => {
       console.error(err);
     }
   }
+
+  console.log(`login attempt for user ${body.user}: FAIL`);
 
   return {
     status: -1,

@@ -33,30 +33,33 @@ const onDroppedData = (data: DataTransfer | null) => {
 };
 
 const upload = async () => {
-  console.log(await file.value.text());
+  const fileReader = new FileReader();
+  fileReader.addEventListener("load", async (event) => {
+    const { status } = await $fetch("/api/file/upload", {
+      method: "POST",
+      body: {
+        file: file.value.name,
+        content: event.target.result,
+      },
+    });
 
-  const { status } = await $fetch("/api/file/upload", {
-    method: "POST",
-    body: {
-      file: file.value.name,
-      content: await file.value.text(),
-    },
+    if (status < 0) {
+      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      toastStore.spawn({
+        title: "Upload Error",
+        description: "Cannot upload",
+        icon: h(ExclamationCircleIcon),
+      });
+    } else {
+      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      toastStore.spawn({
+        title: "Upload Success",
+        description: "Successfully uploaded",
+        icon: h(ExclamationCircleIcon),
+      });
+    }
   });
 
-  if (status < 0) {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
-    toastStore.spawn({
-      title: "Upload Error",
-      description: "Cannot upload",
-      icon: h(ExclamationCircleIcon),
-    });
-  } else {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
-    toastStore.spawn({
-      title: "Upload Success",
-      description: "Successfully uploaded",
-      icon: h(ExclamationCircleIcon),
-    });
-  }
+  fileReader.readAsBinaryString(file.value);
 };
 </script>

@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
         !path.isAbsolute(relative)
       ) {
         try {
-          await fs.promises.writeFile(dir, body.content);
+          await fs.promises.writeFile(dir, body.content, { mode: "wx" });
           const id = crypto.randomUUID();
           await useRedis()
             .multi()
