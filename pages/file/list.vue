@@ -131,16 +131,16 @@ const { pending: generalFileInfoPending, data: generalFileInfo } =
   await useFetch("/api/file/info", {
     headers: useRequestHeaders(["cookie"]),
   });
-const { pending: fileListPending, data: fileListData } = await useFetch(
-  "/api/file/list",
-  {
-    headers: useRequestHeaders(["cookie"]),
-    params: () => {
-      return {
+const { pending: fileListPending, data: fileListData } = await useAsyncData(
+  () =>
+    $fetch("/api/file/list", {
+      headers: useRequestHeaders(["cookie"]),
+      params: {
         page: page.value,
         size: size.value,
-      };
-    },
+      },
+    }),
+  {
     watch: [page, size],
   }
 );
