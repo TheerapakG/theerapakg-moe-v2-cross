@@ -135,9 +135,11 @@ const { pending: fileListPending, data: fileListData } = await useFetch(
   "/api/file/list",
   {
     headers: useRequestHeaders(["cookie"]),
-    params: {
-      page: page.value,
-      size: size.value,
+    params: () => {
+      return {
+        page: page.value,
+        size: size.value,
+      };
     },
     watch: [page, size],
   }
