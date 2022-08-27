@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+import _ from "lodash";
 import { useRedis } from "~/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
@@ -17,19 +20,42 @@ export default defineEventHandler(async (event) => {
   }
 
   if ((await useRedis().sismember(`${user}:perms`, "perms:file:list")) > 0) {
-    const start = query.start ? parseInt(query.start as string) : 0;
-    const stop =
-      start + (query.count ? parseInt(query.count as string) : 10) - 1;
+    const page = query.page ? parseInt(query.page as string) : 1;
+    const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
+    const start = (page - 1) * size;
+    const stop = start + size - 1;
     try {
       const ids = await useRedis().zrange("file:ids", start, stop);
 
       if (ids) {
-        return {
-          status: 0,
-          value: {
-            ids: ids.map((id) => id.split(":").pop()),
-          },
-        };
+        const [errs, files] = _.zip(
+          ...(await useRedis()
+            .multi(ids.map((id) => ["hgetall", id]))
+            .exec())
+        ) as [Array<Error>, Array<{ dir: string; owner: string }>];
+
+        const strippedIds = ids.map((id) => id.split(":", 2)[1]);
+
+        if (errs?.every((e) => !e) && files?.every((e) => e)) {
+          const data = await Promise.all(
+            _.zipWith(strippedIds, files, async (id, file) => {
+              return {
+                id,
+                name: path.basename(file.dir),
+                owner: file.owner,
+                size: (await fs.promises.stat(file.dir)).size,
+                url: `/api/file/download/${id}`,
+              };
+            })
+          );
+
+          return {
+            status: 0,
+            value: {
+              files: data,
+            },
+          };
+        }
       }
     } catch (err) {
       console.error(err);

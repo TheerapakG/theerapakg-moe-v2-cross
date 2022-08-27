@@ -29,7 +29,7 @@ const pending = ref(false);
 const logout = async () => {
   pending.value = true;
 
-  const { status } = await $fetch("/api/file/logout", {
+  const { status } = await $fetch("/api/user/logout", {
     method: "POST",
   });
 

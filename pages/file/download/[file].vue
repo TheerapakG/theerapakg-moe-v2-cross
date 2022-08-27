@@ -42,6 +42,9 @@ const startDownload = (url: string, name: string) => {
 };
 
 const { pending: fileInfoPending, data: fileInfo } = await useFetch(
-  `/api/file/info/${route.params.file}`
+  `/api/file/info/${route.params.file}`,
+  {
+    headers: useRequestHeaders(["cookie"]),
+  }
 );
 </script>

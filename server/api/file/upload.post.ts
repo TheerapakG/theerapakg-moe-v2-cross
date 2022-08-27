@@ -24,7 +24,10 @@ export default defineEventHandler(async (event) => {
       user &&
       (await useRedis().sismember(`${user}:perms`, "perms:file:edit")) > 0
     ) {
-      const base = path.resolve(process.env.DOWNLOAD_PATH ?? "./.dist/files");
+      const base = path.resolve(
+        process.env.DOWNLOAD_PATH ?? "./.dist/files",
+        `./${user.split(":", 2)[1]}`
+      );
       const dir = path.resolve(base, body.file);
       const relative = path.relative(base, dir);
 

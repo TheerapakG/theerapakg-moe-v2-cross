@@ -37,7 +37,7 @@ const pending = ref(false);
 const login = async () => {
   pending.value = true;
 
-  const { status } = await $fetch("/api/file/login", {
+  const { status } = await $fetch("/api/user/login", {
     method: "POST",
     body: {
       user: user.value,

@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
             .expire(`session:${sessionId}`, 60 * 60 * 24)
             .exec();
 
-          setCookie(event, "session_id", sessionId);
+          setCookie(event, "session_id", sessionId, { path: "/" });
 
           return {
             status: 0,
