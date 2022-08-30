@@ -3,7 +3,7 @@ import { Ref } from "vue";
 
 export interface User {
   id: string;
-  name: string;
+  name?: string;
 }
 
 export const useUserStore = defineStore("user", () => {
@@ -11,11 +11,12 @@ export const useUserStore = defineStore("user", () => {
 
   const useUser = async (id: string) => {
     if (!users[id]) {
+      users[id] = ref({ id });
       const { value } = await $fetch(`/api/user/${id}/info`);
-      users[id] = ref({
+      users[id].value = {
         id,
         ...value,
-      });
+      };
     }
     return users[id];
   };

@@ -16,7 +16,7 @@
         :key="user.user.id"
         class="mx-auto grid grid-cols-[8rem_2rem] place-content-center place-items-center"
       >
-        <div>{{ user.user.name }}</div>
+        <div>{{ user.user?.name ?? "(loading...)" }}</div>
         <div>
           <button v-if="user.perm" @click="doUser(user.user.id, 'DELETE')">
             <MinusIcon class="w-8 h-8" />
