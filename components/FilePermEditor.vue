@@ -3,25 +3,25 @@
     <button @click="open = !open">{{ permUserCount }} users</button>
     <div
       v-if="open"
-      class="fixed inset-0 opacity-0"
+      class="fixed z-10 inset-0 opacity-0"
       @click="open = false"
     ></div>
     <div
       v-if="open"
-      class="absolute z-10 left-1/2 -translate-x-1/2 w-60 rounded-lg p-2 bg-gray-300 dark:bg-gray-600"
+      class="absolute z-20 left-1/2 -translate-x-1/2 w-60 rounded-lg p-2 bg-gray-300 dark:bg-gray-600"
     >
       <div>changing permission: {{ props.perm }}</div>
       <div
         v-for="user in permUserList"
-        :key="user.id"
+        :key="user.user.id"
         class="mx-auto grid grid-cols-[8rem_2rem] place-content-center place-items-center"
       >
-        <div>{{ user.name }}</div>
+        <div>{{ user.user.name }}</div>
         <div>
-          <button v-if="user.perm" @click="doUser(user.id, 'DELETE')">
+          <button v-if="user.perm" @click="doUser(user.user.id, 'DELETE')">
             <MinusIcon class="w-8 h-8" />
           </button>
-          <button v-else @click="doUser(user.id, 'PUT')">
+          <button v-else @click="doUser(user.user.id, 'PUT')">
             <PlusIcon class="w-8 h-8" />
           </button>
         </div>
@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { PlusIcon, MinusIcon } from "@heroicons/vue/outline";
 import { Ref } from "vue";
+import { User, useUserStore } from "~~/store/user";
 
 interface Props {
   fileId: string;
@@ -41,6 +42,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const userStore = useUserStore();
 
 const open = ref(false);
 
@@ -57,7 +60,7 @@ const {
   data: Ref<{
     count: number;
     userCount: number;
-    users: { id: string; name: string; perm: boolean }[];
+    users: { user: User; perm: boolean }[];
   }>;
 } = await useAsyncData(
   `file:${props.fileId}:perm:${props.perm}`,
@@ -83,12 +86,9 @@ const {
       userCount,
       users: await Promise.all(
         users.map(async ({ id, perm }) => {
-          const {
-            value: { name },
-          } = await $fetch(`/api/user/${id}/info`);
+          const user = await userStore.useUser(id);
           return {
-            id,
-            name,
+            user: user as unknown as User,
             perm,
           };
         })

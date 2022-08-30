@@ -61,7 +61,7 @@
     >
       <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
       <div>{{ file.size }}</div>
-      <div>{{ file.owner }}</div>
+      <div>{{ file.owner.name }}</div>
       <FilePermEditor
         :file-id="file.id"
         perm="view"
@@ -122,8 +122,12 @@
 </template>
 
 <script setup lang="ts">
+import { User } from "~/store/user";
+
 const route = useRoute();
 const router = useRouter();
+
+const userStore = useUserStore();
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
@@ -157,13 +161,11 @@ const { pending, data: fileListData } = await useAsyncData(
       count,
       files: await Promise.all(
         files.map(async ({ id, name, owner, perms, size }) => {
-          const {
-            value: { name: ownerName },
-          } = await $fetch(`/api/user/${owner}/info`);
+          const ownerUser = await userStore.useUser(owner);
           return {
             id,
             name,
-            owner: ownerName,
+            owner: ownerUser as unknown as User,
             perms,
             size,
           };
