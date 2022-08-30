@@ -8,7 +8,7 @@
     ></div>
     <div
       v-if="open"
-      class="absolute left-1/2 -translate-x-1/2 w-60 rounded-lg p-2 bg-gray-300 dark:bg-gray-600"
+      class="absolute z-10 left-1/2 -translate-x-1/2 w-60 rounded-lg p-2 bg-gray-300 dark:bg-gray-600"
     >
       <div>changing permission: {{ props.perm }}</div>
       <div
