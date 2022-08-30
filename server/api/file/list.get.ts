@@ -28,30 +28,61 @@ export default defineEventHandler(async (event) => {
       const ids = await useRedis().zrange("file:ids", start, stop);
 
       if (ids) {
-        const [errs, files] = _.zip(
+        const [errs1, files] = _.zip(
           ...(await useRedis()
             .multi(ids.map((id) => ["hgetall", id]))
             .exec())
         ) as [Array<Error>, Array<{ dir: string; owner: string }>];
 
+        const [errs2, viewPerms] = _.zip(
+          ...(await useRedis()
+            .multi(
+              ids.map((id) => ["zcount", `${id}:perms:view`, "-inf", "inf"])
+            )
+            .exec())
+        ) as [Array<Error>, Array<string>];
+
+        const [errs3, editPerms] = _.zip(
+          ...(await useRedis()
+            .multi(
+              ids.map((id) => ["zcount", `${id}:perms:edit`, "-inf", "inf"])
+            )
+            .exec())
+        ) as [Array<Error>, Array<string>];
+
         const strippedIds = ids.map((id) => id.split(":", 2)[1]);
 
-        if (errs?.every((e) => !e) && files?.every((e) => e)) {
+        if (
+          [errs1, errs2, errs3].every((errs) => errs?.every((e) => !e)) &&
+          files?.every((e) => e) &&
+          [viewPerms, editPerms].every((e) => e)
+        ) {
           const data = await Promise.all(
-            _.zipWith(strippedIds, files, async (id, file) => {
-              return {
-                id,
-                name: path.basename(file.dir),
-                owner: file.owner,
-                size: (await fs.promises.stat(file.dir)).size,
-                url: `/api/file/download/${id}`,
-              };
-            })
+            _.zipWith(
+              strippedIds,
+              files,
+              viewPerms,
+              editPerms,
+              async (id, file, viewPerm, editPerm) => {
+                return {
+                  id,
+                  name: path.basename(file.dir),
+                  owner: file.owner.split(":", 2)[1],
+                  perms: {
+                    view: parseInt(viewPerm),
+                    edit: parseInt(editPerm),
+                  },
+                  size: (await fs.promises.stat(file.dir)).size,
+                  url: `/api/file/download/${id}`,
+                };
+              }
+            )
           );
 
           return {
             status: 0,
             value: {
+              count: await useRedis().zcount("file:ids", "-inf", "inf"),
               files: data,
             },
           };

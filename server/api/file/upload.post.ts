@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
     if (
       user &&
-      (await useRedis().sismember(`${user}:perms`, "perms:file:edit")) > 0
+      parseInt(await useRedis().zscore(`${user}:perms`, "perms:file:edit")) > 0
     ) {
       const base = path.resolve(
         process.env.DOWNLOAD_PATH ?? "./.dist/files",

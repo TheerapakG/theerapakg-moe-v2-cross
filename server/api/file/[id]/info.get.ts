@@ -10,6 +10,8 @@ export default defineEventHandler(async (event) => {
       : "session:default"
   );
 
+  const id = (event.context.params.id as string).split(":", 2)[0];
+
   if (!user) {
     return {
       status: -2,
@@ -17,25 +19,31 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const [errs, [user_view_perm, user_list_perm, file_perm, { dir, owner }]] =
-    _.zip(
-      ...(await useRedis()
-        .multi()
-        .sismember(`${user}:perms`, "perms:file:view")
-        .sismember(`${user}:perms`, "perms:file:list")
-        .sismember(`file:${event.context.params.id}:perms:view`, user)
-        .hgetall(`file:${event.context.params.id}`)
-        .exec())
-    ) as [
-      Array<Error>,
-      [number, number, number, { dir: string; owner: string }]
-    ];
+  const [
+    errs,
+    [viewPerm, listPerm, editPerm, fileViewPerm, fileEditPerm, { dir, owner }],
+  ] = _.zip(
+    ...(await useRedis()
+      .multi()
+      .sismember(`${user}:perms`, "perms:file:view")
+      .sismember(`${user}:perms`, "perms:file:list")
+      .sismember(`${user}:perms`, "perms:file:edit")
+      .zscore(`file:${id}:perms:view`, user)
+      .zscore(`file:${id}:perms:edit`, user)
+      .hgetall(`file:${id}`)
+      .exec())
+  ) as [
+    Array<Error>,
+    [number, number, number, string, string, { dir: string; owner: string }]
+  ];
 
   if (
     errs.every((e) => !e) &&
-    (user_view_perm > 0 ||
-      user_list_perm > 0 ||
-      file_perm > 0 ||
+    (viewPerm > 0 ||
+      listPerm > 0 ||
+      editPerm > 0 ||
+      parseInt(fileViewPerm) > 0 ||
+      parseInt(fileEditPerm) > 0 ||
       owner === user) &&
     dir
   ) {
@@ -45,9 +53,9 @@ export default defineEventHandler(async (event) => {
           status: 0,
           value: {
             name: path.basename(dir),
-            owner,
+            owner: owner.split(":", 2)[1],
             size: (await fs.promises.stat(dir)).size,
-            url: `/api/file/download/${event.context.params.id}`,
+            url: `/api/file/${id}/download`,
           },
         };
       }

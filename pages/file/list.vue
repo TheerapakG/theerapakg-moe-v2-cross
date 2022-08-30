@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="relative z-0">
     <div
-      class="w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
+      class="relative -z-10 w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
     >
       <button class="page-button" :disabled="isFirstPage" @click="page = 1">
         &lt;&lt;
@@ -46,21 +46,35 @@
       </button>
     </div>
     <div
-      class="grid grid-cols-[32rem_8rem] place-content-center place-items-center"
+      class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
     >
       <div>file</div>
       <div>size (bytes)</div>
+      <div>owner</div>
+      <div>view perms</div>
+      <div>edit perms</div>
     </div>
     <div
       v-for="file in fileList"
       :key="file.id"
-      class="grid grid-cols-[32rem_8rem] place-content-center place-items-center"
+      class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
     >
       <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
       <div>{{ file.size }}</div>
+      <div>{{ file.owner }}</div>
+      <FilePermEditor
+        :file-id="file.id"
+        perm="view"
+        :user-count="file.perms.view"
+      />
+      <FilePermEditor
+        :file-id="file.id"
+        perm="edit"
+        :user-count="file.perms.edit"
+      />
     </div>
     <div
-      class="w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
+      class="relative -z-10 w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
     >
       <button class="page-button" :disabled="isFirstPage" @click="page = 1">
         &lt;&lt;
@@ -127,29 +141,43 @@ if (process.client) {
   });
 }
 
-const { pending: generalFileInfoPending, data: generalFileInfo } =
-  await useFetch("/api/file/info", {
-    headers: useRequestHeaders(["cookie"]),
-  });
-const { pending: fileListPending, data: fileListData } = await useAsyncData(
-  () =>
-    $fetch("/api/file/list", {
+const { pending, data: fileListData } = await useAsyncData(
+  async () => {
+    const {
+      value: { count, files },
+    } = await $fetch("/api/file/list", {
       headers: useRequestHeaders(["cookie"]),
       params: {
         page: page.value,
         size: size.value,
       },
-    }),
+    });
+
+    return {
+      count,
+      files: await Promise.all(
+        files.map(async ({ id, name, owner, perms, size }) => {
+          const {
+            value: { name: ownerName },
+          } = await $fetch(`/api/user/${owner}/info`);
+          return {
+            id,
+            name,
+            owner: ownerName,
+            perms,
+            size,
+          };
+        })
+      ),
+    };
+  },
   {
     watch: [page, size],
   }
 );
 
-const pending = computed(
-  () => generalFileInfoPending.value && fileListPending.value
-);
-const fileCount = computed(() => generalFileInfo.value?.value?.count);
-const fileList = computed(() => fileListData.value?.value?.files ?? []);
+const fileCount = computed(() => fileListData.value?.count ?? 0);
+const fileList = computed(() => fileListData.value?.files ?? []);
 
 const { pageCount, isFirstPage, isLastPage, prev, next } = useOffsetPagination({
   total: fileCount,

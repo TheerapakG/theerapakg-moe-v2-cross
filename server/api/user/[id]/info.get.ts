@@ -7,6 +7,8 @@ export default defineEventHandler(async (event) => {
       : "session:default"
   );
 
+  const id = (event.context.params.id as string).split(":", 2)[0];
+
   if (!user) {
     return {
       status: -2,
@@ -14,24 +16,15 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  if ((await useRedis().sismember(`${user}:perms`, "perms:file:list")) > 0) {
-    try {
-      const count = await useRedis().zcount("file:ids", "-inf", "inf");
-
-      return {
-        status: 0,
-        value: {
-          count,
-        },
-      };
-    } catch (err) {
-      console.error(err);
-    }
-  } else {
+  try {
     return {
-      status: -8,
-      error: "no permission",
+      status: 0,
+      value: {
+        name: await useRedis().hget(`user:${id}`, "name"),
+      },
     };
+  } catch (err) {
+    console.error(err);
   }
 
   return {

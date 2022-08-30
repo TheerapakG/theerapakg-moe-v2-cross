@@ -14,7 +14,6 @@
 
 <script setup lang="ts">
 import { QuestionMarkCircleIcon } from "@heroicons/vue/outline";
-import MonacoEditer from "~/components/MonacoEditer.vue";
 import VNodeTemplate from "~/components/VNodeTemplate.vue";
 
 definePageMeta({
@@ -32,11 +31,13 @@ const toastStore = useToastStore("layout");
 
 const tauri = ref<string | boolean>("unknown");
 
+const MonacoEditor = resolveComponent("MonacoEditor");
+
 const views = reactive({
   [useUniqueId("test_view")]: {
     name: "some really long name 1",
     node: h(VNodeTemplate, {
-      renderNode: h(MonacoEditer, {
+      renderNode: h(MonacoEditor, {
         class: "h-64",
       }),
     }),
@@ -54,7 +55,7 @@ const views = reactive({
   [useUniqueId("test_view")]: {
     name: "3",
     node: h(VNodeTemplate, {
-      renderNode: h(MonacoEditer, {
+      renderNode: h(MonacoEditor, {
         class: "h-64",
       }),
     }),
