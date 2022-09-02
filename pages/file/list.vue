@@ -61,7 +61,7 @@
     >
       <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
       <div>{{ file.size }}</div>
-      <div>{{ file.owner?.name }}</div>
+      <div>{{ file.owner?.name ?? "(loading...)" }}</div>
       <FilePermEditor
         :file-id="file.id"
         perm="view"
