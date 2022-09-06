@@ -1,7 +1,7 @@
 <template>
-  <div class="relative z-0">
+  <div>
     <div
-      class="relative -z-10 w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
+      class="w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
     >
       <button class="page-button" :disabled="isFirstPage" @click="page = 1">
         &lt;&lt;
@@ -74,7 +74,7 @@
       />
     </div>
     <div
-      class="relative -z-10 w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
+      class="w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
     >
       <button class="page-button" :disabled="isFirstPage" @click="page = 1">
         &lt;&lt;
@@ -131,7 +131,7 @@ const userStore = useUserStore();
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
-const _size = route.query.size ? parseInt(route.query.size as string) : 10;
+const _size = route.query.size ? parseInt(route.query.size as string) : 25;
 const size = ref(isNaN(_size) ? 10 : _size);
 
 if (process.client) {

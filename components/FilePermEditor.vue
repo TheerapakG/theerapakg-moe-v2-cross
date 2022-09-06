@@ -1,37 +1,42 @@
 <template>
   <div class="relative">
-    <button @click="open = !open">{{ permUserCount }} users</button>
-    <div
-      v-if="open"
-      class="fixed z-10 inset-0 opacity-0"
-      @click="open = false"
-    ></div>
-    <div
-      v-if="open"
-      class="absolute z-20 left-1/2 -translate-x-1/2 w-60 rounded-lg p-2 bg-gray-300 dark:bg-gray-600"
+    <VDropdown
+      :distance="8"
+      :boundary="pageContainerDom"
+      placement="bottom"
+      theme="context-menu"
+      @show="open = true"
+      @hide="open = false"
     >
-      <div>changing permission: {{ props.perm }}</div>
-      <div
-        v-for="user in permUserList"
-        :key="user.user.id"
-        class="mx-auto grid grid-cols-[8rem_2rem] place-content-center place-items-center"
-      >
-        <div>{{ user.user?.name ?? "(loading...)" }}</div>
-        <div>
-          <button v-if="user.perm" @click="doUser(user.user.id, 'DELETE')">
-            <MinusIcon class="w-8 h-8" />
-          </button>
-          <button v-else @click="doUser(user.user.id, 'PUT')">
-            <PlusIcon class="w-8 h-8" />
-          </button>
+      <button>{{ permUserCount }} users</button>
+
+      <template #popper>
+        <div class="flex flex-col gap-y-4">
+          <div>changing permission: {{ props.perm }}</div>
+          <div
+            v-for="user in permUserList"
+            :key="user.user.id"
+            class="mx-auto grid grid-cols-[8rem_1.5rem] place-content-center place-items-center"
+          >
+            <div>{{ user.user?.name ?? "(loading...)" }}</div>
+            <div class="w-6 h-6">
+              <button v-if="user.perm" @click="doUser(user.user.id, 'DELETE')">
+                <MinusIcon class="w-6 h-6" />
+              </button>
+              <button v-else @click="doUser(user.user.id, 'PUT')">
+                <PlusIcon class="w-6 h-6" />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </VDropdown>
   </div>
 </template>
 
 <script setup lang="ts">
 import { PlusIcon, MinusIcon } from "@heroicons/vue/outline";
+import { storeToRefs } from "pinia";
 import { Ref } from "vue";
 import { User, useUserStore } from "~~/store/user";
 
@@ -43,7 +48,10 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const pageStore = usePageStore();
 const userStore = useUserStore();
+
+const { pageContainerDom } = storeToRefs(pageStore);
 
 const open = ref(false);
 

@@ -125,3 +125,17 @@
   focus:outline-none border-gray-500 dark:border-gray-400 focus:border-black focus:dark:border-white
   text-black dark:text-white caret-black dark:caret-white cursor-text
 }
+
+.v-popper--theme-context-menu div {
+  .v-popper__inner {
+    @apply p-4 bg-gray-300 dark:bg-gray-600 border-2 border-gray-500 dark:border-gray-400 text-black dark:text-white
+  }
+
+  .v-popper__arrow-inner {
+    @apply hidden
+  }
+
+  .v-popper__arrow-outer {
+    @apply border-gray-500 dark:border-gray-400
+  }
+}

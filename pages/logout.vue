@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!sessionStore.id">You are not logged in!</div>
+  <div v-if="!current || current.id === 'default'">You are not logged in!</div>
   <div v-else>
     <div class="text-4xl m-8">LOGOUT</div>
     <button
@@ -21,7 +21,9 @@ definePageMeta({
   name: "Logout",
 });
 
-const sessionStore = useSessionStore();
+const userStore = useUserStore();
+const current = await userStore.useCurrent();
+
 const toastStore = useToastStore("layout");
 
 const pending = ref(false);
@@ -49,9 +51,12 @@ const logout = async () => {
       description: "Successfully logged out.",
       icon: h(ExclamationCircleIcon),
     });
-    await navigateTo({
-      path: "/",
-    });
+    await Promise.all([
+      userStore.refreshCurrent(),
+      navigateTo({
+        path: "/",
+      }),
+    ]);
   }
 };
 </script>

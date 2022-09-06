@@ -2,7 +2,7 @@
   <div class="overflow-x-hidden">
     <div class="absolute inset-0 pt-24 md:pt-8 overflow-x-hidden">
       <NuxtErrorBoundary @error="spawnPageErrorToast">
-        <slot />
+        <slot ref="pageSlot" />
       </NuxtErrorBoundary>
     </div>
     <div
@@ -20,7 +20,9 @@
     />
     <SideBar ref="menu" class="absolute top-0 left-0 w-64 h-full">
       <template #content>
-        <div class="flex flex-col place-content-center place-items-center">
+        <div
+          class="flex flex-col place-content-center place-items-center gap-y-2"
+        >
           <div
             v-for="routeInfo in routeInfos"
             :key="routeInfo.fullPath"
@@ -31,6 +33,7 @@
             </NuxtLink>
           </div>
           <ColorModeSelector />
+          <UserDisplay />
         </div>
       </template>
     </SideBar>
@@ -39,6 +42,7 @@
 
 <script setup lang="ts">
 const currentRoute = useRoute();
+const pageStore = usePageStore();
 const routeStore = useRouteStore();
 const toastStore = useToastStore("layout");
 
@@ -46,6 +50,7 @@ useHead({
   title: computed(() => `${currentRoute.meta.title}`),
 });
 
+const page = ref<HTMLElement>(null);
 const menu = ref<InstanceType<typeof SideBar> | null>(null);
 
 const sideBarPaths = ["/", "/github/"];
@@ -61,4 +66,10 @@ const spawnPageErrorToast = (error) => {
   });
   console.log(error);
 };
+
+onMounted(() => {
+  watchEffect(() => {
+    pageStore.pageDom = page.value;
+  });
+});
 </script>

@@ -7,7 +7,23 @@ export interface User {
 }
 
 export const useUserStore = defineStore("user", () => {
+  const current: Ref<User> = ref();
   const users: { [id: string]: Ref<User> } = {};
+
+  const refreshCurrent = async () => {
+    const { value } = await $fetch(`/api/user/current`);
+    current.value = { ...value };
+    if (!users[current.value.id]) {
+      users[current.value.id] = ref({ ...value });
+    } else {
+      users[current.value.id].value = { ...value };
+    }
+  };
+
+  const useCurrent = async () => {
+    if (!current.value) await refreshCurrent();
+    return current;
+  };
 
   const useUser = async (id: string) => {
     if (!users[id]) {
@@ -22,6 +38,8 @@ export const useUserStore = defineStore("user", () => {
   };
 
   return {
+    refreshCurrent,
+    useCurrent,
     useUser,
   };
 });

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
+    "floating-vue/nuxt",
     "nuxt-lodash",
     "./modules/routeLogging",
   ],
