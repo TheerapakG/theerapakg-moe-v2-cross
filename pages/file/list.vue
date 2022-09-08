@@ -60,7 +60,7 @@
       class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
     >
       <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
-      <div>{{ file.size }}</div>
+      <div>{{ formatPretty(file.size) }}</div>
       <div>{{ file.owner?.name ?? "(loading...)" }}</div>
       <FilePermEditor
         :file-id="file.id"
@@ -123,6 +123,7 @@
 
 <script setup lang="ts">
 import { User } from "~/store/user";
+import { formatPretty } from "~~/utils/formatPretty";
 
 const route = useRoute();
 const router = useRouter();

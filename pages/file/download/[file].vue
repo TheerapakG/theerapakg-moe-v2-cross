@@ -5,7 +5,7 @@
     <div>
       <div>File Info:</div>
       <div>name: {{ fileInfo.value.name }}</div>
-      <div>size: {{ fileInfo.value.size }} bytes</div>
+      <div>size: {{ formatPretty(fileInfo.value.size) }} bytes</div>
     </div>
     <button
       class="rounded-lg w-32 h-12 bg-black dark:bg-white text-white font-bold dark:text-black"
@@ -17,6 +17,8 @@
 </template>
 
 <script setup lang="ts">
+import { formatPretty } from "~~/utils/formatPretty";
+
 definePageMeta({
   title: "theerapakg-moe-app",
   pageTransition: {
