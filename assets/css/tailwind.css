@@ -121,7 +121,7 @@
 }
 
 .input-default {
-  @apply px-2 bg-white dark:bg-black rounded-lg border-2 focus:border-2
+  @apply px-2 bg-inherit rounded-lg border-2 focus:border-2
   focus:outline-none border-gray-500 dark:border-gray-400 focus:border-black focus:dark:border-white
   text-black dark:text-white caret-black dark:caret-white cursor-text
 }

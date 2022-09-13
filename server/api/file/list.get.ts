@@ -1,16 +1,13 @@
 import fs from "fs";
 import path from "path";
 import _ from "lodash";
-import { useRedis } from "~/utils/useRedis";
+import { useRedis } from "~/server/utils/useRedis";
+import { getUser } from "~/server/utils/getUser";
+import { getIdFromIdObject } from "~/server/utils/getId";
 
 export default defineEventHandler(async (event) => {
   const query = useQuery(event);
-
-  const user = await useRedis().get(
-    getCookie(event, "session_id")
-      ? `session:${getCookie(event, "session_id")}`
-      : "session:default"
-  );
+  const user = await getUser(event);
 
   if (!user) {
     return {
@@ -50,7 +47,7 @@ export default defineEventHandler(async (event) => {
             .exec())
         ) as [Array<Error>, Array<string>];
 
-        const strippedIds = ids.map((id) => id.split(":", 2)[1]);
+        const strippedIds = ids.map(getIdFromIdObject);
 
         if (
           [errs1, errs2, errs3].every((errs) => errs?.every((e) => !e)) &&
@@ -67,7 +64,7 @@ export default defineEventHandler(async (event) => {
                 return {
                   id,
                   name: path.basename(file.dir),
-                  owner: file.owner.split(":", 2)[1],
+                  owner: getIdFromIdObject(file.owner),
                   perms: {
                     view: parseInt(viewPerm),
                     edit: parseInt(editPerm),

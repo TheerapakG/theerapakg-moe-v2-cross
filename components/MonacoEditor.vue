@@ -13,17 +13,17 @@ interface Props {
 const props = defineProps<Props>();
 const { options, override } = toRefs(props);
 
+const importStore = useImportStore();
+
 const editerElement = ref<HTMLElement | null>(null);
 const editor = shallowRef<_monaco.editor.IStandaloneCodeEditor | null>(null);
 
 onMounted(async () => {
-  if (process.client) {
-    const monaco = await import("monaco-editor");
-    editor.value = monaco.editor.create(
-      editerElement.value,
-      options.value,
-      override.value
-    );
-  }
+  const monaco = await importStore.useMonaco();
+  editor.value = monaco.editor.create(
+    editerElement.value,
+    options.value,
+    override.value
+  );
 });
 </script>

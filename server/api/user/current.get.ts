@@ -1,11 +1,8 @@
-import { useRedis } from "~/utils/useRedis";
+import { useRedis } from "~/server/utils/useRedis";
+import { getUser } from "~/server/utils/getUser";
 
 export default defineEventHandler(async (event) => {
-  const user = await useRedis().get(
-    getCookie(event, "session_id")
-      ? `session:${getCookie(event, "session_id")}`
-      : "session:default"
-  );
+  const user = await getUser(event);
 
   if (!user) {
     return {

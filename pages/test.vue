@@ -1,9 +1,5 @@
 <template>
   <div>
-    <div>
-      <NuxtLink to="/test"> to test </NuxtLink>
-      <NuxtLink to="/test2"> to test 2 </NuxtLink>
-    </div>
     <ClientOnly>
       <div>tauri: {{ tauri }}</div>
     </ClientOnly>
@@ -25,68 +21,17 @@ definePageMeta({
   name: "Test",
 });
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 const toastStore = useToastStore("layout");
 
 const tauri = ref<string | boolean>("unknown");
 
-const MonacoEditor = resolveComponent("MonacoEditor");
-
-const views = reactive({
-  [useUniqueId("test_view")]: {
-    name: "some really long name 1",
-    node: h(VNodeTemplate, {
-      renderNode: h(MonacoEditor, {
-        class: "h-64",
-      }),
-    }),
-    closable: true,
-  },
-  [useUniqueId("test_view")]: {
-    name: "some really long name 2",
-    node: h(VNodeTemplate, {
-      renderNode: h("input", {
-        class: "input-default",
-      }),
-    }),
-    closable: true,
-  },
-  [useUniqueId("test_view")]: {
-    name: "3",
-    node: h(VNodeTemplate, {
-      renderNode: h(MonacoEditor, {
-        class: "h-64",
-      }),
-    }),
-    closable: true,
-  },
-  [useUniqueId("test_view")]: {
-    name: "4",
-    node: h(VNodeTemplate, {
-      renderNode: h("input", {
-        class: "input-default",
-      }),
-    }),
-    closable: true,
-  },
-  [useUniqueId("test_view")]: {
-    name: "last is also really long",
-    node: h(VNodeTemplate, {
-      renderNode: h("input", {
-        class: "input-default",
-      }),
-    }),
-    closable: false,
-  },
-});
+const views = reactive({});
 
 const removeView = (id: string) => {
   delete views[id];
 };
 
-if (process.client) {
-  await sleep(0);
+onMounted(() => {
   toastStore.spawn({
     title: "Title",
     description:
@@ -95,5 +40,53 @@ if (process.client) {
     expire: Date.now() + 60000,
   });
   tauri.value = isTauri();
-}
+
+  const MonacoEditor = resolveComponent("MonacoEditor");
+
+  views[useUniqueId("test_view")] = {
+    name: "some really long name 1",
+    node: h(VNodeTemplate, {
+      renderNode: h(MonacoEditor, {
+        class: "h-64",
+      }),
+    }),
+    closable: true,
+  };
+  views[useUniqueId("test_view")] = {
+    name: "some really long name 2",
+    node: h(VNodeTemplate, {
+      renderNode: h("input", {
+        class: "input-default",
+      }),
+    }),
+    closable: true,
+  };
+  views[useUniqueId("test_view")] = {
+    name: "3",
+    node: h(VNodeTemplate, {
+      renderNode: h(MonacoEditor, {
+        class: "h-64",
+      }),
+    }),
+    closable: true,
+  };
+  views[useUniqueId("test_view")] = {
+    name: "4",
+    node: h(VNodeTemplate, {
+      renderNode: h("input", {
+        class: "input-default",
+      }),
+    }),
+    closable: true,
+  };
+  views[useUniqueId("test_view")] = {
+    name: "last is also really long",
+    node: h(VNodeTemplate, {
+      renderNode: h("input", {
+        class: "input-default",
+      }),
+    }),
+    closable: false,
+  };
+});
 </script>

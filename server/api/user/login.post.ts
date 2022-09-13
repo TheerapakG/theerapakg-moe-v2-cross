@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import argon2 from "argon2";
 
-import { useRedis } from "~/utils/useRedis";
+import { useRedis } from "~/server/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
   const body = await useBody(event);

@@ -1,12 +1,9 @@
-import _ from "lodash";
-import { useRedis } from "~/utils/useRedis";
+import { useRedis } from "~/server/utils/useRedis";
+import { getUser } from "~/server/utils/getUser";
+import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
 
 export default defineEventHandler(async (event) => {
-  const user = await useRedis().get(
-    getCookie(event, "session_id")
-      ? `session:${getCookie(event, "session_id")}`
-      : "session:default"
-  );
+  const user = await getUser(event);
 
   const id = (event.context.params.id as string).split(":", 2)[0];
   const perm = (event.context.params.perm as string).split(":", 2)[0];
@@ -19,27 +16,25 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const [errs, [editPerm, fileEditPerm, { owner }]] = _.zip(
-    ...(await useRedis()
-      .multi()
-      .sismember(`${user}:perms`, "perms:file:edit")
-      .zscore(`file:${id}:perms:edit`, user)
-      .hgetall(`file:${id}`)
-      .exec())
-  ) as [Array<Error>, [number, string, { dir: string; owner: string }]];
+  try {
+    const { edit } = await getFilePermForUser(`file:${id}`, user);
 
-  if (
-    errs.every((e) => !e) &&
-    (editPerm > 0 || parseInt(fileEditPerm) > 0 || owner === user)
-  ) {
-    await useRedis().zadd(`file:${id}:perms:${perm}`, 1, `user:${targetId}`);
-    return {
-      status: 0,
-    };
-  } else {
-    return {
-      status: -8,
-      error: "no permission",
-    };
+    if (edit) {
+      await useRedis().zadd(`file:${id}:perms:${perm}`, 1, `user:${targetId}`);
+      return {
+        status: 0,
+      };
+    } else {
+      return {
+        status: -8,
+        error: "no permission",
+      };
+    }
+  } catch (err) {
+    console.error(err);
   }
+
+  return {
+    status: -1,
+  };
 });

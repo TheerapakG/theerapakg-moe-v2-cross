@@ -11,12 +11,14 @@
       <button>{{ permUserCount }} users</button>
 
       <template #popper>
-        <div class="flex flex-col gap-y-4">
+        <div
+          class="flex flex-col place-content-center place-items-center gap-y-4"
+        >
           <div>changing permission: {{ props.perm }}</div>
           <div
             v-for="user in permUserList"
             :key="user.user.id"
-            class="mx-auto grid grid-cols-[8rem_1.5rem] place-content-center place-items-center"
+            class="mx-auto grid grid-cols-[12rem_1.5rem] place-content-center place-items-center gap-x-4"
           >
             <div>{{ user.user?.name ?? "(loading...)" }}</div>
             <div class="w-6 h-6">
@@ -28,6 +30,7 @@
               </button>
             </div>
           </div>
+          <PaginateNavigation v-model="page" :page-count="pageCount" />
         </div>
       </template>
     </VDropdown>
@@ -113,7 +116,7 @@ const allUserCount = computed(() => permsData.value?.userCount ?? Infinity);
 const permUserCount = computed(() => permsData.value?.count ?? props.userCount);
 const permUserList = computed(() => permsData.value?.users ?? []);
 
-const { pageCount, isFirstPage, isLastPage, prev, next } = useOffsetPagination({
+const { pageCount } = useOffsetPagination({
   total: allUserCount,
   page,
   pageSize: size,

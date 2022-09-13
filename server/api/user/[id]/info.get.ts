@@ -1,4 +1,4 @@
-import { useRedis } from "~/utils/useRedis";
+import { useRedis } from "~/server/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
   const user = await useRedis().get(

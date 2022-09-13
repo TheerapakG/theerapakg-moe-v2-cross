@@ -14,11 +14,37 @@ const target = route.query.path
 onMounted(async () => {
   if (process.client) {
     if (target) {
-      toastStore.spawn({
-        title: "Redirecting...",
-        description: `redirecting to ${target}`,
-      });
-      window.location.href = target;
+      try {
+        const { host, pathname, searchParams, hash } = new URL(target);
+
+        toastStore.spawn({
+          title: "Redirecting...",
+          description: `redirecting to ${target}`,
+        });
+
+        if (host === new URL(window.location.href).host) {
+          await navigateTo({
+            path: pathname,
+            query: {
+              ...searchParams[Symbol.iterator],
+            },
+            hash,
+          });
+        } else {
+          window.location.href = target;
+        }
+      } catch (e) {
+        if (e instanceof TypeError) {
+          const { ExclamationCircleIcon } = await import(
+            "@heroicons/vue/outline"
+          );
+          toastStore.spawn({
+            title: "Redirection Error",
+            description: "Malformed URL! Maybe try going back?",
+            icon: h(ExclamationCircleIcon),
+          });
+        }
+      }
     } else {
       const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
       toastStore.spawn({

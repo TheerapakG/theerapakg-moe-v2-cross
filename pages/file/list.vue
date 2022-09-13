@@ -1,51 +1,6 @@
 <template>
   <div>
     <div
-      class="w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
-    >
-      <button class="page-button" :disabled="isFirstPage" @click="page = 1">
-        &lt;&lt;
-      </button>
-      <div>
-        <div v-if="page - 2 > 1">...</div>
-      </div>
-      <div>
-        <button v-if="page - 1 > 1" class="page-button" @click="page -= 2">
-          {{ page - 2 }}
-        </button>
-      </div>
-      <div>
-        <button v-if="page > 1" class="page-button" @click="prev">
-          {{ page - 1 }}
-        </button>
-      </div>
-      <div class="font-bold">{{ page }}</div>
-      <div>
-        <button v-if="page < pageCount" class="page-button" @click="next">
-          {{ page + 1 }}
-        </button>
-      </div>
-      <div>
-        <button
-          v-if="page + 1 < pageCount"
-          class="page-button"
-          @click="page += 2"
-        >
-          {{ page + 2 }}
-        </button>
-      </div>
-      <div>
-        <div v-if="page + 2 < pageCount">...</div>
-      </div>
-      <button
-        class="page-button"
-        :disabled="isLastPage"
-        @click="page = pageCount"
-      >
-        &gt;&gt;
-      </button>
-    </div>
-    <div
       class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
     >
       <div>file</div>
@@ -73,51 +28,7 @@
         :user-count="file.perms.edit"
       />
     </div>
-    <div
-      class="w-72 h-8 mx-auto grid grid-cols-[repeat(9,2rem)] place-content-center place-items-center"
-    >
-      <button class="page-button" :disabled="isFirstPage" @click="page = 1">
-        &lt;&lt;
-      </button>
-      <div>
-        <div v-if="page - 2 > 1">...</div>
-      </div>
-      <div>
-        <button v-if="page - 1 > 1" class="page-button" @click="page -= 2">
-          {{ page - 2 }}
-        </button>
-      </div>
-      <div>
-        <button v-if="page > 1" class="page-button" @click="prev">
-          {{ page - 1 }}
-        </button>
-      </div>
-      <div class="font-bold">{{ page }}</div>
-      <div>
-        <button v-if="page < pageCount" class="page-button" @click="next">
-          {{ page + 1 }}
-        </button>
-      </div>
-      <div>
-        <button
-          v-if="page + 1 < pageCount"
-          class="page-button"
-          @click="page += 2"
-        >
-          {{ page + 2 }}
-        </button>
-      </div>
-      <div>
-        <div v-if="page + 2 < pageCount">...</div>
-      </div>
-      <button
-        class="page-button"
-        :disabled="isLastPage"
-        @click="page = pageCount"
-      >
-        &gt;&gt;
-      </button>
-    </div>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
   </div>
 </template>
 
@@ -182,15 +93,9 @@ const { pending, data: fileListData } = await useAsyncData(
 const fileCount = computed(() => fileListData.value?.count ?? 0);
 const fileList = computed(() => fileListData.value?.files ?? []);
 
-const { pageCount, isFirstPage, isLastPage, prev, next } = useOffsetPagination({
+const { pageCount } = useOffsetPagination({
   total: fileCount,
   page,
   pageSize: size,
 });
 </script>
-
-<style scoped>
-.page-button {
-  @apply w-8 h-8 rounded-full bg-black dark:bg-white disabled:opacity-20 text-white dark:text-black font-bold;
-}
-</style>

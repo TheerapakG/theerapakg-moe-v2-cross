@@ -1,5 +1,4 @@
-import _ from "lodash";
-import { useRedis } from "~/utils/useRedis";
+import { useRedis } from "~/server/utils/useRedis";
 
 export default defineEventHandler(async (event) => {
   if ((event.context.params.name as string).includes(":")) {
