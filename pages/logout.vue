@@ -21,6 +21,8 @@ definePageMeta({
   name: "Logout",
 });
 
+const config = useRuntimeConfig();
+
 const userStore = useUserStore();
 const current = await userStore.useCurrent();
 
@@ -32,6 +34,8 @@ const logout = async () => {
   pending.value = true;
 
   const { status } = await $fetch("/api/user/logout", {
+    headers: useRequestHeaders(["cookie"]),
+    baseURL: config.public?.apiBaseURL ?? "/",
     method: "POST",
   });
 

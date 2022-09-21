@@ -3,7 +3,7 @@ import { defineNuxtModule, addServerHandler } from "@nuxt/kit";
 export default defineNuxtModule({
   meta: {
     compatibility: {
-      nuxt: "^3.0.0",
+      nuxt: "^3.0.0-rc",
     },
   },
   async setup() {

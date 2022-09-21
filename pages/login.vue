@@ -27,6 +27,8 @@ definePageMeta({
   name: "Login",
 });
 
+const config = useRuntimeConfig();
+
 const userStore = useUserStore();
 const current = await userStore.useCurrent();
 
@@ -40,6 +42,7 @@ const login = async () => {
   pending.value = true;
 
   const { status } = await $fetch("/api/user/login", {
+    baseURL: config.public?.apiBaseURL ?? "/",
     method: "POST",
     body: {
       user: user.value,

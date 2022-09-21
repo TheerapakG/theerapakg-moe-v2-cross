@@ -39,8 +39,16 @@
 
 <script setup lang="ts">
 import { PlusIcon, MinusIcon } from "@heroicons/vue/outline";
+
+definePageMeta({
+  title: "theerapakg-moe-app: shortener manager",
+  name: "Shortener Manager",
+  perms: ["perms:sh:list"],
+});
+
+const config = useRuntimeConfig();
+
 const route = useRoute();
-const router = useRouter();
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
@@ -48,11 +56,12 @@ const _size = route.query.size ? parseInt(route.query.size as string) : 25;
 const size = ref(isNaN(_size) ? 10 : _size);
 
 if (process.client) {
-  watch([page, size], () => {
+  watch([page, size], async () => {
     if (!isNaN(page.value) && !isNaN(size.value)) {
-      router.replace({
+      await navigateTo({
         path: route.path,
         query: { page: page.value, size: size.value },
+        replace: true,
       });
     }
   });
@@ -66,6 +75,7 @@ const {
   async () => {
     const { value } = await $fetch("/api/sh/list", {
       headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
       params: {
         page: page.value,
         size: size.value,
@@ -94,6 +104,7 @@ const newTarget = ref("");
 const addSh = async () => {
   await $fetch(`/api/sh/${newSh.value}`, {
     headers: useRequestHeaders(["cookie"]),
+    baseURL: config.public?.apiBaseURL ?? "/",
     method: "PUT",
     params: {
       target: encodeURIComponent(newTarget.value),
@@ -105,6 +116,7 @@ const addSh = async () => {
 const removeSh = async (sh: string) => {
   await $fetch(`/api/sh/${sh}`, {
     headers: useRequestHeaders(["cookie"]),
+    baseURL: config.public?.apiBaseURL ?? "/",
     method: "DELETE",
   });
   await refreshShListData();

@@ -36,8 +36,15 @@
 import { User } from "~/store/user";
 import { formatPretty } from "~~/utils/formatPretty";
 
+definePageMeta({
+  title: "theerapakg-moe-app: files",
+  name: "Files",
+  perms: ["perms:file:list"],
+});
+
+const config = useRuntimeConfig();
+
 const route = useRoute();
-const router = useRouter();
 
 const userStore = useUserStore();
 
@@ -47,11 +54,12 @@ const _size = route.query.size ? parseInt(route.query.size as string) : 25;
 const size = ref(isNaN(_size) ? 10 : _size);
 
 if (process.client) {
-  watch([page, size], () => {
+  watch([page, size], async () => {
     if (!isNaN(page.value) && !isNaN(size.value)) {
-      router.replace({
+      await navigateTo({
         path: route.path,
         query: { page: page.value, size: size.value },
+        replace: true,
       });
     }
   });
@@ -63,6 +71,7 @@ const { pending, data: fileListData } = await useAsyncData(
       value: { count, files },
     } = await $fetch("/api/file/list", {
       headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
       params: {
         page: page.value,
         size: size.value,

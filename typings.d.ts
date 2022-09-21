@@ -7,5 +7,6 @@ declare module "~/node_modules/nuxt/dist/pages/runtime/composables" {
   interface PageMeta {
     title?: string;
     name?: string | { [key: string]: { [key: string]: string } };
+    perms?: string[];
   }
 }

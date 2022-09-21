@@ -2,7 +2,7 @@
   <div class="overflow-x-hidden">
     <div class="absolute inset-0 pt-24 md:pt-8 overflow-x-hidden">
       <NuxtErrorBoundary @error="spawnPageErrorToast">
-        <slot ref="pageSlot" />
+        <slot />
       </NuxtErrorBoundary>
     </div>
     <div
@@ -41,8 +41,9 @@
 </template>
 
 <script setup lang="ts">
+import SideBar from "~/components/SideBar.vue";
 const currentRoute = useRoute();
-const pageStore = usePageStore();
+const router = useRouter();
 const routeStore = useRouteStore();
 const toastStore = useToastStore("layout");
 
@@ -50,7 +51,6 @@ useHead({
   title: computed(() => `${currentRoute.meta.title}`),
 });
 
-const page = ref<HTMLElement>(null);
 const menu = ref<InstanceType<typeof SideBar> | null>(null);
 
 const sideBarPaths = ["/", "/github/"];
@@ -59,6 +59,21 @@ const routeInfos = computed(() =>
   useMap(sideBarPaths, (path: string) => routeStore.info(path).value)
 );
 
+router.onError((error) => {
+  if (!isNuxtError(error)) {
+    toastStore.spawn({
+      title: "Error routing to page",
+      description: "error encountered routing to page",
+    });
+  } else {
+    toastStore.spawn({
+      title: "Error routing to page",
+      description: `${error.message}`,
+    });
+  }
+  console.log(error);
+});
+
 const spawnPageErrorToast = (error) => {
   toastStore.spawn({
     title: "Error loading the page",
@@ -66,10 +81,4 @@ const spawnPageErrorToast = (error) => {
   });
   console.log(error);
 };
-
-onMounted(() => {
-  watchEffect(() => {
-    pageStore.pageDom = page.value;
-  });
-});
 </script>

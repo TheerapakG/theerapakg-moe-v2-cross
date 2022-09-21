@@ -20,6 +20,14 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  title: "theerapakg-moe-app: upload",
+  name: "Upload",
+  perms: ["perms:file:edit"],
+});
+
+const config = useRuntimeConfig();
+
 const file = shallowRef<File>(null);
 
 const toastStore = useToastStore("layout");
@@ -36,6 +44,8 @@ const upload = async () => {
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
     const { status } = await $fetch("/api/file/upload", {
+      headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
       method: "POST",
       body: {
         file: file.value.name,

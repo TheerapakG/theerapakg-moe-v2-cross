@@ -28,6 +28,8 @@ definePageMeta({
   name: "Download",
 });
 
+const config = useRuntimeConfig();
+
 const route = useRoute();
 
 const toastStore = useToastStore("layout");
@@ -47,6 +49,7 @@ const { pending: fileInfoPending, data: fileInfo } = await useFetch(
   `/api/file/${route.params.file}/info`,
   {
     headers: useRequestHeaders(["cookie"]),
+    baseURL: config.public?.apiBaseURL ?? "/",
   }
 );
 </script>

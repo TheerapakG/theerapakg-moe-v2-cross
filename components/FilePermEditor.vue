@@ -43,6 +43,8 @@ import { storeToRefs } from "pinia";
 import { Ref } from "vue";
 import { User, useUserStore } from "~~/store/user";
 
+const config = useRuntimeConfig();
+
 interface Props {
   fileId: string;
   perm: string;
@@ -86,6 +88,7 @@ const {
       value: { count, userCount, users },
     } = await $fetch(`/api/file/${props.fileId}/perm/${props.perm}`, {
       headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
       params: {
         page: page.value,
         size: size.value,
@@ -124,6 +127,8 @@ const { pageCount } = useOffsetPagination({
 
 const doUser = async (id: string, method: string) => {
   await $fetch(`/api/file/${props.fileId}/perm/${props.perm}/user/${id}`, {
+    headers: useRequestHeaders(["cookie"]),
+    baseURL: config.public?.apiBaseURL ?? "/",
     method,
   });
   await refresh();

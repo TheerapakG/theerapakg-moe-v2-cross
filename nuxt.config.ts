@@ -17,6 +17,11 @@ export default defineNuxtConfig({
   app: {
     baseURL: "/",
   },
+  runtimeConfig: {
+    public: {
+      apiBaseURL: null,
+    },
+  },
   nitro: {
     storage: {
       redis: {
@@ -33,7 +38,7 @@ export default defineNuxtConfig({
   experimental: {
     // externalVue: true,
   },
-  autoImports: {
+  imports: {
     dirs: ["store"],
   },
   colorMode: {

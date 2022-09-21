@@ -11,7 +11,11 @@ export const useUserStore = defineStore("user", () => {
   const users: { [id: string]: Ref<User> } = {};
 
   const refreshCurrent = async () => {
-    const { value } = await $fetch(`/api/user/current`);
+    const config = useRuntimeConfig();
+    const { value } = await $fetch(`/api/user/current`, {
+      headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
+    });
     current.value = { ...value };
     if (!users[current.value.id]) {
       users[current.value.id] = ref({ ...value });
@@ -27,8 +31,11 @@ export const useUserStore = defineStore("user", () => {
 
   const useUser = async (id: string) => {
     if (!users[id]) {
+      const config = useRuntimeConfig();
       users[id] = ref({ id });
-      const { value } = await $fetch(`/api/user/${id}/info`);
+      const { value } = await $fetch(`/api/user/${id}/info`, {
+        baseURL: config.public?.apiBaseURL ?? "/",
+      });
       users[id].value = {
         id,
         ...value,
@@ -38,6 +45,7 @@ export const useUserStore = defineStore("user", () => {
   };
 
   return {
+    current,
     refreshCurrent,
     useCurrent,
     useUser,
