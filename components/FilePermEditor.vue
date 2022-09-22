@@ -15,6 +15,7 @@
           class="flex flex-col place-content-center place-items-center gap-y-4"
         >
           <div>changing permission: {{ props.perm }}</div>
+          <div></div>
           <div
             v-for="user in permUserList"
             :key="user.user.id"
@@ -42,8 +43,6 @@ import { PlusIcon, MinusIcon } from "@heroicons/vue/outline";
 import { storeToRefs } from "pinia";
 import { Ref } from "vue";
 import { User, useUserStore } from "~~/store/user";
-
-const config = useRuntimeConfig();
 
 interface Props {
   fileId: string;
@@ -84,16 +83,15 @@ const {
         : Promise.resolve(permsData.value);
     }
 
-    const {
-      value: { count, userCount, users },
-    } = await $fetch(`/api/file/${props.fileId}/perm/${props.perm}`, {
-      headers: useRequestHeaders(["cookie"]),
-      baseURL: config.public?.apiBaseURL ?? "/",
-      params: {
-        page: page.value,
-        size: size.value,
-      },
-    });
+    const { count, userCount, users } = await $apiFetch(
+      `/api/file/${props.fileId}/perm/${props.perm}`,
+      {
+        params: {
+          page: page.value,
+          size: size.value,
+        },
+      }
+    );
 
     return {
       count,
@@ -126,9 +124,7 @@ const { pageCount } = useOffsetPagination({
 });
 
 const doUser = async (id: string, method: string) => {
-  await $fetch(`/api/file/${props.fileId}/perm/${props.perm}/user/${id}`, {
-    headers: useRequestHeaders(["cookie"]),
-    baseURL: config.public?.apiBaseURL ?? "/",
+  await $apiFetch(`/api/file/${props.fileId}/perm/${props.perm}/user/${id}`, {
     method,
   });
   await refresh();

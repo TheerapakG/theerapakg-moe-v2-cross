@@ -1,15 +1,15 @@
 <template>
-  <div v-if="fileInfoPending">Getting file information...</div>
-  <div v-else-if="fileInfo.status < 0">No such file found :(</div>
+  <div v-if="pending">Getting file information...</div>
+  <div v-else-if="fileInfoError">No such file found :(</div>
   <div v-else>
     <div>
       <div>File Info:</div>
-      <div>name: {{ fileInfo.value.name }}</div>
-      <div>size: {{ formatPretty(fileInfo.value.size) }} bytes</div>
+      <div>name: {{ fileInfo.name }}</div>
+      <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
     </div>
     <button
       class="rounded-lg w-32 h-12 bg-black dark:bg-white text-white font-bold dark:text-black"
-      @click="startDownload(fileInfo.value.url, fileInfo.value.name)"
+      @click="startDownload(fileInfo.url, fileInfo.name)"
     >
       Download
     </button>
@@ -28,8 +28,6 @@ definePageMeta({
   name: "Download",
 });
 
-const config = useRuntimeConfig();
-
 const route = useRoute();
 
 const toastStore = useToastStore("layout");
@@ -41,15 +39,13 @@ const startDownload = (url: string, name: string) => {
   link.click();
   toastStore.spawn({
     title: `Downloading ${name}`,
-    description: `size: ${fileInfo.value.value.size} bytes`,
+    description: `size: ${fileInfo.value.size} bytes`,
   });
 };
 
-const { pending: fileInfoPending, data: fileInfo } = await useFetch(
-  `/api/file/${route.params.file}/info`,
-  {
-    headers: useRequestHeaders(["cookie"]),
-    baseURL: config.public?.apiBaseURL ?? "/",
-  }
-);
+const {
+  pending,
+  data: fileInfo,
+  error: fileInfoError,
+} = await useApiFetch(`/api/file/${route.params.file}/info`);
 </script>

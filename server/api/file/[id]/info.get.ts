@@ -3,47 +3,26 @@ import path from "path";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
-import { getIdFromIdObject } from "~/server/utils/getId";
+import { getSafeIdFromId, getSafeIdFromIdObject } from "~/server/utils/getId";
+import { wrapHandler } from "~/server/utils/wrapHandler";
 
-export default defineEventHandler(async (event) => {
-  const user = await getUser(event);
+export default defineEventHandler(
+  wrapHandler(async (event) => {
+    const user = await getUser(event);
 
-  const id = (event.context.params.id as string).split(":", 2)[0];
+    const id = getSafeIdFromId(event.context.params.id as string);
 
-  if (!user) {
-    return {
-      status: -2,
-      error: "session expired",
-    };
-  }
-
-  try {
     const { view, owner } = await getFilePermForUser(`file:${id}`, user);
+    if (!view) throw createError({ statusMessage: "no permission" });
 
-    if (view) {
-      const dir = await useRedis().hget(`file:${id}`, "dir");
-      if (dir) {
-        return {
-          status: 0,
-          value: {
-            name: path.basename(dir),
-            owner: getIdFromIdObject(owner),
-            size: (await fs.promises.stat(dir)).size,
-            url: `/api/file/${id}/download`,
-          },
-        };
-      }
-    } else {
+    const dir = await useRedis().hget(`file:${id}`, "dir");
+    if (dir) {
       return {
-        status: -8,
-        error: "no permission",
+        name: path.basename(dir),
+        owner: getSafeIdFromIdObject<"user">(owner),
+        size: (await fs.promises.stat(dir)).size,
+        url: `/api/file/${id}/download`,
       };
     }
-  } catch (err) {
-    console.error(err);
-  }
-
-  return {
-    status: -1,
-  };
-});
+  })
+);

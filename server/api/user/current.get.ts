@@ -1,29 +1,15 @@
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
+import { getSafeIdFromIdObject } from "~/server/utils/getId";
+import { wrapHandler } from "~/server/utils/wrapHandler";
 
-export default defineEventHandler(async (event) => {
-  const user = await getUser(event);
+export default defineEventHandler(
+  wrapHandler(async (event) => {
+    const user = await getUser(event);
 
-  if (!user) {
     return {
-      status: -2,
-      error: "session expired",
+      id: getSafeIdFromIdObject<"user">(user),
+      name: await useRedis().hget(user, "name"),
     };
-  }
-
-  try {
-    return {
-      status: 0,
-      value: {
-        id: user.split(":", 2)[1],
-        name: await useRedis().hget(user, "name"),
-      },
-    };
-  } catch (err) {
-    console.error(err);
-  }
-
-  return {
-    status: -1,
-  };
-});
+  })
+);

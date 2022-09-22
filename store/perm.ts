@@ -8,13 +8,8 @@ export const usePermStore = defineStore("perm", () => {
 
   const usePerm = async (perm: string) => {
     if (!perms[perm]) {
-      const config = useRuntimeConfig();
-      const { value } = await $fetch(
-        `/api/user/current/perm/${encodeURIComponent(perm)}`,
-        {
-          headers: useRequestHeaders(["cookie"]),
-          baseURL: config.public?.apiBaseURL ?? "/",
-        }
+      const { value } = await $apiFetch(
+        `/api/user/current/perm/${encodeURIComponent(perm)}`
       );
       perms[perm] = ref(value);
     }

@@ -26,8 +26,6 @@ definePageMeta({
   perms: ["perms:file:edit"],
 });
 
-const config = useRuntimeConfig();
-
 const file = shallowRef<File>(null);
 
 const toastStore = useToastStore("layout");
@@ -43,31 +41,29 @@ const onDroppedData = (data: DataTransfer | null) => {
 const upload = async () => {
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
-    const { status } = await $fetch("/api/file/upload", {
-      headers: useRequestHeaders(["cookie"]),
-      baseURL: config.public?.apiBaseURL ?? "/",
-      method: "POST",
-      body: {
-        file: file.value.name,
-        content: event.target.result,
-      },
-    });
-
-    if (status < 0) {
+    try {
+      await $apiFetch("/api/file/upload", {
+        method: "POST",
+        body: {
+          file: file.value.name,
+          content: event.target.result,
+        },
+      });
+    } catch {
       const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
       toastStore.spawn({
         title: "Upload Error",
         description: "Cannot upload",
         icon: h(ExclamationCircleIcon),
       });
-    } else {
-      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
-      toastStore.spawn({
-        title: "Upload Success",
-        description: "Successfully uploaded",
-        icon: h(ExclamationCircleIcon),
-      });
+      return;
     }
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    toastStore.spawn({
+      title: "Upload Success",
+      description: "Successfully uploaded",
+      icon: h(ExclamationCircleIcon),
+    });
   });
 
   fileReader.readAsBinaryString(file.value);

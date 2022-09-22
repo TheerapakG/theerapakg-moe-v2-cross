@@ -3,13 +3,9 @@
 </template>
 
 <script setup lang="ts">
-const config = useRuntimeConfig();
-
 const route = useRoute();
 
-const target = await $fetch(`/api/sh/${route.params.name}`, {
-  baseURL: config.public?.apiBaseURL ?? "/",
-});
+const target = await $apiFetch(`/api/sh/${route.params.name}`);
 const targetValue = "value" in target ? (target.value as string) : null;
 
 onMounted(async () => {

@@ -46,8 +46,6 @@ definePageMeta({
   perms: ["perms:sh:list"],
 });
 
-const config = useRuntimeConfig();
-
 const route = useRoute();
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
@@ -71,23 +69,13 @@ const {
   pending,
   data: shListData,
   refresh: refreshShListData,
-} = await useAsyncData(
-  async () => {
-    const { value } = await $fetch("/api/sh/list", {
-      headers: useRequestHeaders(["cookie"]),
-      baseURL: config.public?.apiBaseURL ?? "/",
-      params: {
-        page: page.value,
-        size: size.value,
-      },
-    });
-
-    return value;
+} = await useApiFetch("/api/sh/list", {
+  params: {
+    page: page.value,
+    size: size.value,
   },
-  {
-    watch: [page, size],
-  }
-);
+  watch: [page, size],
+});
 
 const shCount = computed(() => shListData.value?.count ?? 0);
 const shList = computed(() => shListData.value?.sh ?? []);
@@ -102,9 +90,7 @@ const newSh = ref("");
 const newTarget = ref("");
 
 const addSh = async () => {
-  await $fetch(`/api/sh/${newSh.value}`, {
-    headers: useRequestHeaders(["cookie"]),
-    baseURL: config.public?.apiBaseURL ?? "/",
+  await $apiFetch(`/api/sh/${newSh.value}`, {
     method: "PUT",
     params: {
       target: encodeURIComponent(newTarget.value),
@@ -114,9 +100,7 @@ const addSh = async () => {
 };
 
 const removeSh = async (sh: string) => {
-  await $fetch(`/api/sh/${sh}`, {
-    headers: useRequestHeaders(["cookie"]),
-    baseURL: config.public?.apiBaseURL ?? "/",
+  await $apiFetch(`/api/sh/${sh}`, {
     method: "DELETE",
   });
   await refreshShListData();

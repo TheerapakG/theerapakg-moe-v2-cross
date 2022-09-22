@@ -2,77 +2,59 @@ import _ from "lodash";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
+import { getSafeIdFromId, getSafeIdFromIdObject } from "~/server/utils/getId";
+import { wrapHandler } from "~/server/utils/wrapHandler";
 
-export default defineEventHandler(async (event) => {
-  const query = useQuery(event);
-  const user = await getUser(event);
+export default defineEventHandler(
+  wrapHandler(async (event) => {
+    const query = useQuery(event);
+    const user = await getUser(event);
 
-  const id = (event.context.params.id as string).split(":", 2)[0];
-  const perm = (event.context.params.perm as string).split(":", 2)[0];
+    const id = getSafeIdFromId(event.context.params.id as string);
+    const perm = getSafeIdFromId(event.context.params.perm as string);
 
-  if (!user) {
-    return {
-      status: -2,
-      error: "session expired",
-    };
-  }
-
-  try {
     const { view } = await getFilePermForUser(`file:${id}`, user);
+    if (!view) throw createError({ statusMessage: "no permission" });
 
-    if (view) {
-      const page = query.page ? parseInt(query.page as string) : 1;
-      const size = query.size
-        ? _.min([parseInt(query.size as string), 50])
-        : 10;
-      const start = (page - 1) * size;
-      const stop = start + size - 1;
+    const page = query.page ? parseInt(query.page as string) : 1;
+    const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
+    const start = (page - 1) * size;
+    const stop = start + size - 1;
 
-      const [errs, [count, userCount, users]] = _.zip(
-        ...(await useRedis()
-          .multi()
-          .zcount(`file:${id}:perms:${perm}`, "-inf", "inf")
-          .zcount("user:ids", "-inf", "inf")
-          .zrange("user:ids", start, stop)
-          .exec())
-      ) as [Array<Error>, [number, number, string[]]];
+    const [errs1, [count, userCount, users]] = _.zip(
+      ...(await useRedis()
+        .multi()
+        .zcount(`file:${id}:perms:${perm}`, "-inf", "inf")
+        .zcount("user:ids", "-inf", "inf")
+        .zrange("user:ids", start, stop)
+        .exec())
+    ) as [Error[], [number, number, `user:${string}`[]]];
 
-      if (errs.every((e) => !e)) {
-        const [errs, perms] = _.zip(
-          ...(await useRedis()
-            .multi(
-              users.map((user) => ["zscore", `file:${id}:perms:${perm}`, user])
-            )
-            .exec())
-        ) as [Array<Error>, Array<string>];
+    errs1.forEach((e) => {
+      if (e) throw e;
+    });
 
-        if (errs.every((e) => !e)) {
-          return {
-            status: 0,
-            value: {
-              count,
-              userCount,
-              users: _.zipWith(users, perms, (user, perm) => {
-                return {
-                  id: user.split(":", 2)[1],
-                  perm: parseInt(perm) > 0,
-                };
-              }),
-            },
-          };
-        }
-      }
-    } else {
-      return {
-        status: -8,
-        error: "no permission",
-      };
-    }
-  } catch (err) {
-    console.error(err);
-  }
+    const [errs2, perms] = _.zip(
+      ...(await useRedis()
+        .multi(
+          users.map((user) => ["zscore", `file:${id}:perms:${perm}`, user])
+        )
+        .exec())
+    ) as [Error[], string[]];
 
-  return {
-    status: -1,
-  };
-});
+    errs2.forEach((e) => {
+      if (e) throw e;
+    });
+
+    return {
+      count,
+      userCount,
+      users: _.zipWith(users, perms, (user, perm) => {
+        return {
+          id: getSafeIdFromIdObject<"user">(user),
+          perm: parseInt(perm) > 0,
+        };
+      }),
+    };
+  })
+);

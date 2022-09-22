@@ -2,41 +2,34 @@ import crypto from "crypto";
 import argon2 from "argon2";
 
 import { useRedis } from "~/server/utils/useRedis";
+import { wrapHandler } from "~/server/utils/wrapHandler";
 
-export default defineEventHandler(async (event) => {
-  const body = await useBody(event);
+export default defineEventHandler(
+  wrapHandler(async (event) => {
+    const body = await useBody(event);
+    if (!(body.user && body.pass)) return;
 
-  if (body.user && body.pass) {
-    try {
-      const user = await useRedis().get(`user:name:${body.user}`);
+    const user = await useRedis().get(`user:name:${body.user}`);
+    if (!user) return;
 
-      if (user) {
-        const phash = await useRedis().hget(user, "phash");
-
-        if (phash && (await argon2.verify(phash, body.pass))) {
-          console.log(`login attempt for user ${body.user}: PASS`);
-          const sessionId = crypto.randomUUID();
-          await useRedis()
-            .multi()
-            .set(`session:${sessionId}`, user)
-            .expire(`session:${sessionId}`, 60 * 60 * 24)
-            .exec();
-
-          setCookie(event, "session_id", sessionId, { path: "/" });
-
-          return {
-            status: 0,
-          };
-        }
-      }
-    } catch (err) {
-      console.error(err);
+    const phash = await useRedis().hget(user, "phash");
+    if (!(phash && (await argon2.verify(phash, body.pass)))) {
+      console.log(`login attempt for user ${body.user}: FAIL`);
+      throw createError({
+        statusMessage: "authentication failed",
+      });
     }
-  }
 
-  console.log(`login attempt for user ${body.user}: FAIL`);
+    console.log(`login attempt for user ${body.user}: PASS`);
+    const sessionId = crypto.randomUUID();
+    await useRedis()
+      .multi()
+      .set(`session:${sessionId}`, user)
+      .expire(`session:${sessionId}`, 60 * 60 * 24)
+      .exec();
 
-  return {
-    status: -1,
-  };
-});
+    setCookie(event, "session_id", sessionId, { path: "/" });
+
+    return {};
+  })
+);

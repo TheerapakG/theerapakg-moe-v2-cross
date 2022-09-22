@@ -42,8 +42,6 @@ definePageMeta({
   perms: ["perms:file:list"],
 });
 
-const config = useRuntimeConfig();
-
 const route = useRoute();
 
 const userStore = useUserStore();
@@ -67,11 +65,7 @@ if (process.client) {
 
 const { pending, data: fileListData } = await useAsyncData(
   async () => {
-    const {
-      value: { count, files },
-    } = await $fetch("/api/file/list", {
-      headers: useRequestHeaders(["cookie"]),
-      baseURL: config.public?.apiBaseURL ?? "/",
+    const { count, files } = await $apiFetch("/api/file/list", {
       params: {
         page: page.value,
         size: size.value,

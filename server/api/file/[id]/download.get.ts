@@ -2,28 +2,21 @@ import fs from "fs";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
+import { getSafeIdFromId } from "~/server/utils/getId";
+import { wrapHandler } from "~/server/utils/wrapHandler";
 
-export default defineEventHandler(async (event) => {
-  const user = await getUser(event);
+export default defineEventHandler(
+  wrapHandler(async (event) => {
+    const user = await getUser(event);
 
-  const id = (event.context.params.id as string).split(":", 2)[0];
+    const id = getSafeIdFromId(event.context.params.id as string);
 
-  if (!user) {
-    return sendStream(event, "");
-  }
-
-  try {
     const { view } = await getFilePermForUser(`file:${id}`, user);
+    if (!view) throw createError({ statusMessage: "no permission" });
 
-    if (view) {
-      const dir = await useRedis().hget(`file:${id}`, "dir");
-      if (dir) {
-        return sendStream(event, fs.createReadStream(dir));
-      }
+    const dir = await useRedis().hget(`file:${id}`, "dir");
+    if (dir) {
+      return sendStream(event, fs.createReadStream(dir));
     }
-  } catch (err) {
-    console.error(err);
-  }
-
-  return sendStream(event, "");
-});
+  })
+);

@@ -1,24 +1,21 @@
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
+import { wrapHandler } from "~/server/utils/wrapHandler";
 
-export default defineEventHandler(async (event) => {
-  if ((event.context.params.name as string).includes(":")) {
-    return {
-      status: -1,
-    };
-  }
+export default defineEventHandler(
+  wrapHandler(async (event) => {
+    if ((event.context.params.name as string).includes(":")) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "invalid name",
+      });
+    }
 
-  const query = useQuery(event);
-  const user = await getUser(event);
+    const query = useQuery(event);
+    const user = await getUser(event);
+    if ((await useRedis().sismember(`${user}:perms`, "perms:sh:edit")) <= 0)
+      throw createError({ statusMessage: "no permission" });
 
-  if (!user) {
-    return {
-      status: -2,
-      error: "session expired",
-    };
-  }
-
-  if ((await useRedis().sismember(`${user}:perms`, "perms:sh:edit")) > 0) {
     await useRedis()
       .multi()
       .set(
@@ -29,13 +26,7 @@ export default defineEventHandler(async (event) => {
       .exec();
 
     return {
-      status: 0,
       value: await useRedis().get(`sh:${event.context.params.name}`),
     };
-  } else {
-    return {
-      status: -8,
-      error: "no permission",
-    };
-  }
-});
+  })
+);
