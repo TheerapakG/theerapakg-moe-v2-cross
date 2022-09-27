@@ -8,7 +8,9 @@
       @show="open = true"
       @hide="open = false"
     >
-      <button>{{ permUserCount }} users</button>
+      <slot :perm-user-count="permUserCount">
+        <button>{{ permUserCount }} users</button>
+      </slot>
 
       <template #popper>
         <div

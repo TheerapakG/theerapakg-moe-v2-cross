@@ -1,4 +1,5 @@
 import fs from "fs";
+import mime from "mime";
 import path from "path";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
@@ -21,6 +22,7 @@ export default defineEventHandler(
         name: path.basename(dir),
         owner: getSafeIdFromIdObject<"user">(owner),
         size: (await fs.promises.stat(dir)).size,
+        mime: mime.getType(dir),
         url: `/api/file/${id}/download`,
       };
     }

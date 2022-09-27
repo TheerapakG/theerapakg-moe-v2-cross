@@ -3,20 +3,27 @@ import { FetchContext, FetchOptions } from "ohmyfetch";
 import { Ref } from "vue";
 
 const tryHandleCommonResponseError = async (ctx: FetchContext) => {
-  if (isNuxtError(ctx.error) && ctx.error.statusMessage === "session expired") {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
-    const toastStore = useToastStore("layout");
-    toastStore.spawn({
-      title: "Session Expired",
-      description: "Re-login required",
-      icon: h(ExclamationCircleIcon),
-      actions: {
-        login: {
-          title: "go to login",
-          action: () => navigateTo("/login"),
+  if (!ctx.response.ok) {
+    if (ctx.response.statusText === "session expired") {
+      const userStore = useUserStore();
+      await userStore.refreshCurrent();
+
+      await navigateTo("/");
+
+      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      const toastStore = useToastStore("layout");
+      toastStore.spawn({
+        title: "Session Expired",
+        description: "Re-login required",
+        icon: h(ExclamationCircleIcon),
+        actions: {
+          login: {
+            title: "go to login",
+            action: () => navigateTo("/login"),
+          },
         },
-      },
-    });
+      });
+    }
   }
 };
 

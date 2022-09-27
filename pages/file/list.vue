@@ -6,35 +6,64 @@
       <div>file</div>
       <div>size (bytes)</div>
       <div>owner</div>
-      <div>view perms</div>
-      <div>edit perms</div>
+      <div>perms</div>
+      <div>actions</div>
     </div>
-    <div
-      v-for="file in fileList"
-      :key="file.id"
-      class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
-    >
-      <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
-      <div>{{ formatPretty(file.size) }}</div>
-      <div>{{ file.owner?.name ?? "(loading...)" }}</div>
-      <FilePermEditor
-        :file-id="file.id"
-        perm="view"
-        :user-count="file.perms.view"
-      />
-      <FilePermEditor
-        :file-id="file.id"
-        perm="edit"
-        :user-count="file.perms.edit"
-      />
+    <div>
+      <LoadingCircleOverlay v-if="pending" />
+      <div
+        v-for="file in fileList"
+        :key="file.id"
+        class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
+      >
+        <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
+        <div>{{ formatPretty(file.size) }}</div>
+        <div>{{ file.owner?.name ?? "(loading...)" }}</div>
+        <div
+          class="grid grid-cols-2 place-content-center place-items-center gap-2"
+        >
+          <FileButtonPermEditor
+            v-slot="{ permUserCount }"
+            :file-id="file.id"
+            perm="view"
+            :user-count="file.perms.view"
+          >
+            <div class="flex place-content-center place-items-center gap-1">
+              {{ permUserCount }} <EyeIcon class="w-6 h-6" />
+            </div>
+          </FileButtonPermEditor>
+          <FileButtonPermEditor
+            v-slot="{ permUserCount }"
+            :file-id="file.id"
+            perm="edit"
+            :user-count="file.perms.edit"
+          >
+            <div class="flex place-content-center place-items-center gap-1">
+              {{ permUserCount }} <PencilIcon class="w-6 h-6" />
+            </div>
+          </FileButtonPermEditor>
+        </div>
+        <div
+          class="grid grid-cols-2 place-content-center place-items-center gap-2"
+        >
+          <FileButtonEdit :file-id="file.id" @refresh="refresh">
+            <PencilIcon class="w-6 h-6" />
+          </FileButtonEdit>
+          <FileButtonDelete :file-id="file.id" @refresh="refresh">
+            <MinusIcon class="w-6 h-6" />
+          </FileButtonDelete>
+        </div>
+      </div>
+      <PaginateNavigation v-model="page" :page-count="pageCount" />
     </div>
-    <PaginateNavigation v-model="page" :page-count="pageCount" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { User } from "~/store/user";
 import { formatPretty } from "~~/utils/formatPretty";
+
+import { EyeIcon, MinusIcon, PencilIcon } from "@heroicons/vue/outline";
 
 definePageMeta({
   title: "theerapakg-moe-app: files",
@@ -63,7 +92,11 @@ if (process.client) {
   });
 }
 
-const { pending, data: fileListData } = await useAsyncData(
+const {
+  pending,
+  refresh,
+  data: fileListData,
+} = await useAsyncData(
   async () => {
     const { count, files } = await $apiFetch("/api/file/list", {
       params: {

@@ -35,6 +35,7 @@ export default defineEventHandler(
     await useRedis()
       .multi()
       .hset(`file:${id}`, "dir", dir, "owner", user)
+      .zadd(`file:${user}:ids`, 1, `file:${id}`)
       .zadd("file:ids", 1, `file:${id}`)
       .exec();
 

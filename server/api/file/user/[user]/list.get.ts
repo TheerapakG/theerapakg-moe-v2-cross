@@ -1,26 +1,30 @@
 import fs from "fs";
-import _ from "lodash";
-import mime from "mime";
 import path from "path";
+import _ from "lodash";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
-import { getSafeIdFromIdObject } from "~/server/utils/getId";
+import { getSafeIdFromId, getSafeIdFromIdObject } from "~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const query = useQuery(event);
     const user = await getUser(event);
-    if ((await useRedis().sismember(`${user}:perms`, "perms:file:list")) <= 0)
+
+    const target = getSafeIdFromId(event.context.params.user);
+    if (
+      user !== target &&
+      (await useRedis().sismember(`${user}:perms`, "perms:file:list")) <= 0
+    )
       throw createError({ statusMessage: "no permission" });
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
     const start = (page - 1) * size;
     const stop = start + size - 1;
-    const ids = await useRedis().zrange("file:ids", start, stop);
+    const ids = await useRedis().zrange(`file:${user}:ids`, start, stop);
 
-    if (!ids || ids.length === 0) return;
+    if (!ids) return;
 
     const [errs, [files, viewPerms, editPerms]] = _.zip(
       ...(await Promise.all([

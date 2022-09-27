@@ -37,6 +37,7 @@ const startDownload = (url: string, name: string) => {
   link.setAttribute("href", url);
   link.setAttribute("download", name);
   link.click();
+  link.remove();
   toastStore.spawn({
     title: `Downloading ${name}`,
     description: `size: ${fileInfo.value.size} bytes`,
