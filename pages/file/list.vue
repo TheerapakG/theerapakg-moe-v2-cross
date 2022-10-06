@@ -1,69 +1,69 @@
 <template>
-  <div>
-    <div
-      class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
-    >
-      <div>file</div>
-      <div>size (bytes)</div>
-      <div>owner</div>
-      <div>perms</div>
-      <div>actions</div>
-    </div>
-    <div>
+  <div class="relative">
+    <Transition name="fade">
       <LoadingCircleOverlay v-if="pending" />
-      <div
-        v-for="file in fileList"
-        :key="file.id"
-        class="grid grid-cols-[32rem_16rem_8rem_8rem_8rem] place-content-center place-items-center"
-      >
-        <NuxtLink :to="`/file/download/${file.id}`">{{ file.name }}</NuxtLink>
-        <div>{{ formatPretty(file.size) }}</div>
-        <div>{{ file.owner?.name ?? "(loading...)" }}</div>
-        <div
-          class="grid grid-cols-2 place-content-center place-items-center gap-2"
-        >
+    </Transition>
+    <ResponsiveList
+      :widths="['32rem', '8rem', '8rem', '8rem', '8rem']"
+      :body-count="fileList.length"
+    >
+      <template #header-col-0><div>file</div></template>
+      <template #content-col-0="{ index }">
+        <NuxtLink :to="`/file/download/${fileList[index].id}`">
+          {{ fileList[index].name }}
+        </NuxtLink>
+      </template>
+      <template #header-col-1><div>size (bytes)</div></template>
+      <template #content-col-1="{ index }">
+        <div>{{ formatPretty(fileList[index].size) }}</div>
+      </template>
+      <template #header-col-2><div>owner</div></template>
+      <template #content-col-2="{ index }">
+        <div>
+          {{ fileList[index].owner?.name ?? "(loading...)" }}
+        </div>
+      </template>
+      <template #header-col-3><div>perms</div></template>
+      <template #content-col-3="{ index }">
+        <div class="flex place-content-center place-items-center gap-2">
           <FileButtonPermEditor
+            v-for="[perm, permIcon] in Object.entries(perms)"
+            :key="perm"
             v-slot="{ permUserCount }"
-            :file-id="file.id"
-            perm="view"
-            :user-count="file.perms.view"
+            :file-id="fileList[index].id"
+            :perm="perm"
+            :user-count="fileList[index].perms[perm] ?? 0"
           >
             <div class="flex place-content-center place-items-center gap-1">
-              {{ permUserCount }} <EyeIcon class="w-6 h-6" />
-            </div>
-          </FileButtonPermEditor>
-          <FileButtonPermEditor
-            v-slot="{ permUserCount }"
-            :file-id="file.id"
-            perm="edit"
-            :user-count="file.perms.edit"
-          >
-            <div class="flex place-content-center place-items-center gap-1">
-              {{ permUserCount }} <PencilIcon class="w-6 h-6" />
+              {{ permUserCount }} <VNodeTemplate :render-node="permIcon" />
             </div>
           </FileButtonPermEditor>
         </div>
+      </template>
+      <template #header-col-4><div>actions</div></template>
+      <template #content-col-4="{ index }">
         <div
           class="grid grid-cols-2 place-content-center place-items-center gap-2"
         >
-          <FileButtonEdit :file-id="file.id" @refresh="refresh">
+          <FileButtonEdit :file-id="fileList[index].id" @refresh="refresh">
             <PencilIcon class="w-6 h-6" />
           </FileButtonEdit>
-          <FileButtonDelete :file-id="file.id" @refresh="refresh">
+          <FileButtonDelete :file-id="fileList[index].id" @refresh="refresh">
             <MinusIcon class="w-6 h-6" />
           </FileButtonDelete>
         </div>
-      </div>
-      <PaginateNavigation v-model="page" :page-count="pageCount" />
-    </div>
+      </template>
+      <template #footer>
+        <PaginateNavigation v-model="page" :page-count="pageCount" />
+      </template>
+    </ResponsiveList>
   </div>
 </template>
 
 <script setup lang="ts">
-import { User } from "~/store/user";
-import { formatPretty } from "~~/utils/formatPretty";
-
 import { EyeIcon, MinusIcon, PencilIcon } from "@heroicons/vue/outline";
+import { User } from "~/store/user";
+import { formatPretty } from "~/utils/formatPretty";
 
 definePageMeta({
   title: "theerapakg-moe-app: files",
@@ -74,6 +74,11 @@ definePageMeta({
 const route = useRoute();
 
 const userStore = useUserStore();
+
+const perms = {
+  view: h(EyeIcon, { class: "w-6 h-6" }),
+  edit: h(PencilIcon, { class: "w-6 h-6" }),
+};
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);

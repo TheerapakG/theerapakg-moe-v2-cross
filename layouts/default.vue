@@ -6,18 +6,20 @@
       </NuxtErrorBoundary>
     </div>
     <div
-      class="absolute top-24 md:top-0 bottom-0 md:right-8 w-full md:w-auto flex flex-col justify-end md:justify-start content-center place-items-center pointer-events-none"
+      class="absolute top-24 md:top-0 bottom-8 md:bottom-0 md:right-8 w-full md:w-auto flex flex-col justify-end md:justify-start content-center place-items-center pointer-events-none"
     >
       <ToastOverlay class="w-80 h-full" toast-store-id="layout" />
     </div>
     <Transition name="fade">
       <LoadingCircleOverlay v-if="routeStore.navigating" />
     </Transition>
-    <button
-      v-if="menu?.open"
-      class="absolute inset-0 bg-black bg-opacity-50"
-      @click="menu?.toggle"
-    />
+    <Transition name="fade">
+      <button
+        v-if="menu?.open"
+        class="absolute inset-0 bg-black bg-opacity-50"
+        @click="menu?.toggle"
+      />
+    </Transition>
     <SideBar ref="menu" class="absolute top-0 left-0 w-64 h-full">
       <template #content>
         <div

@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev:redis": "cd ./.redis && redis-server",
+    "dev:redis": "cd ./.redis && redis-server --loadmodule /usr/lib/redis/modules/redisearch.so",
     "dev:site": "nuxi dev",
     "dev:app": "yarn tauri dev",
     "dev": "concurrently --kill-others \"yarn:dev:site\" \"yarn:dev:app\"",

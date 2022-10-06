@@ -30,7 +30,11 @@ export default defineEventHandler(
       });
 
     await fs.promises.mkdir(base, { recursive: true });
-    await fs.promises.writeFile(dir, body.content, { flag: "wx" });
+    await fs.promises.writeFile(
+      dir,
+      (await (await fetch(body.content)).blob()).stream(),
+      { flag: "wx" }
+    );
     const id = crypto.randomUUID();
     await useRedis()
       .multi()

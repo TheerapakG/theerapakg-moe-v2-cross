@@ -3,6 +3,14 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  title: "redirecting...",
+  pageTransition: {
+    name: "slide-left-uni",
+    mode: "out-in",
+  },
+});
+
 const route = useRoute();
 
 const target = await $apiFetch(`/api/sh/${route.params.name}`);

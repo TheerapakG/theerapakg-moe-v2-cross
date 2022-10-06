@@ -11,7 +11,7 @@
       />
     </div>
     <button
-      class="w-32 h-12 m-4 rounded-lg bg-black dark:bg-white text-white font-bold dark:text-black"
+      class="relative w-32 h-12 m-4 rounded-lg bg-black dark:bg-white text-white font-bold dark:text-black"
       @click="upload()"
     >
       Upload
@@ -96,6 +96,6 @@ const upload = async () => {
     });
   });
 
-  fileReader.readAsBinaryString(file.value);
+  fileReader.readAsDataURL(file.value);
 };
 </script>

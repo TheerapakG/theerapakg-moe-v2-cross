@@ -1,39 +1,45 @@
 <template>
-  <div>
-    <div
-      class="grid grid-cols-[16rem_40rem_8rem] place-content-center place-items-center"
+  <div class="relative">
+    <Transition name="fade">
+      <LoadingCircleOverlay v-if="pending" />
+    </Transition>
+    <ResponsiveList
+      :widths="['16rem', '40rem', '8rem']"
+      :body-count="shList.length"
     >
-      <div>from</div>
-      <div>to</div>
-      <div>action</div>
-    </div>
-    <div
-      v-for="sh in shList"
-      :key="sh.from"
-      class="grid grid-cols-[16rem_40rem_8rem] place-content-center place-items-center"
-    >
-      <div>{{ sh.from }}</div>
-      <div>{{ sh.to }}</div>
-      <div>
-        <button @click="removeSh(sh.from)">
+      <template #header-col-0><div>from</div></template>
+      <template #content-col-0="{ index }">
+        <div>{{ shList[index].from }}</div>
+      </template>
+      <template #footer-col-0>
+        <div class="w-full">
+          <input v-model="newSh" class="w-full input-default text-center" />
+        </div>
+      </template>
+      <template #header-col-1><div>to</div></template>
+      <template #content-col-1="{ index }">
+        <div>{{ shList[index].to }}</div>
+      </template>
+      <template #footer-col-1>
+        <div class="w-full">
+          <input v-model="newTarget" class="w-full input-default text-center" />
+        </div>
+      </template>
+      <template #header-col-2><div>actions</div></template>
+      <template #content-col-2="{ index }">
+        <button @click="removeSh(shList[index].from)">
           <MinusIcon class="w-6 h-6" />
         </button>
-      </div>
-    </div>
-    <div
-      class="grid grid-cols-[16rem_40rem_8rem] place-content-center place-items-center"
-    >
-      <div class="w-full">
-        <input v-model="newSh" class="w-full input-default text-center" />
-      </div>
-      <div class="w-full">
-        <input v-model="newTarget" class="w-full input-default text-center" />
-      </div>
-      <button @click="addSh">
-        <PlusIcon class="w-6 h-6" />
-      </button>
-    </div>
-    <PaginateNavigation v-model="page" :page-count="pageCount" />
+      </template>
+      <template #footer-col-2>
+        <button @click="addSh">
+          <PlusIcon class="w-6 h-6" />
+        </button>
+      </template>
+      <template #footer>
+        <PaginateNavigation v-model="page" :page-count="pageCount" />
+      </template>
+    </ResponsiveList>
   </div>
 </template>
 

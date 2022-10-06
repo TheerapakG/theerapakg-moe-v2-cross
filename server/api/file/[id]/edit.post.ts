@@ -20,7 +20,11 @@ export default defineEventHandler(
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
     if (dir) {
-      await fs.promises.writeFile(dir, body.content, { flag: "w" });
+      await fs.promises.writeFile(
+        dir,
+        (await (await fetch(body.content)).blob()).stream(),
+        { flag: "w" }
+      );
       return {};
     }
   })
