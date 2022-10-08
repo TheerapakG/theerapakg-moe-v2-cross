@@ -13,16 +13,16 @@ export default defineEventHandler(
 
     const query = useQuery(event);
     const user = await getUser(event);
-    if ((await useRedis().sismember(`${user}:perms`, "perms:sh:edit")) <= 0)
+    if ((await useRedis().sismember(`perms:${user}`, "perms:sh:edit")) <= 0)
       throw createError({ statusMessage: "no permission" });
 
     await useRedis()
       .multi()
       .set(
-        `sh:${event.context.params.name}`,
+        `sh::${event.context.params.name}`,
         decodeURIComponent(query.target as string)
       )
-      .zadd("sh::ids", 1, `sh:${event.context.params.name}`)
+      .zadd("sh:ids", 1, `sh:${event.context.params.name}`)
       .exec();
 
     return {

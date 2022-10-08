@@ -18,7 +18,7 @@ export default defineEventHandler(
     if (dir) {
       await useRedis()
         .multi()
-        .del(`file:${id}`)
+        .del(`file:${id}`, `perms:file:${id}:view`, `perms:file:${id}:edit`)
         .zrem(`file:${user}:ids`, `file:${id}`)
         .zrem("file:ids", `file:${id}`)
         .exec();

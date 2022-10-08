@@ -10,7 +10,7 @@ export default defineEventHandler(
       });
     }
     return {
-      value: await useRedis().get(`sh:${event.context.params.name}`),
+      value: await useRedis().get(`sh::${event.context.params.name}`),
     };
   })
 );

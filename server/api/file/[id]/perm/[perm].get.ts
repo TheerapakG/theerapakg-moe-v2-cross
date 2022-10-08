@@ -24,7 +24,7 @@ export default defineEventHandler(
     const [errs1, [count, userCount, users]] = _.zip(
       ...(await useRedis()
         .multi()
-        .zcount(`file:${id}:perms:${perm}`, "-inf", "inf")
+        .zcount(`perms:file:${id}:${perm}`, "-inf", "inf")
         .zcount("user:ids", "-inf", "inf")
         .zrange("user:ids", start, stop)
         .exec())
@@ -37,7 +37,7 @@ export default defineEventHandler(
     const [errs2, perms] = _.zip(
       ...(await useRedis()
         .multi(
-          users.map((user) => ["zscore", `file:${id}:perms:${perm}`, user])
+          users.map((user) => ["zscore", `perms:file:${id}:${perm}`, user])
         )
         .exec())
     ) as [Error[], string[]];

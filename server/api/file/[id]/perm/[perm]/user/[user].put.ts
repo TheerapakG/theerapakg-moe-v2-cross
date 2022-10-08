@@ -15,7 +15,7 @@ export default defineEventHandler(
     const { edit } = await getFilePermForUser(`file:${id}`, user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
-    await useRedis().zadd(`file:${id}:perms:${perm}`, 1, `user:${targetId}`);
+    await useRedis().zadd(`perms:file:${id}:${perm}`, 1, `user:id:${targetId}`);
     return {};
   })
 );

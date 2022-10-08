@@ -12,13 +12,13 @@ export default defineEventHandler(
     }
 
     const user = await getUser(event);
-    if ((await useRedis().sismember(`${user}:perms`, "perms:sh:edit")) <= 0)
+    if ((await useRedis().sismember(`perms:${user}`, "perms:sh:edit")) <= 0)
       throw createError({ statusMessage: "no permission" });
 
     await useRedis()
       .multi()
-      .zrem("sh::ids", `sh:${event.context.params.name}`)
-      .del(`sh:${event.context.params.name}`)
+      .zrem("sh:ids", `sh::${event.context.params.name}`)
+      .del(`sh::${event.context.params.name}`)
       .exec();
 
     return {};

@@ -8,7 +8,7 @@ export default defineEventHandler(
     const user = await getUser(event);
 
     return {
-      id: getSafeIdFromIdObject<"user">(user),
+      id: getSafeIdFromIdObject<"user:id">(user),
       name: await useRedis().hget(user, "name"),
     };
   })

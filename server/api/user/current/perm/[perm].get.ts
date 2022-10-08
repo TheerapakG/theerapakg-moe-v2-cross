@@ -9,7 +9,7 @@ export default defineEventHandler(
     return {
       value:
         (await useRedis().sismember(
-          `${user}:perms`,
+          `perms:${user}`,
           decodeURIComponent(event.context.params.perm)
         )) > 0,
     };

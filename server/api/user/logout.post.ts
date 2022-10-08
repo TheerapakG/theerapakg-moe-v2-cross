@@ -6,7 +6,7 @@ export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    if (user === "user:default") {
+    if (user === "user:id:default") {
       throw createError({ statusMessage: "no permission" });
     }
 

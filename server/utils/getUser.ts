@@ -12,5 +12,5 @@ export const getUser = async (event: CompatibilityEvent) => {
     deleteCookie(event, "session_id");
     throw createError({ statusMessage: "session expired" });
   }
-  return user as `user:${string}`;
+  return user as `user:id:${string}`;
 };

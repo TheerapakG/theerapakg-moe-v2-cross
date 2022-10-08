@@ -27,7 +27,7 @@ export default defineEventHandler(
 
     if (names.some((e) => !e)) return;
 
-    const strippedIds = ids.map(getSafeIdFromIdObject<"user">);
+    const strippedIds = ids.map(getSafeIdFromIdObject<"user:id">);
 
     return {
       count: await useRedis().zcount("user:ids", "-inf", "inf"),

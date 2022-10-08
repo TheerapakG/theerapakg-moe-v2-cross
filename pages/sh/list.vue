@@ -56,8 +56,8 @@ const route = useRoute();
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
-const _size = route.query.size ? parseInt(route.query.size as string) : 25;
-const size = ref(isNaN(_size) ? 10 : _size);
+const _size = route.query.size ? parseInt(route.query.size as string) : 15;
+const size = ref(isNaN(_size) ? 15 : _size);
 
 if (process.client) {
   watch([page, size], async () => {

@@ -13,12 +13,12 @@ export default defineEventHandler(
     if (!body.content) return;
 
     const user = await getUser(event);
-    if ((await useRedis().sismember(`${user}:perms`, "perms:file:edit")) <= 0)
+    if ((await useRedis().sismember(`perms:${user}`, "perms:file:edit")) <= 0)
       throw createError({ statusMessage: "no permission" });
 
     const base = path.resolve(
       process.env.DOWNLOAD_PATH ?? "./.dist/files",
-      `./${getSafeIdFromIdObject<"user">(user)}`
+      `./${getSafeIdFromIdObject<"user:id">(user)}`
     );
     const dir = path.resolve(base, body.file);
     const relative = path.relative(base, dir);

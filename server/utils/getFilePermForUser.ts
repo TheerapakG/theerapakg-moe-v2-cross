@@ -4,7 +4,7 @@ import { useRedis } from "~/server/utils/useRedis";
 interface FilePermission {
   view: boolean;
   edit: boolean;
-  owner: `user:${string}`;
+  owner: `user:id:${string}`;
 }
 
 export const getFilePermForUser = async (
@@ -17,14 +17,14 @@ export const getFilePermForUser = async (
   ] = _.zip(
     ...(await useRedis()
       .multi()
-      .sismember(`${user}:perms`, "perms:file:view")
-      .sismember(`${user}:perms`, "perms:file:list")
-      .sismember(`${user}:perms`, "perms:file:edit")
-      .zscore(`${file}:perms:view`, user)
-      .zscore(`${file}:perms:edit`, user)
+      .sismember(`perms:${user}`, "perms:file:view")
+      .sismember(`perms:${user}`, "perms:file:list")
+      .sismember(`perms:${user}`, "perms:file:edit")
+      .zscore(`perms:${file}:view`, user)
+      .zscore(`perms:${file}:edit`, user)
       .hget(`${file}`, "owner")
       .exec())
-  ) as [Error[], [number, number, number, string, string, `user:${string}`]];
+  ) as [Error[], [number, number, number, string, string, `user:id:${string}`]];
 
   if (errs.some((e) => e)) {
     throw new AggregateError(errs.filter((e) => e));

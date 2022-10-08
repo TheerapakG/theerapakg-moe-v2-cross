@@ -11,7 +11,7 @@ export default defineEventHandler(
   wrapHandler(async (event) => {
     const query = useQuery(event);
     const user = await getUser(event);
-    if ((await useRedis().sismember(`${user}:perms`, "perms:file:list")) <= 0)
+    if ((await useRedis().sismember(`perms:${user}`, "perms:file:list")) <= 0)
       throw createError({ statusMessage: "no permission" });
 
     const page = query.page ? parseInt(query.page as string) : 1;
@@ -29,13 +29,13 @@ export default defineEventHandler(
             ...(await useRedis()
               .multi(ids.map((id) => ["hgetall", id]))
               .exec())
-          ) as [Error[], { dir: string; owner: `user:${string}` }[]])(),
+          ) as [Error[], { dir: string; owner: `user:id:${string}` }[]])(),
 
         (async () =>
           _.zip(
             ...(await useRedis()
               .multi(
-                ids.map((id) => ["zcount", `${id}:perms:view`, "-inf", "inf"])
+                ids.map((id) => ["zcount", `perms:${id}:view`, "-inf", "inf"])
               )
               .exec())
           ) as [Error[], string[]])(),
@@ -44,14 +44,14 @@ export default defineEventHandler(
           _.zip(
             ...(await useRedis()
               .multi(
-                ids.map((id) => ["zcount", `${id}:perms:edit`, "-inf", "inf"])
+                ids.map((id) => ["zcount", `perms:${id}:edit`, "-inf", "inf"])
               )
               .exec())
           ) as [Error[], string[]])(),
       ]))
     ) as [
       Error[][],
-      [{ dir: string; owner: `user:${string}` }[], string[], string[]]
+      [{ dir: string; owner: `user:id:${string}` }[], string[], string[]]
     ];
 
     const strippedIds = ids.map(getSafeIdFromIdObject<"file">);
@@ -77,12 +77,13 @@ export default defineEventHandler(
             return {
               id,
               name: path.basename(file.dir),
-              owner: getSafeIdFromIdObject<"user">(file.owner),
+              owner: getSafeIdFromIdObject<"user:id">(file.owner),
               perms: {
                 view: parseInt(viewPerm),
                 edit: parseInt(editPerm),
               },
               size: (await fs.promises.stat(file.dir)).size,
+              mime: mime.getType(file.dir),
               url: `/api/file/download/${id}`,
             };
           }

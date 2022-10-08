@@ -15,7 +15,7 @@ export default defineEventHandler(
     const { edit } = await getFilePermForUser(`file:${id}`, user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
-    await useRedis().zrem(`file:${id}:perms:${perm}`, `user:${targetId}`);
+    await useRedis().zrem(`perms:file:${id}:${perm}`, `user:id:${targetId}`);
     return {};
   })
 );
