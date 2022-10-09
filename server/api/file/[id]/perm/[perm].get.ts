@@ -2,8 +2,9 @@ import _ from "lodash";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
-import { getSafeIdFromId, getSafeIdFromIdObject } from "~/server/utils/getId";
+import { getSafeIdFromId } from "~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
+import { useMeili, User } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -19,28 +20,42 @@ export default defineEventHandler(
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
     const start = (page - 1) * size;
-    const stop = start + size - 1;
 
-    const [errs1, [count, userCount, users]] = _.zip(
-      ...(await useRedis()
-        .multi()
-        .zcount(`perms:file:${id}:${perm}`, "-inf", "inf")
-        .zcount("user:ids", "-inf", "inf")
-        .zrange("user:ids", start, stop)
-        .exec())
-    ) as [Error[], [number, number, `user:${string}`[]]];
+    const userSearch = query.user
+      ? decodeURIComponent(query.user as string)
+      : "";
 
-    errs1.forEach((e) => {
-      if (e) throw e;
-    });
+    const [count, { userCount, users }] = await Promise.all([
+      useRedis().zcount(`perms:file:${id}:${perm}`, "-inf", "inf"),
+      (async () => {
+        const res = await useMeili(process.env.MEILI_SEARCH_KEY)
+          .index<User>("users")
+          .search<User>(userSearch, {
+            offset: start,
+            limit: size,
+            attributesToRetrieve: ["id"],
+          });
+        return {
+          userCount: res.estimatedTotalHits,
+          users: res.hits.map((u) => u.id),
+        };
+      })(),
+    ]);
 
-    const [errs2, perms] = _.zip(
-      ...(await useRedis()
-        .multi(
-          users.map((user) => ["zscore", `perms:file:${id}:${perm}`, user])
-        )
-        .exec())
-    ) as [Error[], string[]];
+    const [errs2, perms] =
+      users.length > 0
+        ? (_.zip(
+            ...(await useRedis()
+              .multi(
+                users.map((user) => [
+                  "zscore",
+                  `perms:file:${id}:${perm}`,
+                  `user:id:${user}`,
+                ])
+              )
+              .exec())
+          ) as [Error[], string[]])
+        : [[], []];
 
     errs2.forEach((e) => {
       if (e) throw e;
@@ -51,7 +66,7 @@ export default defineEventHandler(
       userCount,
       users: _.zipWith(users, perms, (user, perm) => {
         return {
-          id: getSafeIdFromIdObject<"user">(user),
+          id: user,
           perm: parseInt(perm) > 0,
         };
       }),

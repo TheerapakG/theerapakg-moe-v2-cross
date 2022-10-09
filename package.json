@@ -1,7 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "dev:redis": "cd ./.redis && redis-server --loadmodule /usr/lib/redis/modules/redisearch.so",
+    "dev:redis": "cd ./.redis && redis-server",
+    "dev:meili": "cd ./.meili && meilisearch --http-addr 0.0.0.0:7700",
     "dev:site": "nuxi dev",
     "dev:app": "yarn tauri dev",
     "dev": "concurrently --kill-others \"yarn:dev:site\" \"yarn:dev:app\"",
@@ -31,6 +32,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^9.3.0",
     "floating-vue": "^2.0.0-beta.19",
+    "meilisearch": "^0.28.0",
     "mime": "^3.0.0",
     "nuxt": "npm:nuxt3@3.0.0-rc.10",
     "nuxt-lodash": "^2.2.0",

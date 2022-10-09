@@ -13,35 +13,55 @@
       </slot>
 
       <template #popper>
-        <div
-          class="flex flex-col place-content-center place-items-center gap-y-4"
+        <LoadingCircleOverlay v-if="pending" />
+        <ResponsiveList
+          :widths="['12rem', '1.5rem']"
+          :body-count="permUserList.length"
+          :table-header="false"
         >
-          <div>changing permission: {{ props.perm }}</div>
-          <div></div>
-          <div
-            v-for="user in permUserList"
-            :key="user.user.id"
-            class="mx-auto grid grid-cols-[12rem_1.5rem] place-content-center place-items-center gap-x-4"
-          >
-            <div>{{ user.user?.name ?? "(loading...)" }}</div>
+          <template #header>
+            <div
+              class="w-full flex flex-col place-content-center place-items-center gap-y-2"
+            >
+              <div>changing permission: {{ props.perm }}</div>
+              <div
+                class="w-full input-default p-2 flex place-content-center place-items-center gap-x-2"
+              >
+                <SearchIcon class="w-6 h-6" />
+                <input v-model="userSearch" class="input-hidden flex-grow" />
+              </div>
+            </div>
+          </template>
+          <template #content-col-0="{ index }">
+            <div>{{ permUserList[index].user?.name ?? "(loading...)" }}</div>
+          </template>
+          <template #content-col-1="{ index }">
             <div class="w-6 h-6">
-              <button v-if="user.perm" @click="doUser(user.user.id, 'DELETE')">
+              <button
+                v-if="permUserList[index].perm"
+                @click="doUser(permUserList[index].user.id, 'DELETE')"
+              >
                 <MinusIcon class="w-6 h-6" />
               </button>
-              <button v-else @click="doUser(user.user.id, 'PUT')">
+              <button
+                v-else
+                @click="doUser(permUserList[index].user.id, 'PUT')"
+              >
                 <PlusIcon class="w-6 h-6" />
               </button>
             </div>
-          </div>
-          <PaginateNavigation v-model="page" :page-count="pageCount" />
-        </div>
+          </template>
+          <template #footer>
+            <PaginateNavigation v-model="page" :page-count="pageCount" />
+          </template>
+        </ResponsiveList>
       </template>
     </VDropdown>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PlusIcon, MinusIcon } from "@heroicons/vue/outline";
+import { MinusIcon, PlusIcon, SearchIcon } from "@heroicons/vue/outline";
 import { storeToRefs } from "pinia";
 import { Ref } from "vue";
 import { User, useUserStore } from "~~/store/user";
@@ -62,7 +82,10 @@ const { pageContainerDom } = storeToRefs(pageStore);
 const open = ref(false);
 
 const page = ref(1);
-const size = ref(10);
+const size = ref(5);
+
+const userSearch = ref("");
+const userSearchDebounced = refDebounced(userSearch, 300);
 
 const {
   pending,
@@ -91,6 +114,7 @@ const {
         params: {
           page: page.value,
           size: size.value,
+          ...(userSearchDebounced.value && { user: userSearchDebounced.value }),
         },
       }
     );
@@ -110,17 +134,17 @@ const {
     };
   },
   {
-    watch: [page, size, open],
+    watch: [page, size, userSearchDebounced, open],
     initialCache: false,
   }
 );
 
-const allUserCount = computed(() => permsData.value?.userCount ?? Infinity);
+const searchUserCount = computed(() => permsData.value?.userCount ?? Infinity);
 const permUserCount = computed(() => permsData.value?.count ?? props.userCount);
 const permUserList = computed(() => permsData.value?.users ?? []);
 
 const { pageCount } = useOffsetPagination({
-  total: allUserCount,
+  total: searchUserCount,
   page,
   pageSize: size,
 });

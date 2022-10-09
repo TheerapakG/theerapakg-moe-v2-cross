@@ -1,22 +1,32 @@
 <template>
   <div ref="containerElement">
     <div
-      class="max-w-max mx-auto px-4 rounded-lg flex flex-col place-content-center place-items-center bg-gray-300 dark:bg-gray-600"
+      class="relative max-w-max mx-auto px-4 rounded-lg flex flex-col place-content-center place-items-center bg-gray-300 dark:bg-gray-600"
       :class="{ small, 'divide-y': !small }"
     >
-      <div v-if="'header' in $slots" class="w-full py-2">
-        <slot name="header"></slot>
-      </div>
-      <div ref="headerElement" class="header">
+      <div
+        class="w-full mx-auto flex flex-col place-content-center place-items-center"
+      >
+        <div v-if="'header' in $slots" class="w-full py-2">
+          <slot name="header"></slot>
+        </div>
         <div
-          v-for="col in _.range(widths.length)"
-          :key="col"
-          class="flex place-content-center place-items-center"
+          ref="headerElement"
+          class="header"
+          :class="{ hide: !props.tableHeader }"
         >
-          <slot :name="`header-col-${col}`"></slot>
+          <div
+            v-for="col in _.range(widths.length)"
+            :key="col"
+            class="flex place-content-center place-items-center"
+          >
+            <slot :name="`header-col-${col}`"></slot>
+          </div>
         </div>
       </div>
-      <div>
+      <div
+        class="w-full mx-auto flex flex-col place-content-center place-items-center"
+      >
         <div v-for="index in _.range(bodyCount)" :key="index" class="item">
           <div
             v-for="col in _.range(widths.length)"
@@ -62,9 +72,10 @@ import _ from "lodash";
 interface Props {
   widths: string[];
   bodyCount: number;
+  tableHeader?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { tableHeader: true });
 const computedWidths = computed(() => props.widths.join(" "));
 
 const headerElement = ref<HTMLElement>(null);
@@ -84,6 +95,13 @@ const small = computed(() => containerWidth.value < headerWidth.value);
   padding-bottom: 0.5rem;
 }
 
+.header.hide {
+  position: absolute;
+  visibility: hidden;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+}
+
 .item {
   display: grid;
   grid-template-columns: v-bind("computedWidths");
@@ -98,6 +116,8 @@ const small = computed(() => containerWidth.value < headerWidth.value);
 .small .header {
   position: absolute;
   visibility: hidden;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
 }
 
 .small .item {

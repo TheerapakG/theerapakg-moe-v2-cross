@@ -3,6 +3,7 @@ node_modules
 .dist
 .nuxt
 .redis
+.meili
 .vscode
 nuxt.d.ts
 .output
