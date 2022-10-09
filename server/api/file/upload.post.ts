@@ -17,7 +17,7 @@ export default defineEventHandler(
       throw createError({ statusMessage: "no permission" });
 
     const base = path.resolve(
-      process.env.DOWNLOAD_PATH ?? "./.dist/files",
+      useRuntimeConfig().downloadPath ?? "./.dist/files",
       `./${getSafeIdFromIdObject<"user:id">(user)}`
     );
     const dir = path.resolve(base, body.file);

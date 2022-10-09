@@ -21,6 +21,9 @@ export default defineNuxtConfig({
     public: {
       apiBaseURL: null,
     },
+    downloadPath: process.env.DOWNLOAD_PATH,
+    meiliSearchKey: process.env.MEILI_SEARCH_KEY,
+    meiliApiKey: process.env.MEILI_API_KEY,
   },
   nitro: {
     storage: {

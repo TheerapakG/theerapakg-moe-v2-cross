@@ -28,7 +28,7 @@ export default defineEventHandler(
     const [count, { userCount, users }] = await Promise.all([
       useRedis().zcount(`perms:file:${id}:${perm}`, "-inf", "inf"),
       (async () => {
-        const res = await useMeili(process.env.MEILI_SEARCH_KEY)
+        const res = await useMeili(useRuntimeConfig().meiliSearchKey)
           .index<User>("users")
           .search<User>(userSearch, {
             offset: start,
