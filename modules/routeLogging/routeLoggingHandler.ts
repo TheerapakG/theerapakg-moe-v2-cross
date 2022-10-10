@@ -1,10 +1,8 @@
 import { eventHandler } from "h3";
+import { getClientIp } from "request-ip";
 
 export default eventHandler((event) => {
-  console.log(
-    event.req.headers["x-forwarded-for"],
-    event.req.method,
-    event.req.httpVersion,
-    event.req.url
-  );
+  const ip = getClientIp(event.req);
+  const method = getMethod(event);
+  console.log(ip, method, event.req.httpVersion, event.req.url);
 });

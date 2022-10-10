@@ -20,6 +20,7 @@
     "@rushstack/eslint-patch": "^1.1.4",
     "@tauri-apps/cli": "^1.0.0-rc.13",
     "@types/mime": "^3.0.1",
+    "@types/request-ip": "^0.0.37",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "@vue/eslint-config-typescript": "^11.0.0",
@@ -39,6 +40,7 @@
     "pinia": "^2.0.18",
     "postcss-custom-properties": "^12.1.8",
     "prettier": "^2.6.2",
+    "request-ip": "^3.3.0",
     "typescript": "^4.6.4",
     "vitest": "^0.21.1"
   },

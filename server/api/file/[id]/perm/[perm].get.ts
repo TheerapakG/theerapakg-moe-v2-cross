@@ -25,41 +25,47 @@ export default defineEventHandler(
       ? decodeURIComponent(query.user as string)
       : "";
 
-    const [count, { userCount, users }] = await Promise.all([
+    const [count, { userCount, users, perms }] = await Promise.all([
       useRedis().zcount(`perms:file:${id}:${perm}`, "-inf", "inf"),
       (async () => {
-        const res = await useMeili(useRuntimeConfig().meiliSearchKey)
+        const { estimatedTotalHits: userCount, hits } = await useMeili(
+          useRuntimeConfig().meiliSearchKey
+        )
           .index<User>("users")
           .search<User>(userSearch, {
             offset: start,
             limit: size,
             attributesToRetrieve: ["id"],
           });
+
+        const users = hits.map((u) => u.id);
+
+        const [errs2, perms] =
+          users.length > 0
+            ? (_.zip(
+                ...(await useRedis()
+                  .multi(
+                    users.map((user) => [
+                      "zscore",
+                      `perms:file:${id}:${perm}`,
+                      `user:id:${user}`,
+                    ])
+                  )
+                  .exec())
+              ) as [Error[], string[]])
+            : [[], []];
+
+        errs2.forEach((e) => {
+          if (e) throw e;
+        });
+
         return {
-          userCount: res.estimatedTotalHits,
-          users: res.hits.map((u) => u.id),
+          userCount,
+          users,
+          perms,
         };
       })(),
     ]);
-
-    const [errs2, perms] =
-      users.length > 0
-        ? (_.zip(
-            ...(await useRedis()
-              .multi(
-                users.map((user) => [
-                  "zscore",
-                  `perms:file:${id}:${perm}`,
-                  `user:id:${user}`,
-                ])
-              )
-              .exec())
-          ) as [Error[], string[]])
-        : [[], []];
-
-    errs2.forEach((e) => {
-      if (e) throw e;
-    });
 
     return {
       count,
