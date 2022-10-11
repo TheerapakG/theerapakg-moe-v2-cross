@@ -95,8 +95,8 @@ const {
   pending: Ref<boolean>;
   refresh: () => Promise<void>;
   data: Ref<{
-    count: number;
-    userCount: number;
+    totalCount: number;
+    queryCount: number;
     users: { user: User; perm: boolean }[];
   }>;
 } = await useAsyncData(
@@ -108,7 +108,7 @@ const {
         : Promise.resolve(permsData.value);
     }
 
-    const { count, userCount, users } = await $apiFetch(
+    const { totalCount, queryCount, users } = await $apiFetch(
       `/api/file/${props.fileId}/perm/${props.perm}/list`,
       {
         params: {
@@ -120,8 +120,8 @@ const {
     );
 
     return {
-      count,
-      userCount,
+      totalCount,
+      queryCount,
       users: await Promise.all(
         users.map(async ({ id, perm }) => {
           const user = await userStore.useUser(id);
@@ -139,12 +139,16 @@ const {
   }
 );
 
-const searchUserCount = computed(() => permsData.value?.userCount ?? Infinity);
-const permUserCount = computed(() => permsData.value?.count ?? props.userCount);
+const permQueryUserCount = computed(
+  () => permsData.value?.queryCount ?? Infinity
+);
+const permUserCount = computed(
+  () => permsData.value?.totalCount ?? props.userCount
+);
 const permUserList = computed(() => permsData.value?.users ?? []);
 
 const { pageCount } = useOffsetPagination({
-  total: searchUserCount,
+  total: permQueryUserCount,
   page,
   pageSize: size,
 });
