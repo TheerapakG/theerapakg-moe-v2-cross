@@ -38,6 +38,7 @@ export default defineEventHandler(
 
     const olddir = await useRedis().hget(`file:${id}`, "dir");
     if (olddir) {
+      await fs.promises.mkdir(base, { recursive: true });
       await fs.promises.rename(olddir, dir);
 
       await useRedis().hset(`file:${id}`, "dir", dir);
