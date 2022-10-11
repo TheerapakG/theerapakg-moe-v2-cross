@@ -5,6 +5,7 @@ import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getSafeIdFromIdObject } from "~~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
+import { useMeili } from "~~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -42,6 +43,19 @@ export default defineEventHandler(
       .zadd(`file:${user}:ids`, 1, `file:${id}`)
       .zadd("file:ids", 1, `file:${id}`)
       .exec();
+
+    await useMeili(useRuntimeConfig().meiliApiKey)
+      .index("files")
+      .addDocuments(
+        [
+          {
+            id,
+            name: path.basename(dir),
+            owner: getSafeIdFromIdObject<"user:id">(user),
+          },
+        ],
+        { primaryKey: "id" }
+      );
 
     return {
       name: path.basename(dir),

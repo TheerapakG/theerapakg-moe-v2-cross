@@ -109,7 +109,7 @@ const {
     }
 
     const { count, userCount, users } = await $apiFetch(
-      `/api/file/${props.fileId}/perm/${props.perm}`,
+      `/api/file/${props.fileId}/perm/${props.perm}/list`,
       {
         params: {
           page: page.value,

@@ -9,9 +9,11 @@
     >
       <template #header-col-0><div>file</div></template>
       <template #content-col-0="{ index }">
-        <NuxtLink :to="`/file/download/${fileList[index].id}`">
-          {{ fileList[index].name }}
-        </NuxtLink>
+        <FileNameEditor
+          :file-id="fileList[index].id"
+          :name="fileList[index].name"
+          @refresh="refresh"
+        />
       </template>
       <template #header-col-1><div>size (bytes)</div></template>
       <template #content-col-1="{ index }">
