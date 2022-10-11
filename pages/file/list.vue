@@ -7,6 +7,14 @@
       :widths="['32rem', '8rem', '8rem', '8rem', '8rem']"
       :body-count="fileList.length"
     >
+      <template #header>
+        <div
+          class="w-full input-default p-2 flex place-content-center place-items-center gap-x-2"
+        >
+          <SearchIcon class="w-6 h-6" />
+          <input v-model="fileSearch" class="input-hidden flex-grow" />
+        </div>
+      </template>
       <template #header-col-0><div>file</div></template>
       <template #content-col-0="{ index }">
         <FileNameEditor
@@ -63,7 +71,12 @@
 </template>
 
 <script setup lang="ts">
-import { EyeIcon, MinusIcon, PencilIcon } from "@heroicons/vue/outline";
+import {
+  EyeIcon,
+  MinusIcon,
+  PencilIcon,
+  SearchIcon,
+} from "@heroicons/vue/outline";
 import { User } from "~/store/user";
 import { formatPretty } from "~/utils/formatPretty";
 
@@ -87,6 +100,9 @@ const page = ref(isNaN(_page) ? 1 : _page);
 const _size = route.query.size ? parseInt(route.query.size as string) : 15;
 const size = ref(isNaN(_size) ? 15 : _size);
 
+const fileSearch = ref("");
+const fileSearchDebounced = refDebounced(fileSearch, 300);
+
 if (process.client) {
   watch([page, size], async () => {
     if (!isNaN(page.value) && !isNaN(size.value)) {
@@ -105,15 +121,16 @@ const {
   data: fileListData,
 } = await useAsyncData(
   async () => {
-    const { count, files } = await $apiFetch("/api/file/list", {
+    const { queryCount, files } = await $apiFetch("/api/file/list", {
       params: {
         page: page.value,
         size: size.value,
+        ...(fileSearchDebounced.value && { file: fileSearchDebounced.value }),
       },
     });
 
     return {
-      count,
+      queryCount,
       files: await Promise.all(
         files.map(async ({ id, name, owner, perms, size }) => {
           const ownerUser = await userStore.useUser(owner);
@@ -129,15 +146,15 @@ const {
     };
   },
   {
-    watch: [page, size],
+    watch: [page, size, fileSearchDebounced],
   }
 );
 
-const fileCount = computed(() => fileListData.value?.count ?? 0);
+const fileQueryCount = computed(() => fileListData.value?.queryCount ?? 0);
 const fileList = computed(() => fileListData.value?.files ?? []);
 
 const { pageCount } = useOffsetPagination({
-  total: fileCount,
+  total: fileQueryCount,
   page,
   pageSize: size,
 });

@@ -3,6 +3,12 @@
     <ClientOnly>
       <div>tauri: {{ tauri }}</div>
     </ClientOnly>
+    <button
+      class="rounded-lg w-32 h-12 m-4 bg-black dark:bg-white text-white font-bold dark:text-black"
+      @click="spawnToast"
+    >
+      spawn toast
+    </button>
     <input type="file" />
     <TabbedView class="w-[32rem]" :views="views" @remove-view="removeView" />
   </div>
@@ -31,7 +37,7 @@ const removeView = (id: string) => {
   delete views[id];
 };
 
-onMounted(() => {
+const spawnToast = () =>
   toastStore.spawn({
     title: "Title",
     description:
@@ -39,6 +45,8 @@ onMounted(() => {
     icon: h(QuestionMarkCircleIcon),
     expire: Date.now() + 60000,
   });
+
+onMounted(() => {
   tauri.value = isTauri();
 
   const MonacoEditor = resolveComponent("MonacoEditor");

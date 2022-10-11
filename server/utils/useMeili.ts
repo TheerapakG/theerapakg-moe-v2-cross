@@ -12,7 +12,13 @@ export const useMeili = (key: string) => {
   return meili[key];
 };
 
-export interface User {
+export interface UserDocument {
   id: string;
   name: string;
+}
+
+export interface FileDocument {
+  id: string;
+  name: string;
+  owner: string;
 }

@@ -6,6 +6,7 @@ import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getSafeIdFromIdObject } from "~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
+import { FileDocument, useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -17,44 +18,70 @@ export default defineEventHandler(
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
     const start = (page - 1) * size;
-    const stop = start + size - 1;
-    const ids = await useRedis().zrange("file:ids", start, stop);
 
-    if (!ids || ids.length === 0) return;
+    const fileSearch = query.file
+      ? decodeURIComponent(query.file as string)
+      : "";
 
-    const [errs, [files, viewPerms, editPerms]] = _.zip(
-      ...(await Promise.all([
-        (async () =>
-          _.zip(
-            ...(await useRedis()
-              .multi(ids.map((id) => ["hgetall", id]))
-              .exec())
-          ) as [Error[], { dir: string; owner: `user:id:${string}` }[]])(),
+    const { estimatedTotalHits: queryCount, hits } = await useMeili(
+      useRuntimeConfig().meiliSearchKey
+    )
+      .index<FileDocument>("files")
+      .search<FileDocument>(fileSearch, {
+        offset: start,
+        limit: size,
+        attributesToRetrieve: ["id"],
+      });
 
-        (async () =>
-          _.zip(
-            ...(await useRedis()
-              .multi(
-                ids.map((id) => ["zcount", `perms:${id}:view`, "-inf", "inf"])
-              )
-              .exec())
-          ) as [Error[], string[]])(),
+    const ids = hits.map((f) => f.id);
 
-        (async () =>
-          _.zip(
-            ...(await useRedis()
-              .multi(
-                ids.map((id) => ["zcount", `perms:${id}:edit`, "-inf", "inf"])
-              )
-              .exec())
-          ) as [Error[], string[]])(),
-      ]))
-    ) as [
-      Error[][],
-      [{ dir: string; owner: `user:id:${string}` }[], string[], string[]]
-    ];
+    const [errs, [files, viewPerms, editPerms]] =
+      ids.length <= 0
+        ? [[], [[], [], []]]
+        : (_.zip(
+            ...(await Promise.all([
+              (async () =>
+                _.zip(
+                  ...(await useRedis()
+                    .multi(ids.map((id) => ["hgetall", `file:${id}`]))
+                    .exec())
+                ) as [
+                  Error[],
+                  { dir: string; owner: `user:id:${string}` }[]
+                ])(),
 
-    const strippedIds = ids.map(getSafeIdFromIdObject<"file">);
+              (async () =>
+                _.zip(
+                  ...(await useRedis()
+                    .multi(
+                      ids.map((id) => [
+                        "zcount",
+                        `perms:file:${id}:view`,
+                        "-inf",
+                        "inf",
+                      ])
+                    )
+                    .exec())
+                ) as [Error[], string[]])(),
+
+              (async () =>
+                _.zip(
+                  ...(await useRedis()
+                    .multi(
+                      ids.map((id) => [
+                        "zcount",
+                        `perms:file:${id}:edit`,
+                        "-inf",
+                        "inf",
+                      ])
+                    )
+                    .exec())
+                ) as [Error[], string[]])(),
+            ]))
+          ) as [
+            Error[][],
+            [{ dir: string; owner: `user:id:${string}` }[], string[], string[]]
+          ]);
 
     errs.forEach((err) =>
       err.forEach((e) => {
@@ -66,10 +93,11 @@ export default defineEventHandler(
       return;
 
     return {
-      count: await useRedis().zcount("file:ids", "-inf", "inf"),
+      totalCount: await useRedis().zcount("file:ids", "-inf", "inf"),
+      queryCount,
       files: await Promise.all(
         _.zipWith(
-          strippedIds,
+          ids,
           files,
           viewPerms,
           editPerms,

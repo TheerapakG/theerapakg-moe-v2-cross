@@ -1,8 +1,9 @@
 <template>
-  <div class="relative">
+  <div ref="containerElement" class="relative">
     <div
       ref="toastListElement"
       class="relative -left-full w-[300%] max-h-full overflow-y-scroll hide-scrollbars"
+      :class="{ 'pointer-events-auto': !outsideContainer }"
     >
       <TransitionGroup
         name="list"
@@ -40,11 +41,15 @@ interface Props {
 const props = defineProps<Props>();
 const { toastStoreId } = toRefs(props);
 
+const containerElement = ref<HTMLElement | null>(null);
 const toastListElement = ref<HTMLElement | null>(null);
 
 const toastStore = useToastStore(toastStoreId.value);
 const { toasts } = storeToRefs(toastStore);
 
+const { isOutside: outsideContainer } = useMouseInElement(containerElement, {
+  handleOutside: false,
+});
 const { arrivedState: toastListElementArrivedState } =
   useScroll(toastListElement);
 const { height: toastListElementHeight } = useElementSize(toastListElement);

@@ -4,7 +4,7 @@ import { getUser } from "~/server/utils/getUser";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
 import { getSafeIdFromId } from "~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
-import { useMeili, User } from "~/server/utils/useMeili";
+import { useMeili, UserDocument } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -25,51 +25,44 @@ export default defineEventHandler(
       ? decodeURIComponent(query.user as string)
       : "";
 
-    const [count, { userCount, users, perms }] = await Promise.all([
-      useRedis().zcount(`perms:file:${id}:${perm}`, "-inf", "inf"),
-      (async () => {
-        const { estimatedTotalHits: userCount, hits } = await useMeili(
-          useRuntimeConfig().meiliSearchKey
-        )
-          .index<User>("users")
-          .search<User>(userSearch, {
-            offset: start,
-            limit: size,
-            attributesToRetrieve: ["id"],
-          });
+    const { estimatedTotalHits: queryCount, hits } = await useMeili(
+      useRuntimeConfig().meiliSearchKey
+    )
+      .index<UserDocument>("users")
+      .search<UserDocument>(userSearch, {
+        offset: start,
+        limit: size,
+        attributesToRetrieve: ["id"],
+      });
 
-        const users = hits.map((u) => u.id);
+    const users = hits.map((u) => u.id);
 
-        const [errs2, perms] =
-          users.length > 0
-            ? (_.zip(
-                ...(await useRedis()
-                  .multi(
-                    users.map((user) => [
-                      "zscore",
-                      `perms:file:${id}:${perm}`,
-                      `user:id:${user}`,
-                    ])
-                  )
-                  .exec())
-              ) as [Error[], string[]])
-            : [[], []];
+    const [errs2, perms] =
+      users.length <= 0
+        ? [[], []]
+        : (_.zip(
+            ...(await useRedis()
+              .multi(
+                users.map((user) => [
+                  "zscore",
+                  `perms:file:${id}:${perm}`,
+                  `user:id:${user}`,
+                ])
+              )
+              .exec())
+          ) as [Error[], string[]]);
 
-        errs2.forEach((e) => {
-          if (e) throw e;
-        });
-
-        return {
-          userCount,
-          users,
-          perms,
-        };
-      })(),
-    ]);
+    errs2.forEach((e) => {
+      if (e) throw e;
+    });
 
     return {
-      count,
-      userCount,
+      totalCount: await useRedis().zcount(
+        `perms:file:${id}:${perm}`,
+        "-inf",
+        "inf"
+      ),
+      queryCount,
       users: _.zipWith(users, perms, (user, perm) => {
         return {
           id: user,
