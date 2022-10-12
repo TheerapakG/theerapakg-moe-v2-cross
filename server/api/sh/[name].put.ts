@@ -22,11 +22,11 @@ export default defineEventHandler(
         `sh::${event.context.params.name}`,
         decodeURIComponent(query.target as string)
       )
-      .zadd("sh:ids", 1, `sh:${event.context.params.name}`)
+      .zadd("sh:ids", 1, `sh::${event.context.params.name}`)
       .exec();
 
     return {
-      value: await useRedis().get(`sh:${event.context.params.name}`),
+      value: await useRedis().get(`sh::${event.context.params.name}`),
     };
   })
 );
