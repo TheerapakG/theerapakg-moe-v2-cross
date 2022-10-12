@@ -1,9 +1,11 @@
 <template>
   <div class="overflow-x-hidden">
-    <div class="absolute inset-0 pt-24 md:pt-8 overflow-x-hidden">
-      <NuxtErrorBoundary @error="spawnPageErrorToast">
-        <slot />
-      </NuxtErrorBoundary>
+    <div class="absolute inset-0 overflow-x-hidden overflow-y-visible">
+      <div class="my-24 md:my-8">
+        <NuxtErrorBoundary @error="spawnPageErrorToast">
+          <slot />
+        </NuxtErrorBoundary>
+      </div>
     </div>
     <div
       class="absolute top-24 md:top-0 bottom-8 md:bottom-0 md:right-8 w-full md:w-auto flex flex-col justify-end md:justify-start content-center place-items-center pointer-events-none"
