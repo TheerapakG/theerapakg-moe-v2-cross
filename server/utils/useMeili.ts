@@ -22,3 +22,8 @@ export interface FileDocument {
   name: string;
   owner: string;
 }
+
+export interface ShDocument {
+  name: string;
+  to: string;
+}

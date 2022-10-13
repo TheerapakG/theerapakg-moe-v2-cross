@@ -4,7 +4,7 @@ import { getUser } from "~/server/utils/getUser";
 import { getSafeIdFromId } from "~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
-import { useMeili } from "~/server/utils/useMeili";
+import { FileDocument, useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -18,7 +18,7 @@ export default defineEventHandler(
     const dir = await useRedis().hget(`file:${id}`, "dir");
     if (dir) {
       await useMeili(useRuntimeConfig().meiliApiKey)
-        .index("files")
+        .index<FileDocument>("files")
         .deleteDocument(id);
 
       await useRedis()

@@ -1,15 +1,11 @@
 <template>
-  <TextInputEditor :model-value="props.name" @update:model-value="rename">
-    <NuxtLink :to="`/file/download/${props.fileId}`">
-      {{ props.name }}
-    </NuxtLink>
-  </TextInputEditor>
+  <TextInputEditor :model-value="props.to" @update:model-value="changeTarget" />
 </template>
 
 <script setup lang="ts">
 interface Props {
-  fileId: string;
-  name: string;
+  from: string;
+  to: string;
 }
 
 const props = defineProps<Props>();
@@ -22,19 +18,19 @@ const emit = defineEmits<Emits>();
 
 const toastStore = useToastStore("layout");
 
-const rename = async (newname: string) => {
+const changeTarget = async (target: string) => {
   try {
-    await $apiFetch(`/api/file/${props.fileId}/rename`, {
+    await $apiFetch(`/api/sh/${props.from}`, {
       method: "PUT",
       params: {
-        name: newname,
+        target: encodeURIComponent(target),
       },
     });
   } catch {
     const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
     toastStore.spawn({
-      title: "Rename Error",
-      description: "Cannot rename",
+      title: "Error Changing Target",
+      description: "Cannot change target",
       icon: h(ExclamationCircleIcon),
     });
     emit("refresh");
@@ -42,8 +38,8 @@ const rename = async (newname: string) => {
   }
   const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
   toastStore.spawn({
-    title: "Rename Success",
-    description: "Successfully renamed",
+    title: "Target Changed",
+    description: "Successfully changed target",
     icon: h(ExclamationCircleIcon),
   });
   emit("refresh");

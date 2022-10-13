@@ -103,7 +103,7 @@ const uploadFile = async () => {
   fileReader.addEventListener("load", async (event) => {
     try {
       await $apiFetch(`/api/file/${props.fileId}/edit`, {
-        method: "POST",
+        method: "PUT",
         body: {
           content: event.target.result,
         },

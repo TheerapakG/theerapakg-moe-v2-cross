@@ -9,7 +9,7 @@
     >
       <template #header-col-0><div>from</div></template>
       <template #content-col-0="{ index }">
-        <div>{{ shList[index].from }}</div>
+        <ShFromEditor :from="shList[index].from" @refresh="refresh" />
       </template>
       <template #footer-col-0>
         <div class="w-full">
@@ -18,7 +18,11 @@
       </template>
       <template #header-col-1><div>to</div></template>
       <template #content-col-1="{ index }">
-        <div>{{ shList[index].to }}</div>
+        <ShToEditor
+          :from="shList[index].from"
+          :to="shList[index].to"
+          @refresh="refresh"
+        />
       </template>
       <template #footer-col-1>
         <div class="w-full">
@@ -74,7 +78,7 @@ if (process.client) {
 const {
   pending,
   data: shListData,
-  refresh: refreshShListData,
+  refresh,
 } = await useApiFetch("/api/sh/list", {
   params: {
     page: page.value,
@@ -102,13 +106,13 @@ const addSh = async () => {
       target: encodeURIComponent(newTarget.value),
     },
   });
-  await refreshShListData();
+  await refresh();
 };
 
 const removeSh = async (sh: string) => {
   await $apiFetch(`/api/sh/${sh}`, {
     method: "DELETE",
   });
-  await refreshShListData();
+  await refresh();
 };
 </script>

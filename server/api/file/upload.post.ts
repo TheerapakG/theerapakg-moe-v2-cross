@@ -3,9 +3,9 @@ import fs from "fs";
 import path from "path";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
-import { getSafeIdFromIdObject } from "~~/server/utils/getId";
+import { getSafeIdFromIdObject } from "~/server/utils/getId";
 import { wrapHandler } from "~/server/utils/wrapHandler";
-import { useMeili } from "~~/server/utils/useMeili";
+import { FileDocument, useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -45,7 +45,7 @@ export default defineEventHandler(
       .exec();
 
     await useMeili(useRuntimeConfig().meiliApiKey)
-      .index("files")
+      .index<FileDocument>("files")
       .addDocuments(
         [
           {

@@ -1,15 +1,10 @@
 <template>
-  <TextInputEditor :model-value="props.name" @update:model-value="rename">
-    <NuxtLink :to="`/file/download/${props.fileId}`">
-      {{ props.name }}
-    </NuxtLink>
-  </TextInputEditor>
+  <TextInputEditor :model-value="props.from" @update:model-value="rename" />
 </template>
 
 <script setup lang="ts">
 interface Props {
-  fileId: string;
-  name: string;
+  from: string;
 }
 
 const props = defineProps<Props>();
@@ -22,13 +17,10 @@ const emit = defineEmits<Emits>();
 
 const toastStore = useToastStore("layout");
 
-const rename = async (newname: string) => {
+const rename = async (name: string) => {
   try {
-    await $apiFetch(`/api/file/${props.fileId}/rename`, {
-      method: "PUT",
-      params: {
-        name: newname,
-      },
+    await $apiFetch(`/api/sh/${props.from}/rename/${name}`, {
+      method: "POST",
     });
   } catch {
     const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");

@@ -1,6 +1,7 @@
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { wrapHandler } from "~/server/utils/wrapHandler";
+import { ShDocument, useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -14,6 +15,10 @@ export default defineEventHandler(
     const user = await getUser(event);
     if ((await useRedis().sismember(`perms:${user}`, "perms:sh:edit")) <= 0)
       throw createError({ statusMessage: "no permission" });
+
+    await useMeili(useRuntimeConfig().meiliApiKey)
+      .index<ShDocument>("shs")
+      .deleteDocument(event.context.params.name);
 
     await useRedis()
       .multi()
