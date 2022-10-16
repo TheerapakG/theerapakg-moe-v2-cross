@@ -9,9 +9,9 @@
     >
       <template #header>
         <div
-          class="w-full input-default p-2 flex place-content-center place-items-center gap-x-2"
+          class="input-default flex w-full place-content-center place-items-center gap-x-2 p-2"
         >
-          <SearchIcon class="w-6 h-6" />
+          <MagnifyingGlassIcon class="h-6 w-6" />
           <input v-model="fileSearch" class="input-hidden flex-grow" />
         </div>
       </template>
@@ -56,10 +56,10 @@
           class="grid grid-cols-2 place-content-center place-items-center gap-2"
         >
           <FileButtonEdit :file-id="fileList[index].id" @refresh="refresh">
-            <PencilIcon class="w-6 h-6" />
+            <PencilIcon class="h-6 w-6" />
           </FileButtonEdit>
           <FileButtonDelete :file-id="fileList[index].id" @refresh="refresh">
-            <MinusIcon class="w-6 h-6" />
+            <MinusIcon class="h-6 w-6" />
           </FileButtonDelete>
         </div>
       </template>
@@ -75,8 +75,8 @@ import {
   EyeIcon,
   MinusIcon,
   PencilIcon,
-  SearchIcon,
-} from "@heroicons/vue/outline";
+  MagnifyingGlassIcon,
+} from "@heroicons/vue/24/outline";
 import { User } from "~/store/user";
 import { formatPretty } from "~/utils/formatPretty";
 
@@ -100,7 +100,7 @@ const page = ref(isNaN(_page) ? 1 : _page);
 const _size = route.query.size ? parseInt(route.query.size as string) : 15;
 const size = ref(isNaN(_size) ? 15 : _size);
 
-const fileSearch = ref("");
+const fileSearch = ref(route.query.q ?? "");
 const fileSearchDebounced = refDebounced(fileSearch, 300);
 
 if (process.client) {
@@ -108,7 +108,11 @@ if (process.client) {
     if (!isNaN(page.value) && !isNaN(size.value)) {
       await navigateTo({
         path: route.path,
-        query: { page: page.value, size: size.value },
+        query: {
+          page: page.value,
+          size: size.value,
+          ...(fileSearchDebounced.value && { q: fileSearchDebounced.value }),
+        },
         replace: true,
       });
     }

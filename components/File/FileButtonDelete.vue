@@ -16,7 +16,7 @@
         >
           <div>confirm</div>
           <button
-            class="w-32 h-12 rounded-lg bg-black dark:bg-white text-white font-bold dark:text-black"
+            class="h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
             @click="deleteFile"
           >
             delete
@@ -55,7 +55,7 @@ const deleteFile = async () => {
       method: "DELETE",
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Delete Error",
       description: "Cannot delete",
@@ -64,7 +64,7 @@ const deleteFile = async () => {
     emit("refresh");
     return;
   }
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
   toastStore.spawn({
     title: "Delete Success",
     description: "Successfully deleted",

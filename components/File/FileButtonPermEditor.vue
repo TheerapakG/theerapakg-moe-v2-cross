@@ -21,13 +21,13 @@
         >
           <template #header>
             <div
-              class="w-full flex flex-col place-content-center place-items-center gap-y-2"
+              class="flex w-full flex-col place-content-center place-items-center gap-y-2"
             >
               <div>changing permission: {{ props.perm }}</div>
               <div
-                class="w-full input-default p-2 flex place-content-center place-items-center gap-x-2"
+                class="input-default flex w-full place-content-center place-items-center gap-x-2 p-2"
               >
-                <SearchIcon class="w-6 h-6" />
+                <MagnifyingGlassIcon class="h-6 w-6" />
                 <input v-model="userSearch" class="input-hidden flex-grow" />
               </div>
             </div>
@@ -36,18 +36,18 @@
             <div>{{ permUserList[index].user?.name ?? "(loading...)" }}</div>
           </template>
           <template #content-col-1="{ index }">
-            <div class="w-6 h-6">
+            <div class="h-6 w-6">
               <button
                 v-if="permUserList[index].perm"
                 @click="doUser(permUserList[index].user.id, 'DELETE')"
               >
-                <MinusIcon class="w-6 h-6" />
+                <MinusIcon class="h-6 w-6" />
               </button>
               <button
                 v-else
                 @click="doUser(permUserList[index].user.id, 'PUT')"
               >
-                <PlusIcon class="w-6 h-6" />
+                <PlusIcon class="h-6 w-6" />
               </button>
             </div>
           </template>
@@ -61,7 +61,11 @@
 </template>
 
 <script setup lang="ts">
-import { MinusIcon, PlusIcon, SearchIcon } from "@heroicons/vue/outline";
+import {
+  MinusIcon,
+  PlusIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/vue/24/outline";
 import { storeToRefs } from "pinia";
 import { Ref } from "vue";
 import { User, useUserStore } from "~~/store/user";

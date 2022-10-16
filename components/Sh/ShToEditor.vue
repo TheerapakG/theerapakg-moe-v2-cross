@@ -27,7 +27,7 @@ const changeTarget = async (target: string) => {
       },
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Error Changing Target",
       description: "Cannot change target",
@@ -36,7 +36,7 @@ const changeTarget = async (target: string) => {
     emit("refresh");
     return;
   }
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
   toastStore.spawn({
     title: "Target Changed",
     description: "Successfully changed target",

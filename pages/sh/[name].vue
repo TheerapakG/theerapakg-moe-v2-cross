@@ -18,7 +18,7 @@ const targetValue = "value" in target ? (target.value as string) : null;
 
 onMounted(async () => {
   if (!targetValue) {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     const toastStore = useToastStore("layout");
 
     toastStore.spawn({
@@ -49,7 +49,7 @@ onMounted(async () => {
     } catch (e) {
       if (e instanceof TypeError) {
         const { ExclamationCircleIcon } = await import(
-          "@heroicons/vue/outline"
+          "@heroicons/vue/24/outline"
         );
         const toastStore = useToastStore("layout");
 

@@ -7,7 +7,8 @@ export const useImportStore = defineStore("imports", () => {
 
   const useMonaco = async () => {
     if (!imported.monaco) {
-      const monaco = await import("monaco-editor");
+      const { default: loader } = await import("@monaco-editor/loader");
+      const monaco = await loader.init();
       imported["monaco"] = monaco;
 
       const colorMode = useColorMode();

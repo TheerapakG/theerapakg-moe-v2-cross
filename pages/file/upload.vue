@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="text-4xl m-8">UPLOAD</div>
+    <div class="m-8 text-4xl">UPLOAD</div>
     <div
-      class="w-64 h-16 mx-auto rounded-lg border-2 border-black dark:border-white"
+      class="mx-auto h-16 w-64 rounded-lg border-2 border-black dark:border-white"
     >
       <DropZone
         :check-dragging-data="checkDraggingData"
@@ -11,7 +11,7 @@
       />
     </div>
     <button
-      class="relative w-32 h-12 m-4 rounded-lg bg-black dark:bg-white text-white font-bold dark:text-black"
+      class="relative m-4 h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
       @click="upload()"
     >
       Upload
@@ -80,7 +80,9 @@ const upload = async () => {
         },
       });
     } catch {
-      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      const { ExclamationCircleIcon } = await import(
+        "@heroicons/vue/24/outline"
+      );
       toastStore.spawn({
         title: "Upload Error",
         description: "Cannot upload",
@@ -88,7 +90,7 @@ const upload = async () => {
       });
       return;
     }
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Upload Success",
       description: "Successfully uploaded",

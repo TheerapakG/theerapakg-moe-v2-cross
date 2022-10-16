@@ -1,12 +1,12 @@
 <template>
   <div
     id="app"
-    class="fixed w-screen h-screen bg-white dark:bg-black font-sans text-black dark:text-white overflow-x-hidden overflow-y-auto overscroll-contain"
+    class="fixed h-screen w-screen overflow-y-auto overflow-x-hidden overscroll-contain bg-white font-sans text-black dark:bg-black dark:text-white"
     :class="{ 'color-mode-change': colorModeChange }"
   >
-    <NuxtLayout ref="layout" class="w-full h-full inset-0">
-      <div ref="pageContainer" class="w-full h-full">
-        <NuxtPage ref="page" class="inset-0 text-center" />
+    <NuxtLayout ref="layout" class="inset-0 h-full w-full">
+      <div ref="pageContainer" class="h-0 min-h-full w-full">
+        <NuxtPage ref="page" class="text-center" />
         <div id="over-page" class="pointer-events-none absolute inset-0" />
       </div>
     </NuxtLayout>

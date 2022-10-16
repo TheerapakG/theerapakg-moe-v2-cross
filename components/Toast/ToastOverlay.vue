@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex flex-col justify-end md:justify-start content-center justify-items-end md:justify-items-start items-center pointer-events-none"
+    class="pointer-events-none flex flex-col content-center items-center justify-end justify-items-end md:justify-start md:justify-items-start"
   >
     <ClientOnly>
       <ToastList
-        class="relative w-64 md:w-full max-h-full"
+        class="relative max-h-full w-64 md:w-full"
         :toast-store-id="toastStoreId"
       />
     </ClientOnly>

@@ -1,7 +1,7 @@
 <template>
   <div class="pointer-events-none">
     <ClientOnly>
-      <ToastListImpl class="w-full h-full" :toast-store-id="toastStoreId" />
+      <ToastListImpl class="h-full w-full" :toast-store-id="toastStoreId" />
     </ClientOnly>
   </div>
 </template>

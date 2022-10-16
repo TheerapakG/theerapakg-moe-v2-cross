@@ -2,7 +2,7 @@
   <div ref="containerElement" class="relative">
     <div
       ref="toastListElement"
-      class="relative -left-full w-[300%] max-h-full overflow-y-scroll hide-scrollbars"
+      class="hide-scrollbars relative -left-full max-h-full w-[300%] overflow-y-scroll"
       :class="{ 'pointer-events-auto': !outsideContainer }"
     >
       <TransitionGroup
@@ -16,17 +16,17 @@
           :key="id"
           :toast-store-id="toastStoreId"
           :toast-id="(id as string)"
-          class="relative left-1/3 w-1/3 pointer-events-auto"
+          class="pointer-events-auto relative left-1/3 w-1/3"
         />
       </TransitionGroup>
     </div>
     <div
       v-if="!toastListElementArrivedState.top && !hideFade"
-      class="absolute w-full h-8 top-0 bg-gradient-to-t from-transparent to-white dark:to-black"
+      class="absolute top-0 h-8 w-full bg-gradient-to-t from-transparent to-white dark:to-black"
     />
     <div
       v-if="!toastListElementArrivedState.bottom && !hideFade"
-      class="absolute w-full h-8 bottom-0 bg-gradient-to-b from-transparent to-white dark:to-black"
+      class="absolute bottom-0 h-8 w-full bg-gradient-to-b from-transparent to-white dark:to-black"
     />
   </div>
 </template>
@@ -63,6 +63,6 @@ const hideFade = computed(
 
 <style scoped>
 .list-leave-active {
-  @apply h-0 -my-2;
+  @apply -my-2 h-0;
 }
 </style>

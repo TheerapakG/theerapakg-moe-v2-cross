@@ -3,23 +3,23 @@
     <Transition name="slide-right">
       <div
         v-if="open"
-        class="absolute inset-0 flex flex-col place-content-center place-items-center bg-gray-300 dark:bg-gray-600 pointer-events-auto"
+        class="pointer-events-auto absolute inset-0 flex flex-col place-content-center place-items-center bg-gray-300 dark:bg-gray-600"
       >
         <slot name="content" />
       </div>
     </Transition>
-    <button class="absolute top-8 left-8 pointer-events-auto" @click="toggle">
+    <button class="pointer-events-auto absolute top-8 left-8" @click="toggle">
       <Transition
         :name="open ? 'rotate-ccw-out' : 'rotate-cw-out'"
         mode="out-in"
       >
-        <MenuIcon
+        <Bars3Icon
           v-if="!open"
-          class="h-8 w-8 stroke-black dark:stroke-white hover:stroke-gray-600 dark:hover:stroke-gray-300"
+          class="h-8 w-8 stroke-black hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
         />
-        <XIcon
+        <XMarkIcon
           v-else
-          class="h-8 w-8 stroke-black dark:stroke-white hover:stroke-gray-600 dark:hover:stroke-gray-300"
+          class="h-8 w-8 stroke-black hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
         />
       </Transition>
     </button>
@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { Ref } from "vue";
-import { MenuIcon, XIcon } from "@heroicons/vue/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
 interface Emits {
   (event: "update:modelValue", value: boolean): void;

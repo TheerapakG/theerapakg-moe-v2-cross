@@ -1,9 +1,9 @@
 <template>
   <div
-    class="relative w-full h-full flex flex-col place-content-center place-items-center"
+    class="relative flex h-full w-full flex-col place-content-center place-items-center"
   >
     <div
-      class="absolute w-full h-full"
+      class="absolute h-full w-full"
       @click="onClick"
       @dragenter="dragEnter"
       @dragover="dragOver"
@@ -14,7 +14,7 @@
       <div v-if="isSupportedData">
         <slot name="draggingsupported">
           <div class="flex justify-center">
-            <DocumentIcon class="stroke-current stroke-2 w-6 h-6 m-1" />
+            <DocumentIcon class="m-1 h-6 w-6 stroke-current stroke-2" />
             <div class="m-1">Drop here!</div>
           </div>
         </slot>
@@ -22,7 +22,7 @@
       <div v-else>
         <slot name="draggingunsupported">
           <div class="flex justify-center">
-            <DocumentIcon class="stroke-current stroke-2 w-6 h-6 m-1" />
+            <DocumentIcon class="m-1 h-6 w-6 stroke-current stroke-2" />
             <div class="m-1">Data not supported</div>
           </div>
         </slot>
@@ -32,19 +32,19 @@
       <slot name="dropped" :data="droppedData">
         <div v-if="droppedData.length > 1">
           <div class="flex justify-center">
-            <DocumentIcon class="stroke-current stroke-2 w-6 h-6 m-1" />
+            <DocumentIcon class="m-1 h-6 w-6 stroke-current stroke-2" />
             <div class="m-1">Dropped multiple data</div>
           </div>
         </div>
         <div v-else-if="droppedData[0].kind === 'string'">
           <div class="flex justify-center">
-            <DocumentIcon class="stroke-current stroke-2 w-6 h-6 m-1" />
+            <DocumentIcon class="m-1 h-6 w-6 stroke-current stroke-2" />
             <div class="m-1">Dropped a string</div>
           </div>
         </div>
         <div v-else-if="droppedData[0].kind === 'file'">
           <div class="flex justify-center">
-            <DocumentIcon class="stroke-current stroke-2 w-6 h-6 m-1" />
+            <DocumentIcon class="m-1 h-6 w-6 stroke-current stroke-2" />
             <div class="m-1">Dropped {{ droppedData[0].file.name }}</div>
           </div>
         </div>
@@ -53,7 +53,7 @@
     <div v-else>
       <slot name="notdragging">
         <div class="flex justify-center">
-          <DocumentIcon class="stroke-current stroke-2 w-6 h-6 m-1" />
+          <DocumentIcon class="m-1 h-6 w-6 stroke-current stroke-2" />
           <div class="m-1">Drag &amp; drop here!</div>
         </div>
       </slot>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { DocumentIcon } from "@heroicons/vue/outline";
+import { DocumentIcon } from "@heroicons/vue/24/outline";
 import _ from "lodash";
 import { Ref } from "vue";
 

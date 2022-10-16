@@ -1,4 +1,4 @@
-import { NitroFetchRequest } from "nitropack";
+// import { NitroFetchRequest } from "nitropack";
 import { FetchContext, FetchOptions } from "ohmyfetch";
 import { Ref } from "vue";
 
@@ -10,7 +10,9 @@ const tryHandleCommonResponseError = async (ctx: FetchContext) => {
 
       await navigateTo("/");
 
-      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      const { ExclamationCircleIcon } = await import(
+        "@heroicons/vue/24/outline"
+      );
       const toastStore = useToastStore("layout");
       toastStore.spawn({
         title: "Session Expired",
@@ -29,7 +31,7 @@ const tryHandleCommonResponseError = async (ctx: FetchContext) => {
 
 export const $apiFetch = async <
   T = unknown,
-  R extends NitroFetchRequest = NitroFetchRequest
+  R extends string /* NitroFetchRequest */ = string /* NitroFetchRequest */
 >(
   request: R,
   opts?: FetchOptions
@@ -48,7 +50,7 @@ export const $apiFetch = async <
 export const useApiFetch = async <
   ResT = void,
   ErrorT = Error,
-  ReqT extends NitroFetchRequest = NitroFetchRequest,
+  ReqT extends string /* NitroFetchRequest */ = string /* NitroFetchRequest */,
   OptsT extends Parameters<typeof useFetch<ResT, ErrorT, ReqT>>[1] = Parameters<
     typeof useFetch<ResT, ErrorT, ReqT>
   >[1]

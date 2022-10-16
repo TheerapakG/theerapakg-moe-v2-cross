@@ -4,7 +4,7 @@
       <div>tauri: {{ tauri }}</div>
     </ClientOnly>
     <button
-      class="rounded-lg w-32 h-12 m-4 bg-black dark:bg-white text-white font-bold dark:text-black"
+      class="m-4 h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
       @click="spawnToast"
     >
       spawn toast
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { QuestionMarkCircleIcon } from "@heroicons/vue/outline";
+import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
 import VNodeTemplate from "~/components/VNodeTemplate.vue";
 
 definePageMeta({

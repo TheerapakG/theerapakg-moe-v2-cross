@@ -44,7 +44,7 @@ onMounted(async () => {
       } catch (e) {
         if (e instanceof TypeError) {
           const { ExclamationCircleIcon } = await import(
-            "@heroicons/vue/outline"
+            "@heroicons/vue/24/outline"
           );
           toastStore.spawn({
             title: "Redirection Error",
@@ -54,7 +54,9 @@ onMounted(async () => {
         }
       }
     } else {
-      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      const { ExclamationCircleIcon } = await import(
+        "@heroicons/vue/24/outline"
+      );
       toastStore.spawn({
         title: "Redirection Error",
         description: "No redirection target! Maybe try going back?",

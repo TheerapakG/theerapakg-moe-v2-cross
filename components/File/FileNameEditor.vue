@@ -31,7 +31,7 @@ const rename = async (newname: string) => {
       },
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Rename Error",
       description: "Cannot rename",
@@ -40,7 +40,7 @@ const rename = async (newname: string) => {
     emit("refresh");
     return;
   }
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
   toastStore.spawn({
     title: "Rename Success",
     description: "Successfully renamed",

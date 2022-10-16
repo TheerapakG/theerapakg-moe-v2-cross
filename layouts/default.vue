@@ -1,16 +1,14 @@
 <template>
   <div class="overflow-x-hidden">
     <div class="absolute inset-0 overflow-x-hidden overflow-y-visible">
-      <div class="my-24 md:my-8">
-        <NuxtErrorBoundary @error="spawnPageErrorToast">
-          <slot />
-        </NuxtErrorBoundary>
+      <div class="relative box-border h-0 max-h-max min-h-full py-24 md:py-8">
+        <slot />
       </div>
     </div>
     <div
-      class="absolute top-24 md:top-0 bottom-8 md:bottom-0 md:right-8 w-full md:w-auto flex flex-col justify-end md:justify-start content-center place-items-center pointer-events-none"
+      class="pointer-events-none absolute top-24 bottom-8 flex w-full flex-col place-items-center content-center justify-end md:top-0 md:bottom-0 md:right-8 md:w-auto md:justify-start"
     >
-      <ToastOverlay class="w-80 h-full" toast-store-id="layout" />
+      <ToastOverlay class="h-full w-80" toast-store-id="layout" />
     </div>
     <Transition name="fade">
       <LoadingCircleOverlay v-if="routeStore.navigating" />
@@ -22,7 +20,7 @@
         @click="menu?.toggle"
       />
     </Transition>
-    <SideBar ref="menu" class="absolute top-0 left-0 w-64 h-full">
+    <SideBar ref="menu" class="absolute top-0 left-0 h-full w-64">
       <template #content>
         <div
           class="flex flex-col place-content-center place-items-center gap-y-2"
@@ -47,9 +45,7 @@
 <script setup lang="ts">
 import SideBar from "~/components/SideBar.vue";
 const currentRoute = useRoute();
-const router = useRouter();
 const routeStore = useRouteStore();
-const toastStore = useToastStore("layout");
 
 useHead({
   title: computed(() => `${currentRoute.meta.title}`),
@@ -62,27 +58,4 @@ const sideBarPaths = ["/", "/github/"];
 const routeInfos = computed(() =>
   useMap(sideBarPaths, (path: string) => routeStore.info(path).value)
 );
-
-router.onError((error) => {
-  if (!isNuxtError(error)) {
-    toastStore.spawn({
-      title: "Error routing to page",
-      description: "error encountered routing to page",
-    });
-  } else {
-    toastStore.spawn({
-      title: "Error routing to page",
-      description: `${error.message}`,
-    });
-  }
-  console.log(error);
-});
-
-const spawnPageErrorToast = (error) => {
-  toastStore.spawn({
-    title: "Error loading the page",
-    description: "error encountered while loading the page",
-  });
-  console.log(error);
-};
 </script>

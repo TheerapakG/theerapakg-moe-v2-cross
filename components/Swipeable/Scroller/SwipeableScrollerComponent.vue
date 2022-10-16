@@ -1,30 +1,30 @@
 <template>
   <div
     ref="containerElement"
-    class="flex -ml-[100%] overflow-x-scroll hide-scrollbars snap-mandatory snap-x"
+    class="hide-scrollbars -ml-[100%] flex snap-x snap-mandatory overflow-x-scroll"
   >
     <div
-      class="flex-none w-1/3 h-px pointer-events-none"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="pointer-events-none h-px w-1/3 flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     />
     <div
-      class="flex-none w-1/3 h-px pointer-events-none"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="pointer-events-none h-px w-1/3 flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     />
     <div
       ref="realElement"
-      class="flex-none w-1/3 real-element-opacity"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="real-element-opacity w-1/3 flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     >
       <slot />
     </div>
     <div
-      class="flex-none w-1/3 h-px pointer-events-none"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="pointer-events-none h-px w-1/3 flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     />
     <div
-      class="flex-none w-1/3 h-px pointer-events-none"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="pointer-events-none h-px w-1/3 flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     />
   </div>
 </template>
@@ -56,7 +56,7 @@ const realElementOpacity = computed(
     Math.abs((3 * containerElementPos.value) / containerElementWidth.value - 1)
 );
 
-let ready = ref(false);
+const ready = ref(false);
 
 const resetScrollPos = () => {
   if (!containerElementIsScrolling.value && containerElementWidth.value !== 0) {
@@ -79,7 +79,7 @@ resetScrollPos();
 watch(containerElementWidth, resetScrollPos);
 
 let mouseDragUnwatch: WatchStopHandle = null;
-let virtualScrolling = ref(false);
+const virtualScrolling = ref(false);
 
 watch(containerPressed, () => {
   if (containerPressed.value && containerPressedSourceType.value === "mouse") {

@@ -1,9 +1,9 @@
 <template>
   <div v-if="!current || current.id === 'default'">You are not logged in!</div>
   <div v-else>
-    <div class="text-4xl m-8">LOGOUT</div>
+    <div class="m-8 text-4xl">LOGOUT</div>
     <button
-      class="rounded-lg w-32 h-12 m-4 bg-black dark:bg-white text-white font-bold dark:text-black"
+      class="m-4 h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
       @click="logout()"
     >
       Logout
@@ -36,7 +36,7 @@ const logout = async () => {
       method: "POST",
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Logout Error",
       description: "Cannot log out.",
@@ -46,7 +46,7 @@ const logout = async () => {
   }
 
   pending.value = false;
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
   toastStore.spawn({
     title: "Logout Success",
     description: "Successfully logged out.",

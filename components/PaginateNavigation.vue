@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-80 h-8 mx-auto grid grid-cols-[repeat(4,2rem)_3rem_repeat(4,2rem)] gap-x-0.5 place-content-center place-items-center"
+    class="mx-auto grid h-8 w-80 grid-cols-[repeat(4,2rem)_3rem_repeat(4,2rem)] place-content-center place-items-center gap-x-0.5"
   >
     <button
       class="page-button"
@@ -32,7 +32,7 @@
     </div>
     <div>
       <input
-        class="w-12 input-default font-bold text-center"
+        class="input-default w-12 text-center font-bold"
         :value="page"
         @change="
           (event) => emits('update:modelValue', parseInt((event.target as HTMLInputElement).value))
@@ -90,6 +90,6 @@ const emits = defineEmits<Emits>();
 
 <style scoped>
 .page-button {
-  @apply w-8 h-8 rounded-full bg-black dark:bg-white disabled:opacity-20 text-white dark:text-black font-bold;
+  @apply h-8 w-8 rounded-full bg-black font-bold text-white disabled:opacity-20 dark:bg-white dark:text-black;
 }
 </style>

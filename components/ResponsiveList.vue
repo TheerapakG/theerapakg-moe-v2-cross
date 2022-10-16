@@ -1,11 +1,11 @@
 <template>
   <div ref="containerElement">
     <div
-      class="relative max-w-max mx-auto px-4 rounded-lg flex flex-col place-content-center place-items-center bg-gray-300 dark:bg-gray-600"
+      class="relative mx-auto flex max-w-max flex-col place-content-center place-items-center rounded-lg bg-gray-300 px-4 dark:bg-gray-600"
       :class="{ small, 'divide-y': !small }"
     >
       <div
-        class="w-full mx-auto flex flex-col place-content-center place-items-center"
+        class="mx-auto flex w-full flex-col place-content-center place-items-center"
       >
         <div v-if="'header' in $slots" class="w-full py-2">
           <slot name="header"></slot>
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div
-        class="w-full mx-auto flex flex-col place-content-center place-items-center"
+        class="mx-auto flex w-full flex-col place-content-center place-items-center"
       >
         <div v-for="index in _.range(bodyCount)" :key="index" class="item">
           <div
@@ -91,6 +91,7 @@ const small = computed(() => containerWidth.value < headerWidth.value);
 .header {
   display: grid;
   grid-template-columns: v-bind("computedWidths");
+  column-gap: 0.5rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
@@ -105,6 +106,7 @@ const small = computed(() => containerWidth.value < headerWidth.value);
 .item {
   display: grid;
   grid-template-columns: v-bind("computedWidths");
+  column-gap: 0.5rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }

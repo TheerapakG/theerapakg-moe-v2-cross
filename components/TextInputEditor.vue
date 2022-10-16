@@ -1,34 +1,37 @@
 <template>
   <div class="w-full">
-    <div v-if="!edit" class="flex place-content-center place-items-center">
-      <div class="flex-grow">
+    <div
+      v-if="!edit"
+      class="flex place-content-center place-items-center gap-x-2"
+    >
+      <div class="min-w-0 flex-1">
         <slot>
-          <div>
+          <div class="overflow-hidden text-ellipsis">
             {{ props.modelValue }}
           </div>
         </slot>
       </div>
-      <button @click="startEdit">
-        <PencilIcon class="w-6 h-6" />
+      <button class="flex-initial" @click="startEdit">
+        <PencilIcon class="h-6 w-6" />
       </button>
     </div>
-    <div v-else class="flex place-content-center place-items-center">
+    <div v-else class="flex place-content-center place-items-center gap-x-2">
       <input
         v-model.lazy="inputValue"
-        class="input-default flex-grow text-center"
+        class="input-default flex-1 text-center"
       />
-      <button @click="submitEdit">
-        <CheckIcon class="w-6 h-6" />
+      <button class="flex-initial" @click="submitEdit">
+        <CheckIcon class="h-6 w-6" />
       </button>
-      <button @click="stopEdit">
-        <XIcon class="w-6 h-6" />
+      <button class="flex-initial" @click="stopEdit">
+        <XMarkIcon class="h-6 w-6" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { PencilIcon, CheckIcon, XIcon } from "@heroicons/vue/outline";
+import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 
 interface Props {
   modelValue: string;

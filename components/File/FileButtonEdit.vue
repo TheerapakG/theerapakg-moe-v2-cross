@@ -16,7 +16,7 @@
         >
           <div>edit file</div>
           <div
-            class="w-64 h-16 mx-auto rounded-lg border-2 border-black dark:border-white"
+            class="mx-auto h-16 w-64 rounded-lg border-2 border-black dark:border-white"
           >
             <DropZone
               :check-dragging-data="checkDraggingData"
@@ -25,7 +25,7 @@
             />
           </div>
           <button
-            class="relative w-32 h-12 rounded-lg bg-black dark:bg-white text-white font-bold dark:text-black"
+            class="relative h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
             @click="uploadFile()"
           >
             upload
@@ -109,7 +109,9 @@ const uploadFile = async () => {
         },
       });
     } catch {
-      const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+      const { ExclamationCircleIcon } = await import(
+        "@heroicons/vue/24/outline"
+      );
       toastStore.spawn({
         title: "Upload Error",
         description: "Cannot upload",
@@ -118,7 +120,7 @@ const uploadFile = async () => {
       emit("refresh");
       return;
     }
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/outline");
+    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Upload Success",
       description: "Successfully uploaded",

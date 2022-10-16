@@ -5,7 +5,7 @@
       <div v-if="current.id === 'default'">
         not logged in
         <NuxtLink
-          class="rounded-lg p-2 m-2 bg-black dark:bg-white text-white dark:text-black"
+          class="m-2 rounded-lg bg-black p-2 text-white dark:bg-white dark:text-black"
           to="/login"
         >
           login
@@ -14,7 +14,7 @@
       <div v-else>
         user: {{ current.name }}
         <NuxtLink
-          class="rounded-lg p-2 m-2 bg-black dark:bg-white text-white dark:text-black"
+          class="m-2 rounded-lg bg-black p-2 text-white dark:bg-white dark:text-black"
           to="/logout"
         >
           logout

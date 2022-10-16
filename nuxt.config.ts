@@ -11,9 +11,6 @@ export default defineNuxtConfig({
     "nuxt-lodash",
     "./modules/routeLogging",
   ],
-  build: {
-    transpile: ["@heroicons/vue"],
-  },
   app: {
     baseURL: "/",
   },
@@ -36,6 +33,11 @@ export default defineNuxtConfig({
         password: "",
         db: 0, // Defaults to 0
       },
+    },
+  },
+  vite: {
+    ssr: {
+      noExternal: ["@heroicons/vue", "monaco-editor"],
     },
   },
   experimental: {

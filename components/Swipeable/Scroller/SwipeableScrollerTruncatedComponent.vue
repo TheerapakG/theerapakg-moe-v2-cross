@@ -1,22 +1,22 @@
 <template>
   <div
     ref="containerElement"
-    class="flex overflow-x-scroll hide-scrollbars snap-mandatory snap-x"
+    class="hide-scrollbars flex snap-x snap-mandatory overflow-x-scroll"
   >
     <div
-      class="flex-none w-full h-px pointer-events-none"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="pointer-events-none h-px w-full flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     />
     <div
       ref="realElement"
-      class="flex-none w-full real-element-opacity"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="real-element-opacity w-full flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     >
       <slot />
     </div>
     <div
-      class="flex-none w-full h-px pointer-events-none"
-      :class="{ 'snap-always snap-center': !virtualScrolling }"
+      class="pointer-events-none h-px w-full flex-none"
+      :class="{ 'snap-center snap-always': !virtualScrolling }"
     />
   </div>
 </template>
@@ -47,7 +47,7 @@ const realElementOpacity = computed(
     1 - Math.abs(containerElementPos.value / containerElementWidth.value - 1)
 );
 
-let ready = ref(false);
+const ready = ref(false);
 
 const resetScrollPos = () => {
   if (!containerElementIsScrolling.value && containerElementWidth.value !== 0) {
@@ -70,7 +70,7 @@ resetScrollPos();
 watch(containerElementWidth, resetScrollPos);
 
 let mouseDragUnwatch: WatchStopHandle = null;
-let virtualScrolling = ref(false);
+const virtualScrolling = ref(false);
 
 watch(containerPressed, () => {
   if (containerPressed.value && containerPressedSourceType.value === "mouse") {
