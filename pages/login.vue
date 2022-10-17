@@ -8,12 +8,7 @@
     <div class="m-4">
       password: <input v-model="pass" type="password" class="input-default" />
     </div>
-    <button
-      class="m-4 h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
-      @click="login()"
-    >
-      Login
-    </button>
+    <button class="button-default m-4 h-12 w-32" @click="login()">Login</button>
   </div>
 </template>
 

@@ -3,7 +3,7 @@
     class="mx-auto grid h-8 w-80 grid-cols-[repeat(4,2rem)_3rem_repeat(4,2rem)] place-content-center place-items-center gap-x-0.5"
   >
     <button
-      class="page-button"
+      class="button-default h-8 w-8 rounded-full"
       :disabled="page == 1"
       @click="emits('update:modelValue', 1)"
     >
@@ -15,7 +15,7 @@
     <div>
       <button
         v-if="page - 1 > 1"
-        class="page-button"
+        class="button-default h-8 w-8 rounded-full"
         @click="emits('update:modelValue', page - 2)"
       >
         {{ page - 2 }}
@@ -24,7 +24,7 @@
     <div>
       <button
         v-if="page > 1"
-        class="page-button"
+        class="button-default h-8 w-8 rounded-full"
         @click="emits('update:modelValue', page - 1)"
       >
         {{ page - 1 }}
@@ -42,7 +42,7 @@
     <div>
       <button
         v-if="page < pageCount"
-        class="page-button"
+        class="button-default h-8 w-8 rounded-full"
         @click="emits('update:modelValue', page + 1)"
       >
         {{ page + 1 }}
@@ -51,7 +51,7 @@
     <div>
       <button
         v-if="page + 1 < pageCount"
-        class="page-button"
+        class="button-default h-8 w-8 rounded-full"
         @click="emits('update:modelValue', page + 2)"
       >
         {{ page + 2 }}
@@ -61,7 +61,7 @@
       <div v-if="page + 2 < pageCount">...</div>
     </div>
     <button
-      class="page-button"
+      class="button-default h-8 w-8 rounded-full"
       :disabled="page == pageCount"
       @click="emits('update:modelValue', pageCount)"
     >
@@ -87,9 +87,3 @@ interface Emits {
 
 const emits = defineEmits<Emits>();
 </script>
-
-<style scoped>
-.page-button {
-  @apply h-8 w-8 rounded-full bg-black font-bold text-white disabled:opacity-20 dark:bg-white dark:text-black;
-}
-</style>

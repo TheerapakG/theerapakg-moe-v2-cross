@@ -47,7 +47,8 @@
     "prettier-plugin-tailwindcss": "^0.1.13",
     "request-ip": "^3.3.0",
     "typescript": "^4.6.4",
-    "vitest": "^0.21.1"
+    "vitest": "^0.21.1",
+    "vue-tsc": "^1.0.8"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.0.0-rc.6"

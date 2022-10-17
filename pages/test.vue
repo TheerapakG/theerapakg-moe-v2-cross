@@ -3,10 +3,7 @@
     <ClientOnly>
       <div>tauri: {{ tauri }}</div>
     </ClientOnly>
-    <button
-      class="m-4 h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
-      @click="spawnToast"
-    >
+    <button class="button-default m-4 h-12 w-32" @click="spawnToast">
       spawn toast
     </button>
     <input type="file" />

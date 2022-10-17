@@ -15,10 +15,7 @@
           class="flex flex-col place-content-center place-items-center gap-y-4"
         >
           <div>confirm</div>
-          <button
-            class="h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
-            @click="deleteFile"
-          >
+          <button class="button-default h-12 w-32" @click="deleteFile">
             delete
           </button>
         </div>

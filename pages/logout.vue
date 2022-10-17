@@ -2,10 +2,7 @@
   <div v-if="!current || current.id === 'default'">You are not logged in!</div>
   <div v-else>
     <div class="m-8 text-4xl">LOGOUT</div>
-    <button
-      class="m-4 h-12 w-32 rounded-lg bg-black font-bold text-white dark:bg-white dark:text-black"
-      @click="logout()"
-    >
+    <button class="button-default m-4 h-12 w-32" @click="logout()">
       Logout
     </button>
   </div>

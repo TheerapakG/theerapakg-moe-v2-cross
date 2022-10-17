@@ -7,9 +7,11 @@
 </template>
 
 <script setup lang="ts">
+import { status as statusKey } from "../[file].provide";
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 
 const route = useRoute();
+const status = inject(statusKey);
 
 const importStore = useImportStore();
 const toastStore = useToastStore("layout");
@@ -17,6 +19,28 @@ const toastStore = useToastStore("layout");
 const data = await $apiFetch(`/api/file/${route.params.file}/download`);
 
 const monacoEditor = ref<InstanceType<typeof MonacoEditor>>(null);
+const monacoModel = computed(() => monacoEditor.value?.editor?.getModel());
+const lastSaveVersionId = ref<number>(null);
+
+const resetLastSaveVersionId = () => {
+  lastSaveVersionId.value = monacoModel.value?.getAlternativeVersionId?.();
+};
+
+const updateEditStatus = () => {
+  if (
+    monacoModel.value?.getAlternativeVersionId?.() === lastSaveVersionId.value
+  )
+    status.value.delete("edit");
+  else status.value.add("edit");
+};
+
+// model or model.value.editor changed
+watch(monacoModel, () => {
+  resetLastSaveVersionId();
+  monacoModel.value?.onDidChangeContent?.(updateEditStatus);
+});
+
+watch(lastSaveVersionId, updateEditStatus);
 
 const save = async () => {
   const fileReader = new FileReader();
@@ -40,6 +64,7 @@ const save = async () => {
       });
       return;
     }
+    resetLastSaveVersionId();
     const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
     toastStore.spawn({
       title: "Save Success",

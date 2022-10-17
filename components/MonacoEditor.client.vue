@@ -24,7 +24,13 @@ const props = withDefaults(defineProps<Props>(), {
 const importStore = useImportStore();
 
 const editerElement = ref<HTMLElement | null>(null);
+const { width, height } = useElementSize(editerElement);
+
 const editor = shallowRef<_monaco.editor.IStandaloneCodeEditor | null>(null);
+
+watch([width, height], () =>
+  editor.value?.layout({ width: width.value, height: height.value })
+);
 
 onMounted(async () => {
   const monaco = await importStore.useMonaco();

@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-white dark:bg-black
+}
+
 .hide-scrollbars {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE 10+ */
@@ -120,16 +124,6 @@
   @apply opacity-0 translate-x-full;
 }
 
-.input-default {
-  @apply px-2 bg-inherit rounded-lg border-2 focus:border-2
-  focus:outline-none border-gray-500 dark:border-gray-400 focus:border-black focus:dark:border-white
-  text-black dark:text-white caret-black dark:caret-white cursor-text
-}
-
-.input-hidden {
-  @apply bg-inherit focus:outline-none border-none text-black dark:text-white caret-black dark:caret-white cursor-text
-}
-
 .v-popper--theme-context-menu div {
   .v-popper__inner {
     @apply p-4 bg-gray-300 dark:bg-gray-600 border-2 border-gray-500 dark:border-gray-400 text-black dark:text-white
@@ -141,5 +135,21 @@
 
   .v-popper__arrow-outer {
     @apply border-gray-500 dark:border-gray-400
+  }
+}
+
+@layer components {
+  .button-default {
+    @apply rounded-lg bg-black font-bold text-white enabled:hover:bg-gray-600 enabled:hover:transition-colors enabled:hover:duration-300 disabled:opacity-20 dark:bg-white dark:text-black enabled:hover:dark:bg-gray-300
+  }
+
+  .input-default {
+    @apply px-2 bg-inherit rounded-lg border-2 focus:border-2
+    focus:outline-none border-gray-500 dark:border-gray-400 focus:border-black focus:dark:border-white
+    text-black dark:text-white caret-black dark:caret-white cursor-text
+  }
+
+  .input-hidden {
+    @apply bg-inherit focus:outline-none border-none text-black dark:text-white caret-black dark:caret-white cursor-text
   }
 }
