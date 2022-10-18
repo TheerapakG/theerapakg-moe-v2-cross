@@ -5,10 +5,16 @@
     :class="{ 'color-mode-change': colorModeChange }"
   >
     <NuxtLayout ref="layout" class="inset-0 h-full w-full">
-      <div ref="pageContainer" class="h-0 min-h-full w-full">
-        <NuxtPage ref="page" class="text-center" />
-        <div id="over-page" class="pointer-events-none absolute inset-0" />
+      <div
+        ref="pageContainer"
+        class="flex w-full flex-shrink-0 flex-grow flex-col place-content-start place-items-center"
+      >
+        <NuxtPage
+          ref="page"
+          class="w-full flex-shrink-0 flex-grow text-center"
+        />
       </div>
+      <div id="over-page" class="pointer-events-none absolute inset-0" />
     </NuxtLayout>
     <div id="over-app" class="pointer-events-none absolute inset-0" />
   </div>

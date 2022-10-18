@@ -1,7 +1,9 @@
 <template>
   <div class="overflow-x-hidden">
     <div class="absolute inset-0 overflow-x-hidden overflow-y-visible">
-      <div class="relative box-border h-0 max-h-max min-h-full py-24 md:py-8">
+      <div
+        class="relative box-border flex min-h-full flex-col place-content-start place-items-center py-24 md:py-8"
+      >
         <slot />
       </div>
     </div>

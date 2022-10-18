@@ -1,12 +1,15 @@
 <template>
-  <div class="flex h-full flex-col">
-    <div class="mb-8 flex place-content-center place-items-center">
-      <div>{{ fileInfo.name }}</div>
-      <div v-if="status.has('edit')" class="text-gray-600 dark:text-gray-300">
-        &nbsp;- unsaved
+  <div class="flex flex-col place-content-start place-items-center">
+    <div class="mb-8 w-full">
+      <div v-if="pending">loading...</div>
+      <div v-else class="flex place-content-center place-items-center">
+        <div>{{ fileInfo.name }}</div>
+        <div v-if="status.has('edit')" class="text-gray-600 dark:text-gray-300">
+          &nbsp;- unsaved
+        </div>
       </div>
     </div>
-    <NuxtPage class="flex-grow" @status="setStatus" />
+    <NuxtPage class="w-full flex-grow" @status="setStatus" />
   </div>
 </template>
 
@@ -19,7 +22,7 @@ provide(statusKey, status);
 const {
   pending,
   data: fileInfo,
-  error: fileInfoError,
+  //error: fileInfoError,
 } = await useApiFetch(`/api/file/${route.params.file}/info`);
 
 const setStatus = (newStatus: Set<string>) => {
