@@ -30,8 +30,11 @@ const updateEditStatus = () => {
   if (
     monacoModel.value?.getAlternativeVersionId?.() === lastSaveVersionId.value
   )
-    status.value.delete("edit");
-  else status.value.add("edit");
+    status.value.delete("edited");
+  else {
+    status.value.delete("saved");
+    status.value.add("edited");
+  }
 };
 
 // model or model.value.editor changed
@@ -65,12 +68,7 @@ const save = async () => {
       return;
     }
     resetLastSaveVersionId();
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
-      title: "Save Success",
-      description: "Successfully saved",
-      icon: h(ExclamationCircleIcon),
-    });
+    status.value.add("saved");
   });
 
   fileReader.readAsDataURL(new Blob([monacoEditor.value.editor.getValue()]));

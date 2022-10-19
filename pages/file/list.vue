@@ -36,18 +36,15 @@
       <template #header-col-3><div>perms</div></template>
       <template #content-col-3="{ index }">
         <div class="flex place-content-center place-items-center gap-2">
-          <FileButtonPermEditor
-            v-for="[perm, permIcon] in Object.entries(perms)"
-            :key="perm"
-            v-slot="{ permUserCount }"
+          <FileButtonPermEditorGroup
+            v-slot="{ perm, permUserCount }"
             :file-id="fileList[index].id"
-            :perm="perm"
-            :user-count="fileList[index].perms[perm] ?? 0"
+            :user-count="fileList[index].perms"
           >
             <div class="flex place-content-center place-items-center gap-1">
-              {{ permUserCount }} <VNodeTemplate :render-node="permIcon" />
+              {{ permUserCount }} <VNodeTemplate :render-node="perms[perm]" />
             </div>
-          </FileButtonPermEditor>
+          </FileButtonPermEditorGroup>
         </div>
       </template>
       <template #header-col-4><div>actions</div></template>

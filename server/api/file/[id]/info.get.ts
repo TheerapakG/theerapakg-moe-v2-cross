@@ -17,10 +17,25 @@ export default defineEventHandler(
     if (!view) throw createError({ statusMessage: "no permission" });
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
+    const viewPerm = await useRedis().zcount(
+      `perms:file:${id}:view`,
+      "-inf",
+      "inf"
+    );
+    const editPerm = await useRedis().zcount(
+      `perms:file:${id}:edit`,
+      "-inf",
+      "inf"
+    );
+
     if (dir) {
       return {
         name: path.basename(dir),
         owner: getSafeIdFromIdObject<"user">(owner),
+        perms: {
+          view: viewPerm,
+          edit: editPerm,
+        },
         size: (await fs.promises.stat(dir)).size,
         mime: mime.getType(dir),
         url: `/api/file/${id}/download`,
