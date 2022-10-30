@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div>
     <div
       v-if="!edit"
       class="flex place-content-center place-items-center gap-x-2"
@@ -11,7 +11,10 @@
           </div>
         </slot>
       </div>
-      <button class="flex-initial" @click="startEdit">
+      <button
+        class="icon-button t-transition-default flex-initial"
+        @click="startEdit"
+      >
         <PencilIcon class="h-6 w-6" />
       </button>
     </div>
@@ -20,10 +23,16 @@
         v-model.lazy="inputValue"
         class="input-default flex-1 text-center"
       />
-      <button class="flex-initial" @click="submitEdit">
+      <button
+        class="icon-button t-transition-default flex-initial"
+        @click="submitEdit"
+      >
         <CheckIcon class="h-6 w-6" />
       </button>
-      <button class="flex-initial" @click="stopEdit">
+      <button
+        class="icon-button t-transition-default flex-initial"
+        @click="stopEdit"
+      >
         <XMarkIcon class="h-6 w-6" />
       </button>
     </div>

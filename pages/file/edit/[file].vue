@@ -10,14 +10,21 @@
               :file-id="(route.params.file as string)"
               :user-count="fileInfo.perms"
             >
-              <div class="flex place-content-center place-items-center gap-1">
+              <button
+                class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+              >
                 {{ permUserCount }} <VNodeTemplate :render-node="perms[perm]" />
-              </div>
+              </button>
             </FileButtonPermEditorGroup>
           </div>
         </div>
         <div class="flex place-content-center place-items-center">
-          <div class="font-bold">{{ fileInfo.name }}</div>
+          <FileNameEditor
+            class="font-bold"
+            :file-id="(route.params.file as string)"
+            :name="fileInfo.name"
+            :download="false"
+          />
           <div
             v-if="status.has('saved')"
             class="text-emerald-600 dark:text-emerald-300"

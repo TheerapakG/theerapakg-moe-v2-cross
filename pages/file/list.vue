@@ -18,6 +18,7 @@
       <template #header-col-0><div>file</div></template>
       <template #content-col-0="{ index }">
         <FileNameEditor
+          class="w-full"
           :file-id="fileList[index].id"
           :name="fileList[index].name"
           @refresh="refresh"
@@ -41,18 +42,30 @@
             :file-id="fileList[index].id"
             :user-count="fileList[index].perms"
           >
-            <div class="flex place-content-center place-items-center gap-1">
+            <button
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
               {{ permUserCount }} <VNodeTemplate :render-node="perms[perm]" />
-            </div>
+            </button>
           </FileButtonPermEditorGroup>
         </div>
       </template>
       <template #header-col-4><div>actions</div></template>
       <template #content-col-4="{ index }">
         <div
-          class="grid grid-cols-2 place-content-center place-items-center gap-2"
+          class="grid grid-cols-3 place-content-center place-items-center gap-2"
         >
-          <FileButtonEdit :file-id="fileList[index].id" @refresh="refresh">
+          <FileButtonView
+            :file-id="fileList[index].id"
+            :mime="fileList[index].mime"
+          >
+            <EyeIcon class="h-6 w-6" />
+          </FileButtonView>
+          <FileButtonEdit
+            :file-id="fileList[index].id"
+            :mime="fileList[index].mime"
+            @refresh="refresh"
+          >
             <PencilIcon class="h-6 w-6" />
           </FileButtonEdit>
           <FileButtonDelete :file-id="fileList[index].id" @refresh="refresh">
@@ -133,7 +146,7 @@ const {
     return {
       queryCount,
       files: await Promise.all(
-        files.map(async ({ id, name, owner, perms, size }) => {
+        files.map(async ({ id, name, owner, perms, size, mime }) => {
           const ownerUser = await userStore.useUser(owner);
           return {
             id,
@@ -141,6 +154,7 @@ const {
             owner: ownerUser as unknown as User,
             perms,
             size,
+            mime,
           };
         })
       ),

@@ -1,9 +1,16 @@
 <template>
-  <MonacoEditor
-    ref="monacoEditor"
-    :options="{ fontLigatures: true, value: data }"
-    :commands="commands"
-  />
+  <div class="flex flex-col place-content-start place-items-center">
+    <MonacoEditor
+      ref="monacoEditor"
+      class="w-full flex-grow"
+      :options="{
+        fontLigatures: true,
+        value: data,
+        ...(route.query.language && { language: route.query.language }),
+      }"
+      :commands="commands"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -16,7 +23,9 @@ const status = inject(statusKey);
 const importStore = useImportStore();
 const toastStore = useToastStore("layout");
 
-const data = await $apiFetch(`/api/file/${route.params.file}/download`);
+const data = await $apiFetch(`/api/file/${route.params.file}/download`, {
+  responseType: "text",
+});
 
 const monacoEditor = ref<InstanceType<typeof MonacoEditor>>(null);
 const monacoModel = computed(() => monacoEditor.value?.editor?.getModel());

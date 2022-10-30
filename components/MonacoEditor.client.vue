@@ -34,6 +34,7 @@ watch([width, height], () =>
 
 onMounted(async () => {
   const monaco = await importStore.useMonaco();
+
   editor.value = monaco.editor.create(
     editerElement.value,
     props.options,
@@ -47,6 +48,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   editor.value.dispose();
+  editor.value = null;
 });
 
 defineExpose({ editor });

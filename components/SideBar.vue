@@ -8,19 +8,16 @@
         <slot name="content" />
       </div>
     </Transition>
-    <button class="pointer-events-auto absolute top-8 left-8" @click="toggle">
+    <button
+      class="icon-button pointer-events-auto absolute top-8 left-8"
+      @click="toggle"
+    >
       <Transition
         :name="open ? 'rotate-ccw-out' : 'rotate-cw-out'"
         mode="out-in"
       >
-        <Bars3Icon
-          v-if="!open"
-          class="h-8 w-8 stroke-black hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
-        />
-        <XMarkIcon
-          v-else
-          class="h-8 w-8 stroke-black hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300"
-        />
+        <Bars3Icon v-if="!open" class="h-8 w-8 transition duration-300" />
+        <XMarkIcon v-else class="h-8 w-8 transition duration-300" />
       </Transition>
     </button>
   </div>

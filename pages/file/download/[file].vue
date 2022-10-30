@@ -7,12 +7,21 @@
       <div>name: {{ fileInfo.name }}</div>
       <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
     </div>
-    <button
-      class="button-default h-12 w-32"
-      @click="startDownload(fileInfo.url, fileInfo.name)"
-    >
-      Download
-    </button>
+    <div class="flex place-content-center place-items-center gap-2">
+      <button
+        class="button-default h-12 w-32"
+        @click="startDownload(fileInfo.url, fileInfo.name)"
+      >
+        Download
+      </button>
+      <FileButtonView
+        :file-id="(route.params.file as string)"
+        :mime="fileInfo.mime"
+        class="button-default h-12 w-32"
+      >
+        View Online
+      </FileButtonView>
+    </div>
   </div>
 </template>
 

@@ -140,12 +140,28 @@ body {
 
 @layer components {
   .button-default {
-    @apply rounded-lg bg-black font-bold text-white enabled:hover:bg-gray-600 enabled:hover:transition-colors enabled:hover:duration-300 disabled:opacity-20 dark:bg-white dark:text-black enabled:hover:dark:bg-gray-300
+    @apply rounded-lg bg-black font-bold text-white enabled:transition-colors enabled:duration-300 enabled:hover:bg-gray-600 disabled:opacity-20 dark:bg-white dark:text-black enabled:hover:dark:bg-gray-300
+  }
+
+  .icon-button > svg {
+   @apply stroke-black dark:stroke-white
+  }
+
+  .icon-button:hover:enabled > svg {
+   @apply stroke-gray-500 dark:stroke-gray-400
+  }
+
+  .icon-button.t-transition-default:hover:enabled > svg {
+   @apply transition-colors duration-300
+  }
+
+  .icon-button:disabled > svg {
+    @apply opacity-20
   }
 
   .input-default {
-    @apply px-2 bg-inherit rounded-lg border-2 focus:border-2
-    focus:outline-none border-gray-500 dark:border-gray-400 focus:border-black focus:dark:border-white
+    @apply px-2 bg-inherit rounded-lg border-2 enabled:transition-colors enabled:duration-300 focus:border-2
+    focus:outline-none border-gray-500 dark:border-gray-400 enabled:hover:[&:not(:focus)]:border-gray-600 enabled:hover:[&:not(:focus)]:dark:border-gray-300 focus:border-black focus:dark:border-white
     text-black dark:text-white caret-black dark:caret-white cursor-text
   }
 

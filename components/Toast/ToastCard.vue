@@ -13,12 +13,11 @@
           >
             <button
               v-if="toast.killable"
+              class="icon-button t-transition-default"
               @pointerdown.stop=""
               @click.stop="toastStore.kill(toastId as string)"
             >
-              <XMarkIcon
-                class="h-6 w-6 stroke-black hover:stroke-gray-600 dark:stroke-white dark:hover:stroke-gray-300 md:h-8 md:w-8"
-              />
+              <XMarkIcon class="h-6 w-6 md:h-8 md:w-8" />
             </button>
             <div
               class="flex grow place-items-center justify-start gap-x-2 truncate md:w-full md:grow-0"

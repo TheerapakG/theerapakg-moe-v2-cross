@@ -39,12 +39,14 @@
             <div class="h-6 w-6">
               <button
                 v-if="permUserList[index].perm"
+                class="icon-button t-transition-default"
                 @click="doUser(permUserList[index].user.id, 'DELETE')"
               >
                 <MinusIcon class="h-6 w-6" />
               </button>
               <button
                 v-else
+                class="icon-button t-transition-default"
                 @click="doUser(permUserList[index].user.id, 'PUT')"
               >
                 <PlusIcon class="h-6 w-6" />

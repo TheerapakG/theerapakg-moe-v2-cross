@@ -1,8 +1,11 @@
 <template>
   <TextInputEditor :model-value="props.name" @update:model-value="rename">
-    <NuxtLink :to="`/file/download/${props.fileId}`">
+    <NuxtLink v-if="download" :to="`/file/download/${props.fileId}`">
       {{ props.name }}
     </NuxtLink>
+    <div v-else>
+      {{ props.name }}
+    </div>
   </TextInputEditor>
 </template>
 
@@ -10,9 +13,10 @@
 interface Props {
   fileId: string;
   name: string;
+  download?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { download: true });
 
 interface Emits {
   (event: "refresh"): void;

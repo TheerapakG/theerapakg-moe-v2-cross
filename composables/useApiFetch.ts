@@ -47,6 +47,24 @@ export const $apiFetch = async <
   });
 };
 
+export const $apiRawFetch = async <
+  T = unknown,
+  R extends string /* NitroFetchRequest */ = string /* NitroFetchRequest */
+>(
+  request: R,
+  opts?: FetchOptions
+) => {
+  const config = useRuntimeConfig();
+  return await $fetch.raw<T, R>(request, {
+    ...{
+      headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
+      onResponseError: tryHandleCommonResponseError,
+    },
+    ...opts,
+  });
+};
+
 export const useApiFetch = async <
   ResT = void,
   ErrorT = Error,

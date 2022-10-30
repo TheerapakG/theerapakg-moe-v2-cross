@@ -15,6 +15,9 @@
           class="flex flex-col place-content-center place-items-center gap-y-4"
         >
           <div>edit file</div>
+          <button class="button-default h-12 w-48" @click="editFile()">
+            open in-website editor
+          </button>
           <div
             class="mx-auto h-16 w-64 rounded-lg border-2 border-black dark:border-white"
           >
@@ -38,6 +41,7 @@ import { storeToRefs } from "pinia";
 
 interface Props {
   fileId: string;
+  mime: string;
 }
 
 const props = defineProps<Props>();
@@ -127,5 +131,9 @@ const uploadFile = async () => {
   });
 
   fileReader.readAsDataURL(file.value);
+};
+
+const editFile = async () => {
+  await navigateTo(`/file/edit/mime/${props.mime}/${props.fileId}`);
 };
 </script>

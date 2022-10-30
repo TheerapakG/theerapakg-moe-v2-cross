@@ -39,12 +39,15 @@
       </template>
       <template #header-col-2><div>actions</div></template>
       <template #content-col-2="{ index }">
-        <button @click="removeSh(shList[index].from)">
+        <button
+          class="icon-button t-transition-default"
+          @click="removeSh(shList[index].from)"
+        >
           <MinusIcon class="h-6 w-6" />
         </button>
       </template>
       <template #footer-col-2>
-        <button @click="addSh">
+        <button class="icon-button t-transition-default" @click="addSh">
           <PlusIcon class="h-6 w-6" />
         </button>
       </template>
