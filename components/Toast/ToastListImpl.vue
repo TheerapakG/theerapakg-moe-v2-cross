@@ -6,7 +6,7 @@
       :class="{ 'pointer-events-auto': !outsideContainer }"
     >
       <TransitionGroup
-        name="list"
+        name="list-slide"
         tag="div"
         class="flex flex-col gap-y-4"
         :class="{ 'py-8': Object.keys(toasts).length !== 0 }"
@@ -62,7 +62,7 @@ const hideFade = computed(
 </script>
 
 <style scoped>
-.list-leave-active {
+.list-slide-leave-active {
   @apply -my-2 h-0;
 }
 </style>

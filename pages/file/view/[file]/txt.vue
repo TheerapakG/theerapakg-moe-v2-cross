@@ -6,7 +6,7 @@
         fontLigatures: true,
         readOnly: true,
         value: data,
-        ...(route.query.language && { language: route.query.language }),
+        ...(route.query.lang && { language: route.query.lang }),
       }"
     />
   </div>

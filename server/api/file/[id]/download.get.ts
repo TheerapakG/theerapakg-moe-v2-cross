@@ -16,6 +16,7 @@ export default defineEventHandler(
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
     if (dir) {
+      appendResponseHeader(event, "Access-Control-Allow-Origin", "*");
       return sendStream(event, fs.createReadStream(dir));
     }
   })

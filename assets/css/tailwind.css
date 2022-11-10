@@ -114,14 +114,28 @@ body {
   @apply transition-transform duration-300 ease-in-out;
 }
 
-.list-enter-active,
-.list-leave-active {
+.list-slide-move {
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+.list-slide-enter-active,
+.list-slide-leave-active {
   @apply transition duration-300 ease-out;
 }
 
-.list-enter-from,
-.list-leave-to {
+.list-slide-enter-from,
+.list-slide-leave-to {
   @apply opacity-0 translate-x-full;
+}
+
+.pop-enter-active,
+.pop-leave-active {
+  @apply transition-all duration-300 ease-out;
+}
+
+.pop-enter-from,
+.pop-leave-to {
+  @apply scale-0;
 }
 
 .v-popper--theme-context-menu div {
@@ -151,8 +165,8 @@ body {
    @apply stroke-gray-500 dark:stroke-gray-400
   }
 
-  .icon-button.t-transition-default:hover:enabled > svg {
-   @apply transition-colors duration-300
+  .icon-button.t-transition-default > svg {
+   @apply transition-[fill,stroke,opacity] duration-300
   }
 
   .icon-button:disabled > svg {

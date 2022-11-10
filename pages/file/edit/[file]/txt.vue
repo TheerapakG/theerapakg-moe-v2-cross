@@ -6,19 +6,44 @@
       :options="{
         fontLigatures: true,
         value: data,
-        ...(route.query.language && { language: route.query.language }),
+        ...(route.query.lang && { language: route.query.lang }),
       }"
       :commands="commands"
     />
+    <Teleport to="#file-menu-left">
+      <button
+        class="icon-button t-transition-default"
+        :disabled="!status.has('edited')"
+        @click="save"
+      >
+        <CloudArrowUpIcon class="h-8 w-8" />
+      </button>
+    </Teleport>
+    <Teleport to="#file-status">
+      <Transition name="pop" mode="out-in">
+        <div
+          v-if="status.has('edited')"
+          class="text-amber-600 dark:text-amber-300"
+        >
+          &nbsp;- modified
+        </div>
+        <div
+          v-else-if="status.has('saved')"
+          class="text-emerald-600 dark:text-emerald-300"
+        >
+          &nbsp;- saved
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { status as statusKey } from "../[file].provide";
+import CloudArrowUpIcon from "@heroicons/vue/24/outline/CloudArrowUpIcon";
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 
 const route = useRoute();
-const status = inject(statusKey);
+const status = ref(new Set<string>());
 
 const importStore = useImportStore();
 const toastStore = useToastStore("layout");
