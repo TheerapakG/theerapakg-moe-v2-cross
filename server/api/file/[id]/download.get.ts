@@ -1,4 +1,5 @@
 import fs from "fs";
+import mime from "mime";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
@@ -16,7 +17,7 @@ export default defineEventHandler(
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
     if (dir) {
-      appendResponseHeader(event, "Access-Control-Allow-Origin", "*");
+      appendResponseHeader(event, "Content-Type", mime.getType(dir));
       return sendStream(event, fs.createReadStream(dir));
     }
   })
