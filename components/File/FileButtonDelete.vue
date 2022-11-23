@@ -5,8 +5,6 @@
       :boundary="pageContainerDom"
       placement="bottom"
       theme="context-menu"
-      @show="open = true"
-      @hide="open = false"
     >
       <slot />
 
@@ -43,8 +41,6 @@ const pageStore = usePageStore();
 const toastStore = useToastStore("layout");
 
 const { pageContainerDom } = storeToRefs(pageStore);
-
-const open = ref(false);
 
 const deleteFile = async () => {
   try {

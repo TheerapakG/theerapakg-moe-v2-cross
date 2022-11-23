@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useImportStore = defineStore("imports", () => {
   const imported = shallowReactive({
-    monaco: null as typeof import("monaco-editor"),
+    monaco: null as typeof import("monaco-editor") | null,
   });
 
   const useMonaco = async () => {

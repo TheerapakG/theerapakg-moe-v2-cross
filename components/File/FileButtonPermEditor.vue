@@ -69,7 +69,6 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/vue/24/outline";
 import { storeToRefs } from "pinia";
-import { Ref } from "vue";
 import { User, useUserStore } from "~~/store/user";
 
 interface Props {
@@ -97,22 +96,17 @@ const {
   pending,
   refresh,
   data: permsData,
-}: {
-  pending: Ref<boolean>;
-  refresh: () => Promise<void>;
-  data: Ref<{
-    totalCount: number;
-    queryCount: number;
-    users: { user: User; perm: boolean }[];
-  }>;
 } = await useAsyncData(
   `file:${props.fileId}:perm:${props.perm}`,
-  async () => {
-    if (!open.value) {
-      return typeof permsData === "undefined"
-        ? Promise.resolve(null)
-        : Promise.resolve(permsData.value);
-    }
+  async (): Promise<
+    | {
+        totalCount: number;
+        queryCount: number;
+        users: { user: User; perm: boolean }[];
+      }
+    | Record<string, never>
+  > => {
+    if (!open.value) return Promise.resolve({});
 
     const { totalCount, queryCount, users } = await $apiFetch(
       `/api/file/${props.fileId}/perm/${props.perm}/list`,
@@ -141,7 +135,7 @@ const {
   },
   {
     watch: [page, size, userSearchDebounced, open],
-    initialCache: false,
+    server: false,
   }
 );
 

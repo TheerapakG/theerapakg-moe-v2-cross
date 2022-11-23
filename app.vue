@@ -4,7 +4,7 @@
     class="fixed h-screen w-screen overflow-y-auto overflow-x-hidden overscroll-contain bg-white font-sans text-black dark:bg-black dark:text-white"
     :class="{ 'color-mode-change': colorModeChange }"
   >
-    <NuxtLayout ref="layout" class="inset-0 h-full w-full">
+    <NuxtLayout ref="layout">
       <div
         ref="pageContainer"
         class="flex w-full flex-shrink-0 flex-grow flex-col place-content-start place-items-center"
@@ -14,9 +14,13 @@
           class="w-full flex-shrink-0 flex-grow text-center"
         />
       </div>
-      <div id="over-page" class="pointer-events-none absolute inset-0" />
+      <div class="pointer-events-none absolute inset-0">
+        <portal-target name="over-page" />
+      </div>
     </NuxtLayout>
-    <div id="over-app" class="pointer-events-none absolute inset-0" />
+    <div class="pointer-events-none absolute inset-0">
+      <portal-target name="over-app" />
+    </div>
   </div>
 </template>
 
@@ -24,7 +28,7 @@
 const pageStore = usePageStore();
 
 const colorModeChange = ref(false);
-const pageContainer = ref<HTMLDivElement>(null);
+const pageContainer = ref<HTMLDivElement | null>(null);
 
 watch(useColorMode(), () => {
   colorModeChange.value = true;

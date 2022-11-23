@@ -5,20 +5,26 @@ import { wrapHandler } from "~/server/utils/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = useQuery(event);
+    const query = getQuery(event);
 
     const page = query.page ? parseInt(query.page as string) : 1;
-    const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
+    const size = query.size
+      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      : 10;
     const start = (page - 1) * size;
     const stop = start + size - 1;
 
-    const ids = await useRedis().zrange("user:ids", start, stop);
+    const ids = (await useRedis().zrange(
+      "user:ids",
+      start,
+      stop
+    )) as `user:id:${string}`[];
     if (!ids) return;
 
     const [errs, names] = _.zip(
-      ...(await useRedis()
+      ...((await useRedis()
         .multi(ids.map((id) => ["hget", id, "name"]))
-        .exec())
+        .exec()) ?? [])
     ) as [Array<Error>, Array<string>];
 
     errs.forEach((e) => {

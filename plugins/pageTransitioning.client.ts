@@ -6,7 +6,7 @@ const callHook = <
   Args extends Array<unknown>,
   F extends (...args: Args) => void
 >(
-  hook: Hook<F> | null,
+  hook: Hook<F> | null | undefined,
   ...args: Args
 ) => {
   if (!hook) return;

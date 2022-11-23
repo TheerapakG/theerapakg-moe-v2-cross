@@ -16,8 +16,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  options: null,
-  override: null,
+  options: undefined,
+  override: undefined,
   commands: () => [],
 });
 
@@ -35,19 +35,17 @@ watch([width, height], () =>
 onMounted(async () => {
   const monaco = await importStore.useMonaco();
 
-  editor.value = monaco.editor.create(
-    editerElement.value,
-    props.options,
-    props.override
-  );
+  editor.value = editerElement.value
+    ? monaco.editor.create(editerElement.value, props.options, props.override)
+    : null;
 
   props.commands.map(({ keybinding, handler, context }) =>
-    editor.value.addCommand(keybinding, handler, context)
+    editor.value?.addCommand(keybinding, handler, context)
   );
 });
 
 onUnmounted(() => {
-  editor.value.dispose();
+  editor.value?.dispose();
   editor.value = null;
 });
 

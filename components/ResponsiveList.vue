@@ -78,8 +78,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), { tableHeader: true });
 const computedWidths = computed(() => props.widths.join(" "));
 
-const headerElement = ref<HTMLElement>(null);
-const containerElement = ref<HTMLElement>(null);
+const headerElement = ref<HTMLElement | null>(null);
+const containerElement = ref<HTMLElement | null>(null);
 
 const { width: headerWidth } = useElementSize(headerElement);
 const { width: containerWidth } = useElementSize(containerElement);

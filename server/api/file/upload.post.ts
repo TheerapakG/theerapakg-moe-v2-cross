@@ -9,7 +9,7 @@ import { FileDocument, useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const body = await useBody(event);
+    const body = await readBody(event);
 
     if (!body.content) return;
 

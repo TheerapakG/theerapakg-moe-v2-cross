@@ -72,17 +72,19 @@ export const useToastStore = (storeId: string) =>
       );
 
       const setupExpireTimeoutWatcher = () => {
-        if (toasts.value[id]?.expire) {
-          toasts.value[id].expireTimeout = useTimeoutFnNoGuard(() => {
-            console.log(`toast: id ${id}: maybe expire`);
-            if (!toasts.value[id]?.expire) return;
-            if (toasts.value[id].expire > Date.now()) {
-              setupExpireTimeoutWatcher();
-              return;
-            }
-            kill(id);
-          }, option.expire - Date.now());
-        }
+        const { expire } = toasts.value[id];
+        if (!expire) return;
+
+        toasts.value[id].expireTimeout = useTimeoutFnNoGuard(() => {
+          console.log(`toast: id ${id}: maybe expire`);
+          const { expire } = toasts.value[id];
+          if (!expire) return;
+          if (expire > Date.now()) {
+            setupExpireTimeoutWatcher();
+            return;
+          }
+          kill(id);
+        }, expire - Date.now());
       };
 
       const setupWatcher = () => {

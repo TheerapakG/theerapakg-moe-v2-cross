@@ -9,7 +9,7 @@ import { useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = useQuery(event);
+    const query = getQuery(event);
     const user = await getUser(event);
 
     const id = getSafeIdFromId(event.context.params.id as string);

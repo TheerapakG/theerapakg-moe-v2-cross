@@ -37,7 +37,7 @@ export default defineEventHandler(
           edit: editPerm,
         },
         size: (await fs.promises.stat(dir)).size,
-        mime: mime.getType(dir),
+        mime: mime.getType(dir) ?? "",
         url: `/api/file/${id}/download`,
       };
     }

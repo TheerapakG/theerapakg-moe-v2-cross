@@ -23,7 +23,7 @@ export const useRouteStore = defineStore("route", () => {
       } else if (!route.meta.name) {
         return route;
       } else {
-        let routeWithData: RouteLocation = null;
+        let routeWithData: RouteLocation | null = null;
         useSome(useEntries(route.meta.name), ([name, data]) => {
           if (isEqual(data, route.params)) {
             routeWithData = useAssign(

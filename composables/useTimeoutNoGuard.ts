@@ -1,18 +1,18 @@
-import { noop, Stoppable, TimeoutOptions } from "@vueuse/shared";
+import { noop, Stoppable, UseTimeoutOptions } from "@vueuse/shared";
 import { ComputedRef } from "vue";
 
 export function useTimeoutNoGuard(
   interval?: number,
-  options?: TimeoutOptions<false>
+  options?: UseTimeoutOptions<false>
 ): ComputedRef<boolean>;
 export function useTimeoutNoGuard(
   interval: number,
-  options: TimeoutOptions<true>
+  options: UseTimeoutOptions<true>
 ): { ready: ComputedRef<boolean> } & Stoppable;
 
 export function useTimeoutNoGuard<Controls extends boolean>(
   interval = 1000,
-  options: TimeoutOptions<Controls> = {}
+  options: UseTimeoutOptions<Controls> = {}
 ) {
   const { controls = false } = options;
 

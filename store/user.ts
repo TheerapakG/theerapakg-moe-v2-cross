@@ -3,11 +3,11 @@ import { Ref } from "vue";
 
 export interface User {
   id: string;
-  name?: string;
+  name?: string | null;
 }
 
 export const useUserStore = defineStore("user", () => {
-  const current: Ref<User> = ref();
+  const current = ref<User | null>(null);
   const users: { [id: string]: Ref<User> } = {};
 
   const refreshCurrent = async () => {
@@ -22,7 +22,7 @@ export const useUserStore = defineStore("user", () => {
 
   const useCurrent = async () => {
     if (!current.value) await refreshCurrent();
-    return current;
+    return current as Ref<User>;
   };
 
   const useUser = async (id: string) => {

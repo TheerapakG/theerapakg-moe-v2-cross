@@ -69,7 +69,7 @@ const resetScrollPos = () => {
 resetScrollPos();
 watch(containerElementWidth, resetScrollPos);
 
-let mouseDragUnwatch: WatchStopHandle = null;
+let mouseDragUnwatch: WatchStopHandle | null = null;
 const virtualScrolling = ref(false);
 
 watch(containerPressed, () => {

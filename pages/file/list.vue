@@ -45,7 +45,8 @@
             <button
               class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
             >
-              {{ permUserCount }} <VNodeTemplate :render-node="perms[perm]" />
+              {{ permUserCount }}
+              <VNodeTemplate :render-node="perms[perm as keyof typeof perms]" />
             </button>
           </FileButtonPermEditorGroup>
         </div>

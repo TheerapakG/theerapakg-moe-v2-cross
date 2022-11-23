@@ -5,8 +5,6 @@
       :boundary="pageContainerDom"
       placement="bottom"
       theme="context-menu"
-      @show="open = true"
-      @hide="open = false"
     >
       <slot />
 
@@ -57,9 +55,7 @@ const toastStore = useToastStore("layout");
 
 const { pageContainerDom } = storeToRefs(pageStore);
 
-const open = ref(false);
-
-const file = shallowRef<File>(null);
+const file = shallowRef<File | null>(null);
 
 const checkDraggingData = (
   data:
@@ -96,17 +92,19 @@ const onDroppedData = (
       )[]
     | undefined
 ) => {
-  file.value = data?.[0]?.kind === "file" ? data[0].file : undefined;
+  file.value = data?.[0]?.kind === "file" ? data[0].file : null;
 };
 
 const uploadFile = async () => {
+  if (!file.value) return;
+
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
     try {
       await $apiFetch(`/api/file/${props.fileId}/edit`, {
         method: "PUT",
         body: {
-          content: event.target.result,
+          content: event.target?.result,
         },
       });
     } catch {

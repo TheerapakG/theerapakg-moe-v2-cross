@@ -28,7 +28,8 @@ const toastStore = useToastStore("layout");
 
 const tauri = ref<string | boolean>("unknown");
 
-const views = reactive({});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const views = reactive<Record<string, any>>({});
 
 const removeView = (id: string) => {
   delete views[id];

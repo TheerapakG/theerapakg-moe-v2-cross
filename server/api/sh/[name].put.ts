@@ -12,7 +12,7 @@ export default defineEventHandler(
       });
     }
 
-    const query = useQuery(event);
+    const query = getQuery(event);
     const user = await getUser(event);
     if ((await useRedis().sismember(`perms:${user}`, "perms:sh:edit")) <= 0)
       throw createError({ statusMessage: "no permission" });

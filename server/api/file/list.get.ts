@@ -10,13 +10,15 @@ import { FileDocument, useMeili } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = useQuery(event);
+    const query = getQuery(event);
     const user = await getUser(event);
     if ((await useRedis().sismember(`perms:${user}`, "perms:file:list")) <= 0)
       throw createError({ statusMessage: "no permission" });
 
     const page = query.page ? parseInt(query.page as string) : 1;
-    const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
+    const size = query.size
+      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      : 10;
     const start = (page - 1) * size;
 
     const fileSearch = query.file
@@ -42,9 +44,9 @@ export default defineEventHandler(
             ...(await Promise.all([
               (async () =>
                 _.zip(
-                  ...(await useRedis()
+                  ...((await useRedis()
                     .multi(ids.map((id) => ["hgetall", `file:${id}`]))
-                    .exec())
+                    .exec()) ?? [])
                 ) as [
                   Error[],
                   { dir: string; owner: `user:id:${string}` }[]
@@ -52,7 +54,7 @@ export default defineEventHandler(
 
               (async () =>
                 _.zip(
-                  ...(await useRedis()
+                  ...((await useRedis()
                     .multi(
                       ids.map((id) => [
                         "zcount",
@@ -61,12 +63,12 @@ export default defineEventHandler(
                         "inf",
                       ])
                     )
-                    .exec())
+                    .exec()) ?? [])
                 ) as [Error[], string[]])(),
 
               (async () =>
                 _.zip(
-                  ...(await useRedis()
+                  ...((await useRedis()
                     .multi(
                       ids.map((id) => [
                         "zcount",
@@ -75,7 +77,7 @@ export default defineEventHandler(
                         "inf",
                       ])
                     )
-                    .exec())
+                    .exec()) ?? [])
                 ) as [Error[], string[]])(),
             ]))
           ) as [
@@ -111,7 +113,7 @@ export default defineEventHandler(
                 edit: parseInt(editPerm),
               },
               size: (await fs.promises.stat(file.dir)).size,
-              mime: mime.getType(file.dir),
+              mime: mime.getType(file.dir) ?? "",
               url: `/api/file/download/${id}`,
             };
           }

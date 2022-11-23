@@ -38,7 +38,7 @@ onMounted(async () => {
             ? typeof toast.description === "string"
               ? toast.description
               : toast.altDescription
-            : null,
+            : undefined,
           tag: id,
           requireInteraction: true,
         });

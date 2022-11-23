@@ -1,7 +1,10 @@
 export const useUniqueId = (prefix = "") => {
-  const idCounter = useState(`unique-id-${prefix}`, () => {
-    return {};
-  });
+  const idCounter = useState<Record<string, number>>(
+    `unique-id-${prefix}`,
+    () => {
+      return {};
+    }
+  );
 
   if (!idCounter.value[prefix]) {
     idCounter.value[prefix] = 0;

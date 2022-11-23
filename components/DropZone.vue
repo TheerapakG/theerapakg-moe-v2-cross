@@ -138,7 +138,7 @@ const dragEnter = (event: DragEvent) => {
   isDragging.value = true;
   if (
     props.checkDraggingData(
-      _.map(event.dataTransfer.items, (dataItem) => {
+      _.map(event.dataTransfer?.items, (dataItem) => {
         const { kind, type } = dataItem;
         if (kind === "string") {
           return {
@@ -150,7 +150,7 @@ const dragEnter = (event: DragEvent) => {
           return {
             kind: "file",
             type,
-            file: dataItem.getAsFile(),
+            file: dataItem.getAsFile() as File,
           };
         }
       })
@@ -173,19 +173,21 @@ const dragLeave = (event: DragEvent) => {
   isDragging.value = false;
 };
 
-let unwatchNewDroppedData: () => void = undefined;
+let unwatchNewDroppedData: (() => void) | undefined = undefined;
 
 const drop = (event: DragEvent) => {
   event.stopPropagation();
   event.preventDefault();
   isDragging.value = false;
   if (isSupportedData.value) {
-    const newDroppedData = _.map(event.dataTransfer.items, (dataItem) => {
+    const newDroppedData = _.map(event.dataTransfer?.items, (dataItem) => {
       const { kind, type } = dataItem;
       if (kind === "string") {
-        const ret = ref<{ kind: "string"; type: string; string: string }>(
-          undefined
-        );
+        const ret = ref<{
+          kind: "string";
+          type: string;
+          string: string;
+        } | null>(null);
         dataItem.getAsString((s) => {
           ret.value = {
             kind: "string",
@@ -198,7 +200,7 @@ const drop = (event: DragEvent) => {
         return {
           kind: "file",
           type,
-          file: shallowReactive(dataItem.getAsFile()),
+          file: shallowReactive(dataItem.getAsFile() as File),
         };
       }
     });

@@ -15,7 +15,7 @@ export const getFilePermForUser = async (
     errs,
     [viewPerm, listPerm, editPerm, fileViewPerm, fileEditPerm, owner],
   ] = _.zip(
-    ...(await useRedis()
+    ...((await useRedis()
       .multi()
       .sismember(`perms:${user}`, "perms:file:view")
       .sismember(`perms:${user}`, "perms:file:list")
@@ -23,7 +23,7 @@ export const getFilePermForUser = async (
       .zscore(`perms:${file}:view`, user)
       .zscore(`perms:${file}:edit`, user)
       .hget(`${file}`, "owner")
-      .exec())
+      .exec()) ?? [])
   ) as [Error[], [number, number, number, string, string, `user:id:${string}`]];
 
   if (errs.some((e) => e)) {

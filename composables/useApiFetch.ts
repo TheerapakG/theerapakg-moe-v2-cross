@@ -1,10 +1,11 @@
 // import { NitroFetchRequest } from "nitropack";
+import { NitroFetchRequest } from "nitropack";
 import { FetchContext, FetchOptions } from "ohmyfetch";
 import { Ref } from "vue";
 
 const tryHandleCommonResponseError = async (ctx: FetchContext) => {
-  if (!ctx.response.ok) {
-    if (ctx.response.statusText === "session expired") {
+  if (!ctx.response?.ok) {
+    if (ctx.response?.statusText === "session expired") {
       const userStore = useUserStore();
       await userStore.refreshCurrent();
 
@@ -31,7 +32,7 @@ const tryHandleCommonResponseError = async (ctx: FetchContext) => {
 
 export const $apiFetch = async <
   T = unknown,
-  R extends string /* NitroFetchRequest */ = string /* NitroFetchRequest */
+  R extends NitroFetchRequest = NitroFetchRequest
 >(
   request: R,
   opts?: FetchOptions
@@ -39,7 +40,7 @@ export const $apiFetch = async <
   const config = useRuntimeConfig();
   return await $fetch<T, R>(request, {
     ...{
-      headers: useRequestHeaders(["cookie"]),
+      headers: useRequestHeaders(["cookie"]) as HeadersInit,
       baseURL: config.public?.apiBaseURL ?? "/",
       onResponseError: tryHandleCommonResponseError,
     },
@@ -49,7 +50,7 @@ export const $apiFetch = async <
 
 export const $apiRawFetch = async <
   T = unknown,
-  R extends string /* NitroFetchRequest */ = string /* NitroFetchRequest */
+  R extends NitroFetchRequest = NitroFetchRequest
 >(
   request: R,
   opts?: FetchOptions
@@ -57,7 +58,7 @@ export const $apiRawFetch = async <
   const config = useRuntimeConfig();
   return await $fetch.raw<T, R>(request, {
     ...{
-      headers: useRequestHeaders(["cookie"]),
+      headers: useRequestHeaders(["cookie"]) as HeadersInit,
       baseURL: config.public?.apiBaseURL ?? "/",
       onResponseError: tryHandleCommonResponseError,
     },
@@ -68,7 +69,7 @@ export const $apiRawFetch = async <
 export const useApiFetch = async <
   ResT = void,
   ErrorT = Error,
-  ReqT extends string /* NitroFetchRequest */ = string /* NitroFetchRequest */,
+  ReqT extends NitroFetchRequest = NitroFetchRequest,
   OptsT extends Parameters<typeof useFetch<ResT, ErrorT, ReqT>>[1] = Parameters<
     typeof useFetch<ResT, ErrorT, ReqT>
   >[1]
@@ -80,7 +81,7 @@ export const useApiFetch = async <
 
   return await useFetch<ResT, ErrorT, ReqT>(request, {
     ...{
-      headers: useRequestHeaders(["cookie"]),
+      headers: useRequestHeaders(["cookie"]) as HeadersInit,
       baseURL: config.public?.apiBaseURL ?? "/",
       onResponseError: tryHandleCommonResponseError,
     },

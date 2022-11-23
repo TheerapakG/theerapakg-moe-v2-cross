@@ -1,11 +1,12 @@
-import { CompatibilityEvent } from "h3";
+import { H3Event } from "h3";
 import { useRedis } from "~/server/utils/useRedis";
 import { getSafeIdFromId } from "~/server/utils/getId";
 
-export const getUser = async (event: CompatibilityEvent) => {
+export const getUser = async (event: H3Event) => {
+  const sessionCookie = getCookie(event, "session_id");
   const user = await useRedis().get(
-    getCookie(event, "session_id")
-      ? `session:${getSafeIdFromId(getCookie(event, "session_id"))}`
+    sessionCookie
+      ? `session:${getSafeIdFromId(sessionCookie)}`
       : "session:default"
   );
   if (!user) {

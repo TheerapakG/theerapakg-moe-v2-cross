@@ -23,7 +23,7 @@ definePageMeta({
   perms: ["perms:file:edit"],
 });
 
-const file = shallowRef<File>(null);
+const file = shallowRef<File | null>(null);
 
 const toastStore = useToastStore("layout");
 
@@ -62,18 +62,20 @@ const onDroppedData = (
       )[]
     | undefined
 ) => {
-  file.value = data?.[0]?.kind === "file" ? data[0].file : undefined;
+  file.value = data?.[0]?.kind === "file" ? data[0].file : null;
 };
 
 const upload = async () => {
+  if (!file.value) return;
+
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
     try {
       await $apiFetch("/api/file/upload", {
         method: "POST",
         body: {
-          file: file.value.name,
-          content: event.target.result,
+          file: file.value?.name,
+          content: event.target?.result,
         },
       });
     } catch {

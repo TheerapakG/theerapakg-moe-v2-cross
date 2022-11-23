@@ -8,7 +8,7 @@ import { useMeili, UserDocument } from "~/server/utils/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = useQuery(event);
+    const query = getQuery(event);
     const user = await getUser(event);
 
     const id = getSafeIdFromId(event.context.params.id as string);
@@ -18,7 +18,9 @@ export default defineEventHandler(
     if (!view) throw createError({ statusMessage: "no permission" });
 
     const page = query.page ? parseInt(query.page as string) : 1;
-    const size = query.size ? _.min([parseInt(query.size as string), 50]) : 10;
+    const size = query.size
+      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      : 10;
     const start = (page - 1) * size;
 
     const userSearch = query.user
@@ -41,7 +43,7 @@ export default defineEventHandler(
       users.length <= 0
         ? [[], []]
         : (_.zip(
-            ...(await useRedis()
+            ...((await useRedis()
               .multi(
                 users.map((user) => [
                   "zscore",
@@ -49,7 +51,7 @@ export default defineEventHandler(
                   `user:id:${user}`,
                 ])
               )
-              .exec())
+              .exec()) ?? [])
           ) as [Error[], string[]]);
 
     errs2.forEach((e) => {

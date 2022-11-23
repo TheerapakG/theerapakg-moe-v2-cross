@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-let redis: Redis = null;
+let redis: Redis | null = null;
 
 export const useRedis = () => {
   if (!redis) {

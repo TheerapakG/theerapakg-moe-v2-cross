@@ -16,10 +16,11 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+interface Props<UC extends { [perm: string]: number }> {
   fileId: string;
-  userCount: { [perm: string]: number };
+  userCount: UC;
 }
 
-defineProps<Props>();
+// TODO: generic
+defineProps<Props<{ [perm: string]: number }>>();
 </script>

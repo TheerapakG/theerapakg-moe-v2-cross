@@ -57,7 +57,7 @@ const { height: toastListElementHeight } = useElementSize(toastListElement);
 const hideFade = computed(
   () =>
     toastListElementHeight.value === 0 ||
-    toastListElementHeight.value === toastListElement.value.scrollHeight
+    toastListElementHeight.value === toastListElement.value?.scrollHeight
 );
 </script>
 

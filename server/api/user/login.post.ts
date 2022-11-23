@@ -6,7 +6,7 @@ import { wrapHandler } from "~/server/utils/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const body = await useBody(event);
+    const body = await readBody(event);
     if (!(body.user && body.pass)) return;
 
     const user = await useRedis().get(`user:name:${body.user}`);

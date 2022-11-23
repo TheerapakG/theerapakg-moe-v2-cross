@@ -7,7 +7,7 @@ import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const body = await useBody(event);
+    const body = await readBody(event);
 
     if (!body.content) return;
 

@@ -1,5 +1,3 @@
-import { defineNuxtConfig } from "nuxt";
-
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
   modules: [
@@ -7,7 +5,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
-    "floating-vue/nuxt",
+    // "floating-vue/nuxt",
     "nuxt-lodash",
     "./modules/routeLogging",
   ],
