@@ -19,7 +19,7 @@
           :disabled="!status.has('edited')"
           @click="save"
         >
-          <CloudArrowUpIcon class="h-8 w-8" />
+          <CloudArrowUpIcon class="h-6 w-6" />
         </button>
       </portal>
       <portal v-if="pageMounted" to="file-status">
@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import CloudArrowUpIcon from "@heroicons/vue/24/outline/CloudArrowUpIcon";
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 import { mountedKey } from "../provides";
@@ -110,7 +110,7 @@ const save = async () => {
       toastStore.spawn({
         title: "Save Error",
         description: "Cannot save",
-        icon: h(ExclamationCircleIcon),
+        icon: <ExclamationCircleIcon />,
       });
       return;
     }

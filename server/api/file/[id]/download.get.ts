@@ -17,7 +17,10 @@ export default defineEventHandler(
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
     if (dir) {
-      appendResponseHeader(event, "Content-Type", mime.getType(dir) ?? "");
+      appendResponseHeaders(event, {
+        "Content-Type": mime.getType(dir) ?? "",
+        "Content-Length": (await fs.promises.stat(dir)).size.toString(),
+      });
       return sendStream(event, fs.createReadStream(dir));
     }
   })

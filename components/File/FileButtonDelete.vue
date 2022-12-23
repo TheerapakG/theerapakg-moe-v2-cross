@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { storeToRefs } from "pinia";
 
 interface Props {
@@ -52,7 +52,7 @@ const deleteFile = async () => {
     toastStore.spawn({
       title: "Delete Error",
       description: "Cannot delete",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     emit("refresh");
     return;
@@ -61,7 +61,7 @@ const deleteFile = async () => {
   toastStore.spawn({
     title: "Delete Success",
     description: "Successfully deleted",
-    icon: h(ExclamationCircleIcon),
+    icon: <ExclamationCircleIcon />,
   });
   emit("refresh");
 };

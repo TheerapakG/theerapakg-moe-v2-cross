@@ -5,7 +5,11 @@
     placement="bottom"
     theme="context-menu"
   >
-    <button class="button-default p-2">edit/view</button>
+    <button
+      class="button-default flex h-8 place-content-center place-items-center p-2"
+    >
+      edit / view
+    </button>
 
     <template #popper>
       <div
@@ -33,6 +37,7 @@
 <script setup lang="ts">
 import { EyeIcon, PencilIcon } from "@heroicons/vue/24/outline";
 import { storeToRefs } from "pinia";
+import MimeType from "whatwg-mimetype";
 
 interface Props {
   fileId: string;
@@ -46,6 +51,10 @@ const pageStore = usePageStore();
 const { pageContainerDom } = storeToRefs(pageStore);
 
 const viewFile = async (mode: "edit" | "view") => {
-  await navigateTo(`/file/${mode}/mime/${props.mime}/${props.fileId}`);
+  const mimeType = new MimeType(props.mime);
+  await navigateTo({
+    path: `/file/${mode}/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
+    query: Object.fromEntries(mimeType.parameters),
+  });
 };
 </script>

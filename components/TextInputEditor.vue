@@ -6,7 +6,7 @@
     >
       <div class="min-w-0 flex-1">
         <slot>
-          <div class="overflow-hidden text-ellipsis">
+          <div class="overflow-hidden text-ellipsis whitespace-nowrap">
             {{ props.modelValue }}
           </div>
         </slot>

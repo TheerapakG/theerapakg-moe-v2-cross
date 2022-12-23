@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 definePageMeta({
   title: "theerapakg-moe: logout",
   pageTransition: {
@@ -37,7 +37,7 @@ const logout = async () => {
     toastStore.spawn({
       title: "Logout Error",
       description: "Cannot log out.",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     return;
   }
@@ -47,7 +47,7 @@ const logout = async () => {
   toastStore.spawn({
     title: "Logout Success",
     description: "Successfully logged out.",
-    icon: h(ExclamationCircleIcon),
+    icon: <ExclamationCircleIcon />,
   });
   await Promise.all([
     userStore.refreshCurrent(),

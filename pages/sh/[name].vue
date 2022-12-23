@@ -2,7 +2,7 @@
   <div></div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 definePageMeta({
   title: "redirecting...",
   pageTransition: {
@@ -24,7 +24,7 @@ onMounted(async () => {
     toastStore.spawn({
       title: "Redirection Error",
       description: "No shortened target! Maybe try going back?",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
   } else {
     try {
@@ -56,7 +56,7 @@ onMounted(async () => {
         toastStore.spawn({
           title: "Redirection Error",
           description: "Malformed URL! Maybe try going back?",
-          icon: h(ExclamationCircleIcon),
+          icon: <ExclamationCircleIcon />,
         });
       }
     }

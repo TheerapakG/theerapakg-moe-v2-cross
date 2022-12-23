@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col place-content-start place-items-center">
-    <div class="mb-8 w-full px-8">
+    <div class="mb-8 h-8 w-full px-8">
       <div v-if="pending">loading...</div>
       <div v-else-if="!fileInfo"></div>
-      <div v-else class="relative w-full">
+      <div v-else class="relative h-full w-full">
         <div
           class="absolute right-0 flex place-content-center place-items-center gap-x-2"
         >
@@ -12,8 +12,12 @@
             :mime="fileInfo?.mime"
           />
         </div>
-        <div class="flex place-content-center place-items-center">
-          <div class="font-bold">{{ fileInfo.name }}</div>
+        <div class="mx-24 flex h-full place-content-center place-items-center">
+          <div
+            class="overflow-hidden text-ellipsis whitespace-nowrap font-bold"
+          >
+            {{ fileInfo.name }}
+          </div>
         </div>
       </div>
     </div>
@@ -35,10 +39,15 @@ import { mountedKey } from "./provides";
 provide(mountedKey, useMounted());
 
 const route = useRoute();
+const routeStore = useRouteStore();
 
 const {
   pending,
   data: fileInfo,
   //error: fileInfoError,
 } = await useApiFetch(`/api/file/${route.params.file}/info`);
+
+routeStore.setTitle(
+  computed(() => `theerapakg-moe-app: ${fileInfo.value?.name}`)
+);
 </script>

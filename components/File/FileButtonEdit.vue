@@ -34,8 +34,9 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { storeToRefs } from "pinia";
+import MimeType from "whatwg-mimetype";
 
 interface Props {
   fileId: string;
@@ -114,7 +115,7 @@ const uploadFile = async () => {
       toastStore.spawn({
         title: "Upload Error",
         description: "Cannot upload",
-        icon: h(ExclamationCircleIcon),
+        icon: <ExclamationCircleIcon />,
       });
       emit("refresh");
       return;
@@ -123,7 +124,7 @@ const uploadFile = async () => {
     toastStore.spawn({
       title: "Upload Success",
       description: "Successfully uploaded",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     emit("refresh");
   });
@@ -132,6 +133,10 @@ const uploadFile = async () => {
 };
 
 const editFile = async () => {
-  await navigateTo(`/file/edit/mime/${props.mime}/${props.fileId}`);
+  const mimeType = new MimeType(props.mime);
+  await navigateTo({
+    path: `/file/edit/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
+    query: Object.fromEntries(mimeType.parameters),
+  });
 };
 </script>

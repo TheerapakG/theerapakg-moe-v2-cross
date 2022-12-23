@@ -81,7 +81,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import {
   EyeIcon,
   MinusIcon,
@@ -102,8 +102,8 @@ const route = useRoute();
 const userStore = useUserStore();
 
 const perms = {
-  view: h(EyeIcon, { class: "w-6 h-6" }),
-  edit: h(PencilIcon, { class: "w-6 h-6" }),
+  view: <EyeIcon class="h-6 w-6" />,
+  edit: <PencilIcon class="h-6 w-6" />,
 };
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;

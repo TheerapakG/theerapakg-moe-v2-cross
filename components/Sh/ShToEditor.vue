@@ -2,7 +2,7 @@
   <TextInputEditor :model-value="props.to" @update:model-value="changeTarget" />
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 interface Props {
   from: string;
   to: string;
@@ -31,7 +31,7 @@ const changeTarget = async (target: string) => {
     toastStore.spawn({
       title: "Error Changing Target",
       description: "Cannot change target",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     emit("refresh");
     return;
@@ -40,7 +40,7 @@ const changeTarget = async (target: string) => {
   toastStore.spawn({
     title: "Target Changed",
     description: "Successfully changed target",
-    icon: h(ExclamationCircleIcon),
+    icon: <ExclamationCircleIcon />,
   });
   emit("refresh");
 };

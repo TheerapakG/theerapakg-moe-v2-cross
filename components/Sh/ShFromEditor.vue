@@ -2,7 +2,7 @@
   <TextInputEditor :model-value="props.from" @update:model-value="rename" />
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 interface Props {
   from: string;
 }
@@ -27,7 +27,7 @@ const rename = async (name: string) => {
     toastStore.spawn({
       title: "Rename Error",
       description: "Cannot rename",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     emit("refresh");
     return;
@@ -36,7 +36,7 @@ const rename = async (name: string) => {
   toastStore.spawn({
     title: "Rename Success",
     description: "Successfully renamed",
-    icon: h(ExclamationCircleIcon),
+    icon: <ExclamationCircleIcon />,
   });
   emit("refresh");
 };

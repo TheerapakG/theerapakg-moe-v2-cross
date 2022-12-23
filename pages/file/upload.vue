@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 definePageMeta({
   title: "theerapakg-moe-app: upload",
   name: "Upload",
@@ -85,7 +85,7 @@ const upload = async () => {
       toastStore.spawn({
         title: "Upload Error",
         description: "Cannot upload",
-        icon: h(ExclamationCircleIcon),
+        icon: <ExclamationCircleIcon />,
       });
       return;
     }
@@ -93,7 +93,7 @@ const upload = async () => {
     toastStore.spawn({
       title: "Upload Success",
       description: "Successfully uploaded",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
   });
 

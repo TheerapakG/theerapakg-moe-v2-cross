@@ -1,15 +1,17 @@
 <template>
   <TextInputEditor :model-value="props.name" @update:model-value="rename">
     <NuxtLink v-if="download" :to="`/file/download/${props.fileId}`">
-      {{ props.name }}
+      <div class="overflow-hidden text-ellipsis whitespace-nowrap">
+        {{ props.name }}
+      </div>
     </NuxtLink>
-    <div v-else>
+    <div v-else class="overflow-hidden text-ellipsis whitespace-nowrap">
       {{ props.name }}
     </div>
   </TextInputEditor>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 interface Props {
   fileId: string;
   name: string;
@@ -39,7 +41,7 @@ const rename = async (newname: string) => {
     toastStore.spawn({
       title: "Rename Error",
       description: "Cannot rename",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     emit("refresh");
     return;
@@ -48,7 +50,7 @@ const rename = async (newname: string) => {
   toastStore.spawn({
     title: "Rename Success",
     description: "Successfully renamed",
-    icon: h(ExclamationCircleIcon),
+    icon: <ExclamationCircleIcon />,
   });
   emit("refresh");
 };

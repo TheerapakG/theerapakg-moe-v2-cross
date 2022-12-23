@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 definePageMeta({
   title: "theerapakg-moe: login",
   pageTransition: {
@@ -47,7 +47,7 @@ const login = async () => {
     toastStore.spawn({
       title: "Login Error",
       description: "Cannot log in. Check username/password.",
-      icon: h(ExclamationCircleIcon),
+      icon: <ExclamationCircleIcon />,
     });
     return;
   }
@@ -58,7 +58,7 @@ const login = async () => {
   toastStore.spawn({
     title: "Login Success",
     description: "Successfully logged in.",
-    icon: h(ExclamationCircleIcon),
+    icon: <ExclamationCircleIcon />,
   });
   await Promise.all([
     userStore.refreshCurrent(),

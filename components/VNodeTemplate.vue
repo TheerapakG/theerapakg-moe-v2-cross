@@ -2,8 +2,7 @@
   <renderVNode />
 </template>
 
-<script setup lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
+<script setup lang="tsx">
 import { cloneVNode, VNode } from "vue";
 
 interface Props {
@@ -15,10 +14,9 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), { renderKey: "", tag: "" });
 const { renderNode, renderKey, tag } = toRefs(props);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const renderVNode = () =>
   cloneVNode(
-    tag.value ? h(tag.value, [renderNode.value]) : renderNode.value,
+    tag.value ? <tag.value>{renderNode.value}</tag.value> : renderNode.value,
     useAssign(
       renderKey.value
         ? {

@@ -46,11 +46,10 @@
 
 <script setup lang="ts">
 import SideBar from "~/components/SideBar.vue";
-const currentRoute = useRoute();
 const routeStore = useRouteStore();
 
 useHead({
-  title: computed(() => `${currentRoute.meta.title}`),
+  title: computed(() => routeStore.title ?? "theerapakg-moe-app"),
 });
 
 const menu = ref<InstanceType<typeof SideBar> | null>(null);

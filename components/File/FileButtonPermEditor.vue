@@ -106,7 +106,7 @@ const {
       }
     | Record<string, never>
   > => {
-    if (!open.value) return Promise.resolve({});
+    if (!open.value) return Promise.resolve(permsData.value ?? {});
 
     const { totalCount, queryCount, users } = await $apiFetch(
       `/api/file/${props.fileId}/perm/${props.perm}/list`,
