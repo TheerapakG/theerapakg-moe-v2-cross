@@ -22,6 +22,7 @@
     "@rushstack/eslint-patch": "^1.1.4",
     "@tauri-apps/cli": "^1.0.0-rc.13",
     "@types/mime": "^3.0.1",
+    "@types/node-fetch": "^2.6.2",
     "@types/request-ip": "^0.0.37",
     "@types/whatwg-mimetype": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",

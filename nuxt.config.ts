@@ -44,6 +44,8 @@ export default defineNuxtConfig({
   imports: {
     dirs: ["store"],
   },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   colorMode: {
     classSuffix: "",
   },

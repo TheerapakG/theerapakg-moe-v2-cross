@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import fetch from "node-fetch";
 import { useRedis } from "~/server/utils/useRedis";
 import { getUser } from "~/server/utils/getUser";
 import { getSafeIdFromIdObject } from "~/server/utils/getId";
@@ -31,11 +32,9 @@ export default defineEventHandler(
       });
 
     await fs.promises.mkdir(base, { recursive: true });
-    await fs.promises.writeFile(
-      dir,
-      (await (await fetch(body.content)).blob()).stream(),
-      { flag: "wx" }
-    );
+    await fs.promises.writeFile(dir, (await fetch(body.content)).body, {
+      flag: "wx",
+    });
     const id = crypto.randomUUID();
     await useRedis()
       .multi()

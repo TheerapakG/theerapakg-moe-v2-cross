@@ -10,7 +10,10 @@ onMounted(() => {
   if (process.client) {
     try {
       const toastStore = useToastStore("layout");
-      if (!isNuxtError(error.value) && !("message" in error.value)) {
+      if (
+        !error.value ||
+        (!isNuxtError(error.value) && !("message" in error.value))
+      ) {
         toastStore.spawn({
           title: "Error loading the page",
           description: "error encountered while loading the page",
