@@ -67,7 +67,7 @@ jobs:
       run: yarn nuxi build
 
     - name: Tar Build
-      run: tar -czvf build.tar.gz ./.output
+      run: tar -czvf build.tar.gz .output
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
