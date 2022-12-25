@@ -8,16 +8,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  setup:
     uses: ./.github/workflows/setup.yml
 
+  lint:
+    needs: setup
     steps:
     - name: Run lint
       run: yarn eslint .
 
   typecheck:
-    uses: ./.github/workflows/setup.yml
-
+    needs: setup
     steps:
     - name: Run typecheck
       run: yarn nuxi typecheck
