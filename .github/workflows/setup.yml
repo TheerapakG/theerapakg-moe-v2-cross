@@ -1,14 +1,10 @@
 name: Typecheck
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  typecheck:
+  setup:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +19,3 @@ jobs:
         
     - name: Install dependencies
       run: yarn install
-    
-    - name: Run typecheck
-      run: yarn nuxi typecheck

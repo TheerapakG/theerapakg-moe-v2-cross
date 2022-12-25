@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup
+      uses: ./.github/workflows/setup.yml@setup
+    
+    - name: Run lint
+      run: yarn eslint .
+
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup
+      uses: ./.github/workflows/setup.yml@setup
+    
+    - name: Run typecheck
+      run: yarn nuxi typecheck
