@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Setup
-      uses: ./.github/workflows/setup.yml@setup
+      uses: ./.github/workflows/setup.yml
     
     - name: Run lint
       run: yarn eslint .
@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Setup
-      uses: ./.github/workflows/setup.yml@setup
+      uses: ./.github/workflows/setup.yml
     
     - name: Run typecheck
       run: yarn nuxi typecheck
