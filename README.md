@@ -1,10 +1,8 @@
-# Nuxt 3 Minimal Starter
-
-We recommend to look at the [documentation](https://v3.nuxtjs.org).
+# theerapakg.moe
 
 ## Setup
 
-Make sure to install the dependencies
+install the dependencies
 
 ```bash
 yarn install
@@ -12,7 +10,16 @@ yarn install
 
 ## Development
 
-Start the development server on http://localhost:3000
+start the development servers
+
+```bash
+yarn dev:redis
+yarn dev:meili
+yarn dev:site
+yarn dev:app
+```
+
+or to start all development servers
 
 ```bash
 yarn dev
@@ -20,10 +27,9 @@ yarn dev
 
 ## Production
 
-Build the application for production:
+build the application for production
 
 ```bash
-yarn build
+yarn build:site
+yarn build:app
 ```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/docs/deployment).

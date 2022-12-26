@@ -5,10 +5,10 @@
     "dev:meili": "cd ./.meili && meilisearch --http-addr 0.0.0.0:7700",
     "dev:site": "nuxi dev",
     "dev:app": "yarn tauri dev",
-    "dev": "concurrently --kill-others \"yarn:dev:site\" \"yarn:dev:app\"",
+    "dev": "concurrently --kill-others \"yarn:dev:redis\" \"yarn:dev:meili\" \"yarn:dev:site\" \"yarn:dev:app\"",
     "build:site": "nuxi build",
-    "build:app": "yarn tauri build",
-    "build": "yarn generate:site && yarn build:app",
+    "build:_app": "yarn tauri build",
+    "build:app": "yarn generate:site && yarn build:_app",
     "generate:site": "nuxi generate",
     "start:site": "node .output/server/index.mjs"
   },
