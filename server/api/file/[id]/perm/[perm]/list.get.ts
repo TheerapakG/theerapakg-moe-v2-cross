@@ -64,7 +64,7 @@ export default defineEventHandler(
         "-inf",
         "inf"
       ),
-      queryCount,
+      queryCount: queryCount ?? Infinity,
       users: _.zipWith(users, perms, (user, perm) => {
         return {
           id: user,

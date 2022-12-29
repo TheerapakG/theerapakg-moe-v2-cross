@@ -33,7 +33,7 @@ export default defineEventHandler(
 
     return {
       totalCount: await useRedis().zcount("sh:ids", "-inf", "inf"),
-      queryCount,
+      queryCount: queryCount ?? Infinity,
       sh: _.zipWith(froms, tos, (from, to) => {
         return { from, to };
       }),

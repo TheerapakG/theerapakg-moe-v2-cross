@@ -96,7 +96,7 @@ export default defineEventHandler(
 
     return {
       totalCount: await useRedis().zcount("file:ids", "-inf", "inf"),
-      queryCount,
+      queryCount: queryCount ?? Infinity,
       files: await Promise.all(
         _.zipWith(
           ids,
