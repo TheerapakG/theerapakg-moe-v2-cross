@@ -5,8 +5,13 @@ export const wrapHandler = <ResT>(
 ) => {
   return async (event: H3Event) => {
     try {
-      return await handler(event);
+      const ret = await handler(event);
+      if (!getResponseHeader(event, "Cache-Control"))
+        appendResponseHeader(event, "Cache-Control", "no-store");
+      return ret;
     } catch (err) {
+      if (!getResponseHeader(event, "Cache-Control"))
+        appendResponseHeader(event, "Cache-Control", "no-store");
       if (isError(err)) {
         if (!process.dev && err.stack) delete err.stack;
         throw err;

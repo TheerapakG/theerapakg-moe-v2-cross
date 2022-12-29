@@ -1,32 +1,35 @@
 <template>
   <div class="flex place-content-center place-items-center gap-x-2">
     <button
-      title="system"
+      title="system theme"
       class="system-btn button-default flex h-12 w-12 place-content-center place-items-center rounded-full"
+      :class="{ activated: colorMode.preference === 'system' }"
       @click="colorMode.preference = 'system'"
     >
       <div class="h-8 w-8">
-        <DevicePhoneMobileIcon class="stroke-gray-300 dark:stroke-gray-600" />
+        <DevicePhoneMobileIcon />
       </div>
     </button>
 
     <button
-      title="light"
+      title="light theme"
       class="light-btn button-default flex h-12 w-12 place-content-center place-items-center rounded-full"
+      :class="{ activated: colorMode.preference === 'light' }"
       @click="colorMode.preference = 'light'"
     >
       <div class="h-8 w-8">
-        <SunIcon class="stroke-gray-300 dark:stroke-gray-600" />
+        <SunIcon />
       </div>
     </button>
 
     <button
-      title="dark"
+      title="dark theme"
       class="dark-btn button-default flex h-12 w-12 place-content-center place-items-center rounded-full"
+      :class="{ activated: colorMode.preference === 'dark' }"
       @click="colorMode.preference = 'dark'"
     >
       <div class="h-8 w-8">
-        <MoonIcon class="stroke-gray-300 dark:stroke-gray-600" />
+        <MoonIcon />
       </div>
     </button>
   </div>

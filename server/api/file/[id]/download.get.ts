@@ -17,10 +17,66 @@ export default defineEventHandler(
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
     if (dir) {
+      const length = (await fs.promises.stat(dir)).size;
+
       appendResponseHeaders(event, {
+        "Cache-Control": "private",
         "Content-Type": mime.getType(dir) ?? "",
-        "Content-Length": (await fs.promises.stat(dir)).size.toString(),
+        "Accept-Ranges": "bytes",
       });
+
+      const range = getRequestHeader(event, "range");
+
+      if (range) {
+        const [unit, ranges] = range.split("=");
+        if (unit !== "bytes" || !ranges) {
+          event.node.res.statusCode = 416;
+          return "";
+        }
+
+        const parsedRanges = ranges.split(",").map((s) => {
+          const trimmedRange = s.trim();
+          if (trimmedRange.startsWith("-"))
+            return [undefined, parseInt(s.slice(1).trim())] as [
+              undefined,
+              number
+            ];
+          if (trimmedRange.endsWith("-"))
+            return [parseInt(s.slice(undefined, -1).trim()), undefined] as [
+              number,
+              undefined
+            ];
+          const [ret1, ret2] = trimmedRange
+            .split("-", 2)
+            .map((s) => parseInt(s.trim()));
+          return [ret1, ret2] as [number, number];
+        });
+
+        // TODO: multiple range
+        const retRange = [
+          parsedRanges[0][0] ?? length - parsedRanges[0][1],
+          parsedRanges[0][1] ?? length - 1,
+        ];
+
+        if (retRange[0] < 0 || retRange[1] >= length) {
+          event.node.res.statusCode = 416;
+          return "";
+        }
+
+        appendResponseHeader(
+          event,
+          "Content-Range",
+          `bytes ${retRange[0]}-${retRange[1]}/${length}`
+        );
+        event.node.res.statusCode = 206;
+
+        return sendStream(
+          event,
+          fs.createReadStream(dir, { start: retRange[0], end: retRange[1] })
+        );
+      }
+
+      appendResponseHeader(event, "Content-Length", length.toString());
       return sendStream(event, fs.createReadStream(dir));
     }
   })

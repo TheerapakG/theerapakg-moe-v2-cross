@@ -37,6 +37,19 @@ body {
   }
 }
 
+.input-range-default {
+  -webkit-appearance: none;
+  @apply bg-transparent;
+
+  &::-webkit-slider-runnable-track {
+    @apply h-2 rounded-full bg-gray-600 dark:bg-gray-300;
+  }
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    @apply w-2 h-2 rounded-full bg-gray-400 dark:bg-gray-500;
+  }
+}
+
 .fade-enter-from,
 .fade-leave-to {
   @apply opacity-0;
@@ -155,6 +168,18 @@ body {
 @layer components {
   .button-default {
     @apply rounded-lg bg-black font-bold text-white enabled:transition-colors enabled:duration-300 enabled:hover:bg-gray-600 disabled:opacity-20 dark:bg-white dark:text-black enabled:hover:dark:bg-gray-300
+  }
+
+  .button-default > svg {
+   @apply stroke-gray-300 dark:stroke-gray-600
+  }
+
+  .button-default.activated {
+    @apply bg-gray-400 text-gray-600 enabled:hover:bg-gray-500 dark:bg-gray-500 dark:text-gray-300 enabled:hover:dark:bg-gray-400
+  }
+
+  .button-default.activated > svg {
+   @apply stroke-gray-600 dark:stroke-gray-300
   }
 
   .icon-button > svg {

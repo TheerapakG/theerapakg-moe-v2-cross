@@ -3,13 +3,12 @@
     <Transition name="slide-right">
       <div
         v-if="open"
-        class="pointer-events-auto absolute inset-0 flex flex-col place-content-center place-items-center bg-gray-300 dark:bg-gray-600"
-      >
-        <slot name="content" />
-      </div>
+        class="absolute inset-0 bg-gray-300 dark:bg-gray-600"
+      ></div>
     </Transition>
     <button
       class="icon-button pointer-events-auto absolute top-8 left-8"
+      :title="open ? 'close sidebar' : 'open sidebar'"
       @click="toggle"
     >
       <Transition
@@ -20,6 +19,18 @@
         <XMarkIcon v-else class="h-8 w-8 transition duration-300" />
       </Transition>
     </button>
+    <Transition name="slide-right">
+      <div
+        v-if="open"
+        class="absolute inset-0 grid grid-cols-1 place-content-center place-items-center"
+      >
+        <div
+          class="pointer-events-auto flex flex-col place-content-center place-items-center"
+        >
+          <slot name="content" />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 

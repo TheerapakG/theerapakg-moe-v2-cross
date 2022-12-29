@@ -25,7 +25,7 @@
       class="flex w-full flex-grow flex-col place-content-start place-items-center px-8"
     >
       <div
-        class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg bg-gray-100 p-4 dark:bg-gray-800"
+        class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg bg-gray-300 p-4 dark:bg-gray-600"
       >
         <NuxtPage class="w-full flex-grow" />
       </div>

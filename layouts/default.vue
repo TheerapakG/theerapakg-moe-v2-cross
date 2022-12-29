@@ -19,28 +19,31 @@
       <button
         v-if="menu?.open"
         class="absolute inset-0 bg-black bg-opacity-50"
+        aria-hidden="true"
         @click="menu?.toggle"
       />
     </Transition>
-    <SideBar ref="menu" class="absolute top-0 left-0 h-full w-64">
-      <template #content>
-        <div
-          class="flex flex-col place-content-center place-items-center gap-y-2"
-        >
+    <nav class="pointer-events-none absolute top-0 left-0 h-full w-64">
+      <SideBar ref="menu">
+        <template #content>
           <div
-            v-for="routeInfo in routeInfos"
-            :key="routeInfo.fullPath"
-            class="flex flex-col place-content-center place-items-center"
+            class="flex flex-col place-content-center place-items-center gap-y-2"
           >
-            <NuxtLink :to="routeInfo.fullPath">
-              {{ routeInfo.routeName }}
-            </NuxtLink>
+            <div
+              v-for="routeInfo in routeInfos"
+              :key="routeInfo.fullPath"
+              class="flex flex-col place-content-center place-items-center"
+            >
+              <NuxtLink :to="routeInfo.fullPath">
+                {{ routeInfo.routeName }}
+              </NuxtLink>
+            </div>
+            <ColorModeSelector />
+            <UserDisplay />
           </div>
-          <ColorModeSelector />
-          <UserDisplay />
-        </div>
-      </template>
-    </SideBar>
+        </template>
+      </SideBar>
+    </nav>
   </div>
 </template>
 

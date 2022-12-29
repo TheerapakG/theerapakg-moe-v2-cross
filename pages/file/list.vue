@@ -59,6 +59,7 @@
           <FileButtonView
             :file-id="fileList[index].id"
             :mime="fileList[index].mime"
+            class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
           >
             <EyeIcon class="h-6 w-6" />
           </FileButtonView>
@@ -67,10 +68,18 @@
             :mime="fileList[index].mime"
             @refresh="refresh"
           >
-            <PencilIcon class="h-6 w-6" />
+            <button
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
+              <PencilIcon class="h-6 w-6" />
+            </button>
           </FileButtonEdit>
           <FileButtonDelete :file-id="fileList[index].id" @refresh="refresh">
-            <MinusIcon class="h-6 w-6" />
+            <button
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
+              <MinusIcon class="h-6 w-6" />
+            </button>
           </FileButtonDelete>
         </div>
       </template>
