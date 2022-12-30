@@ -7,9 +7,17 @@
         <div
           class="absolute right-0 flex place-content-center place-items-center gap-x-2"
         >
+          <NuxtLink :to="`/file/download/${route.params.file}`">
+            <button
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
+              <ArrowDownTrayIcon class="h-6 w-6" />
+            </button>
+          </NuxtLink>
           <FileButtonViewerMode
             :file-id="(route.params.file as string)"
             :mime="fileInfo?.mime"
+            :perms="fileInfo?.perms.user"
           />
         </div>
         <div class="mx-24 flex h-full place-content-center place-items-center">
@@ -34,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
 import { mountedKey } from "./provides";
 
 provide(mountedKey, useMounted());

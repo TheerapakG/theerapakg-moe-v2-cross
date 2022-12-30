@@ -7,20 +7,24 @@
         class="flex place-content-center place-items-center"
       >
         <div>not logged in</div>
-        <NuxtLink
-          class="button-default m-2 flex h-8 place-content-center place-items-center px-2 font-normal"
-          to="/login"
-        >
-          <div>login</div>
+        <NuxtLink to="/login">
+          <button
+            title="login"
+            class="button-default m-2 flex h-8 place-content-center place-items-center px-2 font-normal"
+          >
+            login
+          </button>
         </NuxtLink>
       </div>
       <div v-else class="flex place-content-center place-items-center">
         <div>user: {{ current.name }}</div>
-        <NuxtLink
-          class="button-default m-2 flex h-8 place-content-center place-items-center px-2 font-normal"
-          to="/logout"
-        >
-          <div>logout</div>
+        <NuxtLink to="/logout">
+          <button
+            title="logout"
+            class="button-default m-2 flex h-8 place-content-center place-items-center px-2 font-normal"
+          >
+            logout
+          </button>
         </NuxtLink>
       </div>
     </div>

@@ -8,7 +8,7 @@
     <button
       class="button-default flex h-8 place-content-center place-items-center p-2"
     >
-      edit / view
+      mode
     </button>
 
     <template #popper>
@@ -17,6 +17,7 @@
       >
         <button
           class="icon-button t-transition-default grid grid-cols-[1.5rem_4rem] place-content-center place-items-center"
+          :disabled="!perms['view']"
           @click="viewFile('view')"
         >
           <EyeIcon class="h-6 w-6" />
@@ -24,6 +25,7 @@
         </button>
         <button
           class="icon-button t-transition-default grid grid-cols-[1.5rem_4rem] place-content-center place-items-center"
+          :disabled="!perms['edit']"
           @click="viewFile('edit')"
         >
           <PencilIcon class="h-6 w-6" />
@@ -36,12 +38,14 @@
 
 <script setup lang="ts">
 import { EyeIcon, PencilIcon } from "@heroicons/vue/24/outline";
+import { TypedInternalResponse } from "nitropack";
 import { storeToRefs } from "pinia";
 import MimeType from "whatwg-mimetype";
 
 interface Props {
   fileId: string;
   mime: string;
+  perms: TypedInternalResponse<`/api/file/${string}/info`>["perms"]["user"];
 }
 
 const props = defineProps<Props>();

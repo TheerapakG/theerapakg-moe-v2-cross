@@ -1,7 +1,13 @@
 <template>
-  <button class="relative" @click="viewFile()">
+  <NuxtLink
+    class="relative"
+    :to="{
+      path: `/file/view/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
+      query: Object.fromEntries(mimeType.parameters),
+    }"
+  >
     <slot />
-  </button>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -14,11 +20,5 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const viewFile = async () => {
-  const mimeType = new MimeType(props.mime);
-  await navigateTo({
-    path: `/file/view/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
-    query: Object.fromEntries(mimeType.parameters),
-  });
-};
+const mimeType = computed(() => new MimeType(props.mime));
 </script>

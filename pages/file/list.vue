@@ -4,7 +4,7 @@
       <LoadingCircleOverlay v-if="pending" />
     </Transition>
     <ResponsiveList
-      :widths="['32rem', '8rem', '8rem', '8rem', '8rem']"
+      :widths="['32rem', '8rem', '8rem', '8rem', '12rem']"
       :body-count="fileList.length"
     >
       <template #header>
@@ -40,7 +40,7 @@
           <FileButtonPermEditorGroup
             v-slot="{ perm, permUserCount }"
             :file-id="fileList[index].id"
-            :user-count="fileList[index].perms"
+            :user-count="fileList[index].perms.count"
           >
             <button
               class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
@@ -54,14 +54,19 @@
       <template #header-col-4><div>actions</div></template>
       <template #content-col-4="{ index }">
         <div
-          class="grid grid-cols-3 place-content-center place-items-center gap-2"
+          class="grid grid-cols-5 place-content-center place-items-center gap-2"
         >
           <FileButtonView
             :file-id="fileList[index].id"
             :mime="fileList[index].mime"
             class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
           >
-            <EyeIcon class="h-6 w-6" />
+            <button
+              :title="`view ${fileList[index].name}`"
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
+              <EyeIcon class="h-6 w-6" />
+            </button>
           </FileButtonView>
           <FileButtonEdit
             :file-id="fileList[index].id"
@@ -69,13 +74,31 @@
             @refresh="refresh"
           >
             <button
+              :title="`edit ${fileList[index].name}`"
               class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
             >
               <PencilIcon class="h-6 w-6" />
             </button>
           </FileButtonEdit>
+          <FileButtonUpload :file-id="fileList[index].id" @refresh="refresh">
+            <button
+              :title="`upload ${fileList[index].name}`"
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
+              <CloudArrowUpIcon class="h-6 w-6" />
+            </button>
+          </FileButtonUpload>
+          <NuxtLink :to="`/file/download/${fileList[index].id}`">
+            <button
+              :title="`download ${fileList[index].name}`"
+              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+            >
+              <ArrowDownTrayIcon class="h-6 w-6" />
+            </button>
+          </NuxtLink>
           <FileButtonDelete :file-id="fileList[index].id" @refresh="refresh">
             <button
+              :title="`delete ${fileList[index].name}`"
               class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
             >
               <MinusIcon class="h-6 w-6" />
@@ -92,10 +115,12 @@
 
 <script setup lang="tsx">
 import {
+  ArrowDownTrayIcon,
+  CloudArrowUpIcon,
   EyeIcon,
+  MagnifyingGlassIcon,
   MinusIcon,
   PencilIcon,
-  MagnifyingGlassIcon,
 } from "@heroicons/vue/24/outline";
 import { User } from "~/store/user";
 import { formatPretty } from "~/utils/formatPretty";

@@ -182,19 +182,27 @@ body {
    @apply stroke-gray-600 dark:stroke-gray-300
   }
 
+  .icon-button {
+   @apply text-black dark:text-white
+  }
+
   .icon-button > svg {
    @apply stroke-black dark:stroke-white
+  }
+
+  .icon-button:hover:enabled {
+   @apply text-gray-500 dark:text-gray-400
   }
 
   .icon-button:hover:enabled > svg {
    @apply stroke-gray-500 dark:stroke-gray-400
   }
 
-  .icon-button.t-transition-default > svg {
+  .icon-button.t-transition-default {
    @apply transition-[fill,stroke,opacity] duration-300
   }
 
-  .icon-button:disabled > svg {
+  .icon-button:disabled {
     @apply opacity-20
   }
 

@@ -1,4 +1,7 @@
 <script setup lang="ts">
 const route = useRoute();
-await navigateTo(`/file/edit/${route.params.file}/txt`);
+await navigateTo({
+  path: `/file/edit/${route.params.file}/txt`,
+  replace: true,
+});
 </script>

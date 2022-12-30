@@ -13,7 +13,7 @@ export default defineEventHandler(
 
     const id = getSafeIdFromId(event.context.params.id as string);
 
-    const { view, owner } = await getFilePermForUser(`file:${id}`, user);
+    const { view, edit, owner } = await getFilePermForUser(`file:${id}`, user);
     if (!view) throw createError({ statusMessage: "no permission" });
 
     const dir = await useRedis().hget(`file:${id}`, "dir");
@@ -33,8 +33,14 @@ export default defineEventHandler(
         name: path.basename(dir),
         owner: getSafeIdFromIdObject<"user">(owner),
         perms: {
-          view: viewPerm,
-          edit: editPerm,
+          user: {
+            view,
+            edit,
+          },
+          count: {
+            view: viewPerm,
+            edit: editPerm,
+          },
         },
         size: (await fs.promises.stat(dir)).size,
         mime: mime.getType(dir) ?? "",

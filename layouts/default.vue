@@ -35,7 +35,12 @@
               class="flex flex-col place-content-center place-items-center"
             >
               <NuxtLink :to="routeInfo.fullPath">
-                {{ routeInfo.routeName }}
+                <button
+                  :title="routeInfo.routeName"
+                  class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
+                >
+                  <div>{{ routeInfo.routeName }}</div>
+                </button>
               </NuxtLink>
             </div>
             <ColorModeSelector />

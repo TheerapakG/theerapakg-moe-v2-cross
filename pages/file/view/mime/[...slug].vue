@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const route = useRoute();
-await navigateTo(
-  `/file/view/${route.params.slug[route.params.slug.length - 1]}/txt`
-);
+await navigateTo({
+  path: `/file/view/${route.params.slug[route.params.slug.length - 1]}/txt`,
+  replace: true,
+});
 </script>

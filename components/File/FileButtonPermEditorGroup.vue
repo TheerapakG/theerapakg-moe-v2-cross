@@ -5,7 +5,7 @@
       :key="perm"
       v-slot="{ permUserCount }"
       :file-id="fileId"
-      :perm="(perm as string)"
+      :perm="perm"
       :user-count="estimatedPermUserCount"
     >
       <slot :perm="perm" :perm-user-count="permUserCount">
@@ -16,11 +16,12 @@
 </template>
 
 <script setup lang="ts">
-interface Props<UC extends { [perm: string]: number }> {
+import { TypedInternalResponse } from "nitropack";
+
+interface Props {
   fileId: string;
-  userCount: UC;
+  userCount: TypedInternalResponse<`/api/file/${string}/info`>["perms"]["count"];
 }
 
-// TODO: generic
-defineProps<Props<{ [perm: string]: number }>>();
+defineProps<Props>();
 </script>

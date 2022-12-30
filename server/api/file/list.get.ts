@@ -109,8 +109,10 @@ export default defineEventHandler(
               name: path.basename(file.dir),
               owner: getSafeIdFromIdObject<"user:id">(file.owner),
               perms: {
-                view: parseInt(viewPerm),
-                edit: parseInt(editPerm),
+                count: {
+                  view: parseInt(viewPerm),
+                  edit: parseInt(editPerm),
+                },
               },
               size: (await fs.promises.stat(file.dir)).size,
               mime: mime.getType(file.dir) ?? "",
