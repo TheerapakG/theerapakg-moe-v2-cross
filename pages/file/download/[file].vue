@@ -15,9 +15,8 @@
       <FileButtonView
         :file-id="(route.params.file as string)"
         :mime="fileInfo.mime"
-        class="button-default h-12 w-32"
       >
-        View Online
+        <button class="button-default h-12 w-32">View Online</button>
       </FileButtonView>
     </div>
   </div>

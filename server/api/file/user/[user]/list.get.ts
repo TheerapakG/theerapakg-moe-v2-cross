@@ -25,7 +25,7 @@ export default defineEventHandler(
     const start = (page - 1) * size;
     const stop = start + size - 1;
     const ids = (await useRedis().zrange(
-      `file:${user}:ids`,
+      `file:${target}:ids`,
       start,
       stop
     )) as `file:${string}`[];
