@@ -12,13 +12,16 @@
         :commands="commands"
       />
       <portal v-if="activatePortal" to="file-menu-left">
-        <button
-          class="icon-button t-transition-default"
-          :disabled="!status.has('edited')"
-          @click="save"
-        >
-          <CloudArrowUpIcon class="h-6 w-6" />
-        </button>
+        <div class="flex place-content-center place-items-center gap-2">
+          <button
+            class="icon-button t-transition-default"
+            :disabled="!status.has('edited')"
+            @click="save"
+          >
+            <CloudArrowUpIcon class="h-6 w-6" />
+          </button>
+          <FileRun :file-id="fileId" />
+        </div>
       </portal>
       <portal v-if="activatePortal" to="file-status">
         <Transition name="pop" mode="out-in">

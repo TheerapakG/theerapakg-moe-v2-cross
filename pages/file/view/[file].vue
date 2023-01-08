@@ -5,6 +5,11 @@
       <div v-else-if="!fileInfo"></div>
       <div v-else class="relative h-full w-full">
         <div
+          class="absolute left-0 flex h-full place-content-center place-items-center md:left-16"
+        >
+          <portal-target name="file-menu-left" />
+        </div>
+        <div
           class="absolute right-0 flex place-content-center place-items-center gap-x-2"
         >
           <NuxtLink :to="`/file/download/${route.params.file}`">

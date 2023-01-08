@@ -10,6 +10,9 @@
               ...(lang && { language: lang as string }),
             }"
       />
+      <portal v-if="activatePortal" to="file-menu-left">
+        <FileRun :file-id="fileId" />
+      </portal>
     </ClientOnly>
   </div>
 </template>
@@ -18,6 +21,7 @@
 interface Props {
   fileId: string;
   lang?: string;
+  activatePortal?: boolean;
 }
 
 const props = defineProps<Props>();

@@ -55,10 +55,14 @@ const pageStore = usePageStore();
 const { pageContainerDom } = storeToRefs(pageStore);
 
 const viewFile = async (mode: "edit" | "view") => {
-  const mimeType = new MimeType(props.mime);
-  await navigateTo({
-    path: `/file/${mode}/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
-    query: Object.fromEntries(mimeType.parameters),
-  });
+  try {
+    const mimeType = new MimeType(props.mime);
+    await navigateTo({
+      path: `/file/${mode}/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
+      query: Object.fromEntries(mimeType.parameters),
+    });
+  } catch {
+    await navigateTo(`/file/${mode}/mime/text/plain/${props.fileId}`);
+  }
 };
 </script>
