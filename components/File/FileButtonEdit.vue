@@ -3,7 +3,9 @@
     class="relative"
     :to="{
       path: `/file/edit/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
-      query: Object.fromEntries(mimeType.parameters),
+      ...(mimeType.parameters && {
+        query: Object.fromEntries(mimeType.parameters),
+      }),
     }"
   >
     <slot />
@@ -20,5 +22,15 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const mimeType = computed(() => new MimeType(props.mime));
+const mimeType = computed(() => {
+  try {
+    return new MimeType(props.mime);
+  } catch {
+    return {
+      type: "text",
+      subtype: "plain",
+      parameters: undefined,
+    };
+  }
+});
 </script>
