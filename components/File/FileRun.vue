@@ -32,6 +32,14 @@ const templateSubroutes = {
   "Python 3.9": "python/3.9",
   "Python 3.8": "python/3.8",
   "Python 3.7": "python/3.7",
+  "gcc 9": "gcc/c/9",
+  "gcc 10": "gcc/c/10",
+  "gcc 11": "gcc/c/11",
+  "gcc 12": "gcc/c/12",
+  "g++ 9": "gcc/cpp/9",
+  "g++ 10": "gcc/cpp/10",
+  "g++ 11": "gcc/cpp/11",
+  "g++ 12": "gcc/cpp/12",
 };
 
 const templateSelection = ref<keyof typeof templateSubroutes>();
