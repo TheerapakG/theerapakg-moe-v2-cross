@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
 import _ from "lodash";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { getSafeIdFromId, getSafeIdFromIdObject } from "~/server/utils/getId";
-import { wrapHandler } from "~/server/utils/wrapHandler";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { getSafeIdFromId, getSafeIdFromIdObject } from "~/utils/server/getId";
+import { wrapHandler } from "~/utils/server/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

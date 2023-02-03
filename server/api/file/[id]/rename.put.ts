@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { getSafeIdFromId, getSafeIdFromIdObject } from "~/server/utils/getId";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
-import { useMeili } from "~/server/utils/useMeili";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { getSafeIdFromId, getSafeIdFromIdObject } from "~/utils/server/getId";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
+import { useMeili } from "~/utils/server/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

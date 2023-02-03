@@ -1,10 +1,10 @@
 import fs from "fs";
 import fetch from "node-fetch";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { getSafeIdFromId } from "~/server/utils/getId";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { getSafeIdFromId } from "~/utils/server/getId";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

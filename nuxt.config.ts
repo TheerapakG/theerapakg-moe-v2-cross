@@ -8,13 +8,18 @@ export default defineNuxtConfig({
     // "floating-vue/nuxt",
     "nuxt-lodash",
     "./modules/routeLogging",
+    "./modules/trpc",
   ],
+  build: {
+    transpile: ["trpc-nuxt"],
+  },
   app: {
     baseURL: "/",
   },
   runtimeConfig: {
     public: {
-      apiBaseURL: null,
+      wsHost: process.env.NUXT_PUBLIC_WS_HOST ?? "",
+      apiBaseURL: process.env.NUXT_PUBLIC_API_BASE_URL ?? "",
     },
     downloadPath: process.env.NUXT_DOWNLOAD_PATH ?? "",
     dockerSocketPath: process.env.NUXT_DOCKER_SOCKET_PATH ?? "",
@@ -45,7 +50,7 @@ export default defineNuxtConfig({
     // externalVue: true,
   },
   imports: {
-    dirs: ["store"],
+    dirs: ["store", "trpc"],
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

@@ -69,7 +69,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/vue/24/outline";
 import { storeToRefs } from "pinia";
-import { User, useUserStore } from "~~/store/user";
+import { User, useUserStore } from "~/store/user";
 
 interface Props {
   fileId: string;

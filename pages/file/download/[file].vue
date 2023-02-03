@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatPretty } from "~~/utils/formatPretty";
+import { formatPretty } from "~/utils/formatPretty";
 
 definePageMeta({
   title: "theerapakg-moe-app",

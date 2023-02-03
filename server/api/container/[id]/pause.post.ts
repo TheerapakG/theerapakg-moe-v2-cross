@@ -1,8 +1,8 @@
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { useDocker } from "~/server/utils/useDocker";
-import { getSafeIdFromId } from "~/server/utils/getId";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { useDocker } from "~/utils/server/useDocker";
+import { getSafeIdFromId } from "~/utils/server/getId";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -20,7 +20,7 @@ export default defineEventHandler(
     if (!dockerId)
       throw createError({ statusMessage: "no specified container" });
 
-    await useDocker().getContainer(dockerId).kill();
+    await useDocker().getContainer(dockerId).pause();
 
     return {};
   })

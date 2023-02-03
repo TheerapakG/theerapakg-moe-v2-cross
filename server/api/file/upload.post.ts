@@ -2,11 +2,11 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import fetch from "node-fetch";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { getSafeIdFromIdObject } from "~/server/utils/getId";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { FileDocument, useMeili } from "~/server/utils/useMeili";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { getSafeIdFromIdObject } from "~/utils/server/getId";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { FileDocument, useMeili } from "~/utils/server/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

@@ -1,8 +1,8 @@
 import _ from "lodash";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { ShDocument, useMeili } from "~/server/utils/useMeili";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { ShDocument, useMeili } from "~/utils/server/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

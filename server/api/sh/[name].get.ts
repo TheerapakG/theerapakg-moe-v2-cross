@@ -1,5 +1,5 @@
-import { useRedis } from "~/server/utils/useRedis";
-import { wrapHandler } from "~/server/utils/wrapHandler";
+import { useRedis } from "~/utils/server/useRedis";
+import { wrapHandler } from "~/utils/server/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

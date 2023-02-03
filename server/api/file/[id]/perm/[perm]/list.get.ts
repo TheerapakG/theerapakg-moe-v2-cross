@@ -1,10 +1,10 @@
 import _ from "lodash";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
-import { getSafeIdFromId } from "~/server/utils/getId";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { useMeili, UserDocument } from "~/server/utils/useMeili";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
+import { getSafeIdFromId } from "~/utils/server/getId";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { useMeili, UserDocument } from "~/utils/server/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

@@ -1,6 +1,6 @@
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { wrapHandler } from "~/server/utils/wrapHandler";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { wrapHandler } from "~/utils/server/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

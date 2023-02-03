@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { useRedis } from "~/server/utils/useRedis";
-import { getSafeIdFromIdObject } from "~/server/utils/getId";
-import { wrapHandler } from "~/server/utils/wrapHandler";
+import { useRedis } from "~/utils/server/useRedis";
+import { getSafeIdFromIdObject } from "~/utils/server/getId";
+import { wrapHandler } from "~/utils/server/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

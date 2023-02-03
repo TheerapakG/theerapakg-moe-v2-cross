@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useRedis } from "~/server/utils/useRedis";
+import { useRedis } from "./useRedis";
 
 interface FilePermission {
   view: boolean;

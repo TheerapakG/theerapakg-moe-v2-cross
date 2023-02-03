@@ -1,10 +1,10 @@
 import crypto from "crypto";
-import { useRedis } from "~/server/utils/useRedis";
-import { getUser } from "~/server/utils/getUser";
-import { wrapHandler } from "~/server/utils/wrapHandler";
-import { useDocker } from "~/server/utils/useDocker";
-import { getSafeIdFromId } from "~/server/utils/getId";
-import { getFilePermForUser } from "~/server/utils/getFilePermForUser";
+import { useRedis } from "~/utils/server/useRedis";
+import { getUser } from "~/utils/server/getUser";
+import { wrapHandler } from "~/utils/server/wrapHandler";
+import { useDocker } from "~/utils/server/useDocker";
+import { getSafeIdFromId } from "~/utils/server/getId";
+import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {

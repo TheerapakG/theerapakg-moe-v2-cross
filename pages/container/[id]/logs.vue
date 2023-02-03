@@ -10,21 +10,27 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const { data: logs } = await useApiFetch(
-  `/api/container/${route.params.id}/logs`
-);
 
-const utf8Logs = asyncComputed(async () => {
-  const logPromises = logs?.value?.map(async ({ type, msg }) => {
-    return {
-      type,
-      msg: new TextDecoder().decode(
-        await (
-          await fetch(`data:application/octet-stream;base64,${msg}`)
-        ).arrayBuffer()
-      ),
-    };
-  });
-  return logPromises ? await Promise.all(logPromises) : undefined;
+const utf8Logs = ref<{ type: "stdout" | "stderr"; msg: string }[]>([]);
+
+onMounted(async () => {
+  const { $wsClient } = useNuxtApp();
+  await $wsClient.container.logs.subscribe(
+    {
+      id: route.params.id as string,
+    },
+    {
+      onData: async ({ type, msg }) => {
+        utf8Logs.value.push({
+          type,
+          msg: new TextDecoder().decode(
+            await (
+              await fetch(`data:application/octet-stream;base64,${msg}`)
+            ).arrayBuffer()
+          ),
+        });
+      },
+    }
+  );
 });
 </script>
