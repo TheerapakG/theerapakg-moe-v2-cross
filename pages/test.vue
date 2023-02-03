@@ -45,12 +45,6 @@ const spawnToast = () =>
   });
 
 onMounted(async () => {
-  const { $wsClient } = useNuxtApp();
-  const wsTest = await $wsClient.container.logs.query({
-    session: useCookie("session_id").value,
-    id: "test",
-  });
-
   tauri.value = isTauri();
 
   const MonacoEditor = resolveComponent("MonacoEditor");
