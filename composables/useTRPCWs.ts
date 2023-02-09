@@ -103,7 +103,7 @@ export const useTRPCWs = () => {
           client: createWSClient({
             url: `${
               config?.public?.wsHost === ""
-                ? "ws://localhost:3001"
+                ? "ws://localhost:2096"
                 : config?.public?.wsHost
             }`,
           }),

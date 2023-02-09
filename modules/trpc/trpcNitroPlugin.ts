@@ -20,7 +20,7 @@ export default defineNitroPlugin(async () => {
   });
 
   const handler = applyWSSHandler({ wss, router: wsRouter, createContext });
-  server.listen(3001);
+  server.listen(2096);
   handler.broadcastReconnectNotification();
 
   let addr = wss.address();
