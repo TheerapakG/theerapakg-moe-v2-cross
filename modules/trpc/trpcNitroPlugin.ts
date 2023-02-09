@@ -22,7 +22,12 @@ export default defineNitroPlugin(async () => {
   const handler = applyWSSHandler({ wss, router: wsRouter, createContext });
   handler.broadcastReconnectNotification();
 
-  logger.success(
-    `WebSocket server listening on ws${ssl ? "s" : ""}://localhost:3001`
-  );
+  let addr = wss.address();
+  if (typeof addr != "string") {
+    addr = `${addr.address}:${addr.port}`;
+  }
+
+  // TODO: check if prod
+  console.log(`WebSocket server listening on ${addr}`);
+  logger.success(`WebSocket server listening on ${addr}`);
 });
