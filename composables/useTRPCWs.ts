@@ -90,25 +90,26 @@ const createTRPCNuxtClient = <TRouter extends AnyRouter>(
 
 // END: trpc-nuxt/client
 
-export default defineNuxtPlugin(() => {
+let wsClient: ReturnType<typeof createTRPCNuxtClient<WsRouter>> | undefined =
+  undefined;
+
+export const useTRPCWs = () => {
   const config = useRuntimeConfig();
 
-  const wsClient = createTRPCNuxtClient<WsRouter>({
-    links: [
-      wsLink({
-        client: createWSClient({
-          url: `${
-            config?.public?.wsHost === ""
-              ? "ws://localhost:3001"
-              : config?.public?.wsHost
-          }/ws/trpc`,
+  if (!wsClient) {
+    wsClient = createTRPCNuxtClient<WsRouter>({
+      links: [
+        wsLink({
+          client: createWSClient({
+            url: `${
+              config?.public?.wsHost === ""
+                ? "ws://localhost:3001"
+                : config?.public?.wsHost
+            }/ws/trpc`,
+          }),
         }),
-      }),
-    ],
-  });
-  return {
-    provide: {
-      wsClient,
-    },
-  };
-});
+      ],
+    });
+  }
+  return wsClient;
+};

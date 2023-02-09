@@ -6,6 +6,13 @@ import { parse } from "cookie-es";
 import { useRedis } from "../../../utils/server/useRedis";
 import { useDocker } from "../../../utils/server/useDocker";
 import { getUserBySession } from "../../../utils/server/getUser";
+import { IncomingMessage } from "http";
+
+type ContainerLog = {
+  type: "stdout" | "stderr";
+  time: string;
+  msg: string;
+};
 
 export const containerRouter = router({
   logs: publicProcedure
@@ -33,30 +40,37 @@ export const containerRouter = router({
 
       if (!dockerId) throw { statusMessage: "no specified container" };
 
-      const logStream = await useDocker().getContainer(dockerId).logs({
+      const logStream = (await useDocker().getContainer(dockerId).logs({
         follow: true,
         stdout: true,
         stderr: true,
         until: Date.now(),
         timestamps: true,
-      });
+      })) as IncomingMessage;
 
-      return observable<{ type: "stdout" | "stderr"; msg: string }>((emit) => {
+      return observable<ContainerLog>((emit) => {
         const stdoutStream = new Stream.PassThrough();
         const stderrStream = new Stream.PassThrough();
 
-        stdoutStream.on("data", (data) => {
-          emit.next({ type: "stdout", msg: data.toString("base64") });
+        stdoutStream.on("data", (data: Buffer) => {
+          const time = data.subarray(0, 30).toString();
+          const msg = data.subarray(31).toString("base64");
+          emit.next({ type: "stdout", time, msg });
         });
-        stderrStream.on("data", (data) =>
-          emit.next({ type: "stderr", msg: data.toString("base64") })
-        );
+        stderrStream.on("data", (data: Buffer) => {
+          const time = data.subarray(0, 30).toString();
+          const msg = data.subarray(31).toString("base64");
+          emit.next({ type: "stderr", time, msg });
+        });
+        logStream.on("end", () => {
+          emit.complete();
+        });
 
         useDocker().modem.demuxStream(logStream, stdoutStream, stderrStream);
         logStream.resume();
         // unsubscribe function when client disconnects or stops subscribing
         return () => {
-          return undefined;
+          logStream.destroy();
         };
       });
     }),

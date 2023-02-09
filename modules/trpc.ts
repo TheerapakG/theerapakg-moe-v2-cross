@@ -11,13 +11,6 @@ export default defineNuxtModule({
   async setup(_options, nuxt) {
     nuxt.options.nitro = defu(
       {
-        alias: {
-          "#wss": path.resolve(
-            nuxt.options.dev
-              ? "modules/trpc/wsdevserver"
-              : "modules/trpc/wsserver"
-          ),
-        },
         plugins: [path.resolve("./modules/trpc/trpcNitroPlugin")],
       },
       nuxt.options.nitro
