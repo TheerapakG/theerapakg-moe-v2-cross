@@ -105,7 +105,7 @@ export const useTRPCWs = () => {
               config?.public?.wsHost === ""
                 ? "ws://localhost:3001"
                 : config?.public?.wsHost
-            }/ws/trpc`,
+            }`,
           }),
         }),
       ],
