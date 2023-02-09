@@ -7,18 +7,16 @@ import { logger } from "@nuxt/kit";
 
 export default defineNitroPlugin(async () => {
   const ssl = process.env.NITRO_SSL_KEY && process.env.NITRO_SSL_CERT;
-  const server = ssl
-    ? {
-        server: https.createServer({
-          key: process.env.NITRO_SSL_KEY,
-          cert: process.env.NITRO_SSL_CERT,
-        }),
-      }
-    : undefined;
+  const server = https.createServer({
+    ...(ssl && {
+      key: process.env.NITRO_SSL_KEY,
+      cert: process.env.NITRO_SSL_CERT,
+    }),
+  });
+  server.listen(3001);
 
   const wss = new WebSocketServer({
-    port: 3001,
-    ...server,
+    server,
   });
 
   const handler = applyWSSHandler({ wss, router: wsRouter, createContext });
