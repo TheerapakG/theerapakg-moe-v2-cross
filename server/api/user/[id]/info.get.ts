@@ -4,7 +4,7 @@ import { wrapHandler } from "~/utils/server/wrapHandler";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const id = getSafeIdFromId(event.context.params.id as string);
+    const id = getSafeIdFromId(event.context.params?.id);
 
     return {
       name: await useRedis().hget(`user:id:${id}`, "name"),

@@ -1,69 +1,31 @@
-// import { NitroFetchRequest } from "nitropack";
 import { NitroFetchRequest } from "nitropack";
-import { FetchContext, FetchOptions } from "ohmyfetch";
-import { Ref } from "vue";
+import { FetchOptions, FetchRequest } from "ofetch";
 
-const tryHandleCommonResponseError = async (ctx: FetchContext) => {
-  if (!ctx.response?.ok) {
-    if (ctx.response?.statusText === "session expired") {
-      const userStore = useUserStore();
-      await userStore.refreshCurrent();
+interface ResponseMap {
+  blob: Blob;
+  text: string;
+  arrayBuffer: ArrayBuffer;
+  stream: ReadableStream<Uint8Array>;
+}
+type ResponseType = keyof ResponseMap | "json";
 
-      await navigateTo("/");
-
-      const { ExclamationCircleIcon } = await import(
-        "@heroicons/vue/24/outline"
-      );
-      const toastStore = useToastStore("layout");
-      toastStore.spawn({
-        title: "Session Expired",
-        description: "Re-login required",
-        icon: h(ExclamationCircleIcon),
-        actions: {
-          login: {
-            title: "go to login",
-            action: () => navigateTo("/login"),
-          },
-        },
-      });
-    }
-  }
-};
-
-export const $apiFetch = async <
-  T = unknown,
-  R extends NitroFetchRequest = NitroFetchRequest
->(
-  request: R,
-  opts?: FetchOptions
+export const $apiFetch = async <T = unknown, R extends ResponseType = "json">(
+  request: FetchRequest,
+  options?: FetchOptions<R>
 ) => {
-  const config = useRuntimeConfig();
-  return await $fetch<T, R>(request, {
-    ...{
-      headers: useRequestHeaders(["cookie"]) as HeadersInit,
-      baseURL: config.public?.apiBaseURL ?? "/",
-      onResponseError: tryHandleCommonResponseError,
-    },
-    ...opts,
-  });
+  const { $apiFetch } = useNuxtApp();
+  return await $apiFetch<T, R>(request, options);
 };
 
 export const $apiRawFetch = async <
   T = unknown,
-  R extends NitroFetchRequest = NitroFetchRequest
+  R extends ResponseType = "json"
 >(
-  request: R,
-  opts?: FetchOptions
+  request: FetchRequest,
+  options?: FetchOptions<R>
 ) => {
-  const config = useRuntimeConfig();
-  return await $fetch.raw<T, R>(request, {
-    ...{
-      headers: useRequestHeaders(["cookie"]) as HeadersInit,
-      baseURL: config.public?.apiBaseURL ?? "/",
-      onResponseError: tryHandleCommonResponseError,
-    },
-    ...opts,
-  });
+  const { $apiFetch } = useNuxtApp();
+  return await $apiFetch.raw<T, R>(request, options);
 };
 
 export const useApiFetch = async <
@@ -77,14 +39,6 @@ export const useApiFetch = async <
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts?: OptsT
 ) => {
-  const config = useRuntimeConfig();
-
-  return await useFetch<ResT, ErrorT, ReqT>(request, {
-    ...{
-      headers: useRequestHeaders(["cookie"]) as HeadersInit,
-      baseURL: config.public?.apiBaseURL ?? "/",
-      onResponseError: tryHandleCommonResponseError,
-    },
-    ...opts,
-  });
+  const { $useApiFetch } = useNuxtApp();
+  return await $useApiFetch<ResT, ErrorT, ReqT>(request, opts);
 };

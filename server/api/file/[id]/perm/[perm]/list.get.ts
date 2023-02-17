@@ -11,8 +11,8 @@ export default defineEventHandler(
     const query = getQuery(event);
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params.id as string);
-    const perm = getSafeIdFromId(event.context.params.perm as string);
+    const id = getSafeIdFromId(event.context.params?.id);
+    const perm = getSafeIdFromId(event.context.params?.perm);
 
     const { view } = await getFilePermForUser(`file:${id}`, user);
     if (!view) throw createError({ statusMessage: "no permission" });

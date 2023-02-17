@@ -13,7 +13,7 @@ export default defineEventHandler(
     )
       throw createError({ statusMessage: "no permission" });
 
-    const id = getSafeIdFromId(event.context.params.id as string);
+    const id = getSafeIdFromId(event.context.params?.id);
     const containerId = `container:${id}` as const;
     const dockerId = await useRedis().hget(containerId, "dockerId");
 

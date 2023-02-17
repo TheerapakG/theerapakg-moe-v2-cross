@@ -5,9 +5,15 @@ import { ShDocument, useMeili } from "~/utils/server/useMeili";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
+    if (!event.context.params) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "invalid params",
+      });
+    }
     if (
-      (event.context.params.name as string).includes(":") ||
-      (event.context.params.newname as string).includes(":")
+      event.context.params.name.includes(":") ||
+      event.context.params.newname.includes(":")
     ) {
       throw createError({
         statusCode: 500,

@@ -8,9 +8,9 @@ export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params.id as string);
-    const perm = getSafeIdFromId(event.context.params.perm as string);
-    const targetId = getSafeIdFromId(event.context.params.user as string);
+    const id = getSafeIdFromId(event.context.params?.id);
+    const perm = getSafeIdFromId(event.context.params?.perm);
+    const targetId = getSafeIdFromId(event.context.params?.user);
 
     const { edit } = await getFilePermForUser(`file:${id}`, user);
     if (!edit) throw createError({ statusMessage: "no permission" });

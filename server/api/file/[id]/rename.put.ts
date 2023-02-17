@@ -12,7 +12,7 @@ export default defineEventHandler(
     const query = getQuery(event);
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params.id as string);
+    const id = getSafeIdFromId(event.context.params?.id);
     const name = decodeURIComponent(query.name as string);
     if (!name)
       throw createError({

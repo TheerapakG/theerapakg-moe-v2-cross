@@ -11,7 +11,7 @@ export default defineEventHandler(
     const query = getQuery(event);
     const user = await getUser(event);
 
-    const target = getSafeIdFromId(event.context.params.user);
+    const target = getSafeIdFromId(event.context.params?.user);
     if (
       user !== target &&
       (await useRedis().sismember(`perms:${user}`, "perms:file:list")) <= 0

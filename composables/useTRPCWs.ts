@@ -67,7 +67,7 @@ const createNuxtProxyDecoration = <TRouter extends AnyRouter>(
     } // PATCH BEGIN
     else if (lastArg == "subscribe") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (client as any)[path][lastArg](input, otherOptions);
+      return (client as any)[path].subscribe(input, otherOptions);
     } // PATCH END
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,7 +81,8 @@ const createTRPCNuxtClient = <TRouter extends AnyRouter>(
   const client = createTRPCProxyClient<TRouter>(opts);
 
   const decoratedClient = createFlatProxy((key) => {
-    return createNuxtProxyDecoration(key, client);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return createNuxtProxyDecoration(key, client as any);
     // PATCH BEGIN
   }) as ReturnType<typeof _createTRPCNuxtClient<TRouter>>; //PATCH END
 
