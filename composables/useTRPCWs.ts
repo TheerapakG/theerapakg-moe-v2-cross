@@ -102,9 +102,13 @@ export const useTRPCWs = () => {
         wsLink({
           client: createWSClient({
             url: `${
-              config?.public?.wsHost === ""
-                ? "ws://localhost:2096"
-                : config?.public?.wsHost
+              config.public.wsHost === ""
+                ? `ws${window.location.protocol === "https" ? "s" : ""}://${
+                    window.location.hostname
+                  }:${
+                    config.public.wsPort === "" ? 2096 : config.public.wsPort
+                  }`
+                : config.public.wsHost
             }`,
           }),
         }),

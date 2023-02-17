@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       wsHost: process.env.NUXT_PUBLIC_WS_HOST ?? "",
+      wsPort: process.env.NUXT_PUBLIC_WS_PORT ?? "",
       apiBaseURL: process.env.NUXT_PUBLIC_API_BASE_URL ?? "",
     },
     downloadPath: process.env.NUXT_DOWNLOAD_PATH ?? "",
