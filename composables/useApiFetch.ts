@@ -1,4 +1,4 @@
-import { NitroFetchRequest } from "nitropack";
+import { NitroFetchOptions, NitroFetchRequest } from "nitropack";
 import { FetchOptions, FetchRequest } from "ofetch";
 
 interface ResponseMap {
@@ -9,23 +9,28 @@ interface ResponseMap {
 }
 type ResponseType = keyof ResponseMap | "json";
 
-export const $apiFetch = async <T = unknown, R extends ResponseType = "json">(
-  request: FetchRequest,
-  options?: FetchOptions<R>
+export const $apiFetch = async <
+  T = unknown,
+  R extends NitroFetchRequest = NitroFetchRequest,
+  O extends NitroFetchOptions<R> = NitroFetchOptions<R>
+>(
+  request: R,
+  options?: O
 ) => {
   const { $apiFetch } = useNuxtApp();
-  return await $apiFetch<T, R>(request, options);
+  return await $apiFetch<T, R, O>(request, options);
 };
 
 export const $apiRawFetch = async <
   T = unknown,
-  R extends ResponseType = "json"
+  R extends NitroFetchRequest = NitroFetchRequest,
+  O extends NitroFetchOptions<R> = NitroFetchOptions<R>
 >(
-  request: FetchRequest,
-  options?: FetchOptions<R>
+  request: R,
+  options?: O
 ) => {
   const { $apiFetch } = useNuxtApp();
-  return await $apiFetch.raw<T, R>(request, options);
+  return await $apiFetch.raw<T, R, O>(request, options);
 };
 
 export const useApiFetch = async <

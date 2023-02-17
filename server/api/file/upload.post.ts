@@ -32,7 +32,16 @@ export default defineEventHandler(
       });
 
     await fs.promises.mkdir(base, { recursive: true });
-    await fs.promises.writeFile(dir, (await fetch(body.content)).body, {
+
+    const fileBody = (await fetch(body.content)).body;
+
+    if (fileBody === null)
+      throw createError({
+        statusCode: 500,
+        statusMessage: "invalid file body",
+      });
+
+    await fs.promises.writeFile(dir, fileBody, {
       flag: "wx",
     });
     const id = crypto.randomUUID();
