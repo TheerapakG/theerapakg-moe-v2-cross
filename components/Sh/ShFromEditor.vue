@@ -19,7 +19,7 @@ const toastStore = useToastStore("layout");
 
 const rename = async (name: string) => {
   try {
-    await $apiFetch(`/api/sh/${props.from}/rename/${name}`, {
+    await $apiFetch(`/api/sh/name/${props.from}/rename/${name}`, {
       method: "POST",
     });
   } catch {

@@ -128,7 +128,7 @@ const newSh = ref("");
 const newTarget = ref("");
 
 const addSh = async () => {
-  await $apiFetch(`/api/sh/${newSh.value}`, {
+  await $apiFetch(`/api/sh/name/${newSh.value}`, {
     method: "PUT",
     params: {
       target: encodeURIComponent(newTarget.value),
@@ -138,7 +138,7 @@ const addSh = async () => {
 };
 
 const removeSh = async (sh: string) => {
-  await $apiFetch(`/api/sh/${sh}`, {
+  await $apiFetch(`/api/sh/name/${sh}`, {
     method: "DELETE",
   });
   await refresh();

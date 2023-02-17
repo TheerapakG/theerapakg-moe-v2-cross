@@ -1,13 +1,4 @@
 import { NitroFetchOptions, NitroFetchRequest } from "nitropack";
-import { FetchOptions, FetchRequest } from "ofetch";
-
-interface ResponseMap {
-  blob: Blob;
-  text: string;
-  arrayBuffer: ArrayBuffer;
-  stream: ReadableStream<Uint8Array>;
-}
-type ResponseType = keyof ResponseMap | "json";
 
 export const $apiFetch = async <
   T = unknown,

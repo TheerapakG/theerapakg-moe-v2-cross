@@ -153,7 +153,7 @@ const { pageCount } = useOffsetPagination({
   pageSize: size,
 });
 
-const doUser = async (id: string, method: string) => {
+const doUser = async (id: string, method: "PUT" | "DELETE") => {
   await $apiFetch(`/api/file/${props.fileId}/perm/${props.perm}/user/${id}`, {
     method,
   });

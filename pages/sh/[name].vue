@@ -13,7 +13,7 @@ definePageMeta({
 
 const route = useRoute();
 
-const target = await $apiFetch(`/api/sh/${route.params.name}`);
+const target = await $apiFetch(`/api/sh/name/${route.params.name}`);
 const targetValue = "value" in target ? (target.value as string) : null;
 
 onMounted(async () => {

@@ -25,7 +25,7 @@ onMounted(async () => {
   const wsClient = useTRPCWs();
   const subscription = wsClient.container.logs.subscribe(
     {
-      id: route.params?.id,
+      id: route.params?.id as string,
     },
     {
       onData: async ({ type, time, msg }) => {

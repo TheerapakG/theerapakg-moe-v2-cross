@@ -20,7 +20,7 @@ const toastStore = useToastStore("layout");
 
 const changeTarget = async (target: string) => {
   try {
-    await $apiFetch(`/api/sh/${props.from}`, {
+    await $apiFetch(`/api/sh/name/${props.from}`, {
       method: "PUT",
       params: {
         target: encodeURIComponent(target),
