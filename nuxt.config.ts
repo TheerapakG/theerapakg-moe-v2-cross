@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   },
   vite: {
     ssr: {
-      noExternal: ["@heroicons/vue", "monaco-editor"],
+      noExternal: ["monaco-editor"],
     },
   },
   experimental: {
