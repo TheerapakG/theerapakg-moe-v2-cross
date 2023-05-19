@@ -45,6 +45,12 @@ export default defineNuxtConfig({
     },
   },
 
+  typescript: {
+    tsConfig: {
+      exclude: ["../src-tauri/**/*"],
+    },
+  },
+
   vite: {
     ssr: {
       noExternal: ["monaco-editor"],

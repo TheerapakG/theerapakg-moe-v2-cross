@@ -43,7 +43,7 @@ onMounted(async () => {
           requireInteraction: true,
         });
 
-        onClose.on(() => toastStore.kill(id));
+        onClose(() => toastStore.kill(id));
         toast.onKilled.on(close);
 
         show();
