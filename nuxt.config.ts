@@ -7,15 +7,16 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     // "floating-vue/nuxt",
     "nuxt-lodash",
-    "./modules/routeLogging",
-    "./modules/trpc",
   ],
+
   build: {
     transpile: ["trpc-nuxt"],
   },
+
   app: {
     baseURL: "/",
   },
+
   runtimeConfig: {
     public: {
       wsHost: process.env.NUXT_PUBLIC_WS_HOST ?? "",
@@ -29,6 +30,7 @@ export default defineNuxtConfig({
     meiliSearchKey: process.env.NUXT_MEILI_SEARCH_KEY ?? "",
     meiliApiKey: process.env.NUXT_MEILI_API_KEY ?? "",
   },
+
   nitro: {
     storage: {
       redis: {
@@ -42,23 +44,35 @@ export default defineNuxtConfig({
       },
     },
   },
+
   vite: {
     ssr: {
       noExternal: ["monaco-editor"],
     },
+    optimizeDeps: {
+      exclude: ["docker-modem"],
+    },
   },
+
   experimental: {
     // externalVue: true,
   },
+
   imports: {
     dirs: ["store", "trpc"],
   },
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   colorMode: {
     classSuffix: "",
   },
+
   lodash: {
     exclude: ["head", "uniqueId"],
+  },
+
+  devtools: {
+    enabled: true,
   },
 });

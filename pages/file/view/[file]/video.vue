@@ -9,4 +9,17 @@
 
 <script setup lang="ts">
 const route = useRoute();
+
+const { data: fileInfo } = await useApiFetch(
+  `/api/file/${route.params.file}/info`
+);
+
+const url = useRequestURL();
+
+useSeoMeta({
+  ogTitle: fileInfo.value?.name,
+  ogType: "video.other",
+  ogUrl: url.origin + url.pathname,
+  ogVideo: url.origin + fileInfo.value?.url,
+});
 </script>

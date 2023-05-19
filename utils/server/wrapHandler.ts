@@ -2,7 +2,7 @@ import { H3Event, isError } from "h3";
 
 export const wrapHandler = <ResT>(
   handler: (event: H3Event) => Promise<ResT>
-) => {
+): ((event: H3Event) => Promise<ResT>) => {
   return async (event: H3Event) => {
     try {
       const ret = await handler(event);

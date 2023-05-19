@@ -40,7 +40,7 @@
       <div
         class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg bg-gray-300 p-4 dark:bg-gray-600"
       >
-        <NuxtPage class="w-full flex-grow" />
+        <NuxtPage class="w-full flex-grow" :file-info="fileInfo" />
       </div>
     </div>
   </div>

@@ -17,6 +17,7 @@
 
 <script setup lang="tsx">
 import { PlayIcon } from "@heroicons/vue/24/outline";
+import { NuxtLink } from "#components";
 
 interface Props {
   fileId: string;
@@ -58,7 +59,6 @@ const run = async () => {
       }
     );
     const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    const { NuxtLink } = await import("#components");
     toastStore.spawn({
       title: "Started running",
       description: (
