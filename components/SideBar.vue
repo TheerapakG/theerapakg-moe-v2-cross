@@ -7,7 +7,7 @@
       ></div>
     </Transition>
     <button
-      class="icon-button pointer-events-auto absolute top-8 left-8"
+      class="icon-button pointer-events-auto absolute left-8 top-8"
       :title="open ? 'close sidebar' : 'open sidebar'"
       @click="toggle"
     >

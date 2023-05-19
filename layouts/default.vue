@@ -8,7 +8,7 @@
       </div>
     </div>
     <div
-      class="pointer-events-none absolute top-24 bottom-8 flex w-full flex-col place-items-center content-center justify-end md:top-0 md:bottom-0 md:right-8 md:w-auto md:justify-start"
+      class="pointer-events-none absolute bottom-8 top-24 flex w-full flex-col place-items-center content-center justify-end md:bottom-0 md:right-8 md:top-0 md:w-auto md:justify-start"
     >
       <ToastOverlay class="h-full w-80" toast-store-id="layout" />
     </div>
@@ -23,7 +23,7 @@
         @click="menu?.toggle"
       />
     </Transition>
-    <nav class="pointer-events-none absolute top-0 left-0 h-full w-64">
+    <nav class="pointer-events-none absolute left-0 top-0 h-full w-64">
       <SideBar ref="menu">
         <template #content>
           <div

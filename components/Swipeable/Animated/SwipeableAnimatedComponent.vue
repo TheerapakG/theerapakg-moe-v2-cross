@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { SwipeDirection } from "@vueuse/core";
+import { UseSwipeDirection } from "@vueuse/core";
 
 interface Props {
   threshold?: number;
@@ -29,8 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
 interface Emits {
   (event: "swipe-start", e: PointerEvent): void;
   (event: "swipe", e: PointerEvent): void;
-  (event: "swipe-success", e: PointerEvent, direction: SwipeDirection): void;
-  (event: "swipe-fail", e: PointerEvent, direction: SwipeDirection): void;
+  (event: "swipe-success", e: PointerEvent, direction: UseSwipeDirection): void;
+  (event: "swipe-fail", e: PointerEvent, direction: UseSwipeDirection): void;
 }
 
 const emit = defineEmits<Emits>();
@@ -58,7 +58,7 @@ const { distanceX, isSwiping } = usePointerSwipe(realElement, {
     calculateStyle();
     emit("swipe", e);
   },
-  onSwipeEnd(e: PointerEvent, direction: SwipeDirection) {
+  onSwipeEnd(e: PointerEvent, direction: UseSwipeDirection) {
     if (
       realElement.value?.clientWidth &&
       (Math.abs(distanceX.value) / realElement.value?.clientWidth) * 100 >

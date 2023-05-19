@@ -81,7 +81,7 @@
         >
           <div
             v-if="toast.expire"
-            class="linear absolute left-0 bottom-0 h-full bg-black bg-opacity-25 transition-all duration-100 dark:bg-white dark:bg-opacity-25 md:h-1"
+            class="linear absolute bottom-0 left-0 h-full bg-black bg-opacity-25 transition-all duration-100 dark:bg-white dark:bg-opacity-25 md:h-1"
             :style="{
               width: `${
                 ((toast.expire - timestamp) / (toast.expire - toast.spawn)) *
