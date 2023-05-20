@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+type Props = {
   containerId: string;
-}
+};
 
 const props = defineProps<Props>();
 

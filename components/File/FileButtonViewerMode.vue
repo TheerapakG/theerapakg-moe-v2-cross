@@ -42,11 +42,11 @@ import { TypedInternalResponse } from "nitropack";
 import { storeToRefs } from "pinia";
 import MimeType from "whatwg-mimetype";
 
-interface Props {
+type Props = {
   fileId: string;
   mime: string;
   perms: TypedInternalResponse<`/api/file/${string}/info`>["perms"]["user"];
-}
+};
 
 const props = defineProps<Props>();
 

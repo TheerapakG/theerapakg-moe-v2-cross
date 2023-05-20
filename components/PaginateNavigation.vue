@@ -71,19 +71,19 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+type Props = {
   modelValue: number;
   pageCount: number;
-}
+};
 
 const props = defineProps<Props>();
 
 const page = computed(() => props.modelValue);
 const pageCount = computed(() => props.pageCount);
 
-interface Emits {
-  (event: "update:modelValue", value: number): void;
-}
+type Emits = {
+  "update:modelValue": [value: number];
+};
 
 const emits = defineEmits<Emits>();
 </script>

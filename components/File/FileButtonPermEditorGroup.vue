@@ -18,10 +18,10 @@
 <script setup lang="ts">
 import { TypedInternalResponse } from "nitropack";
 
-interface Props {
+type Props = {
   fileId: string;
   userCount: TypedInternalResponse<`/api/file/${string}/info`>["perms"]["count"];
-}
+};
 
 defineProps<Props>();
 </script>

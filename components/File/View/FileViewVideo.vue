@@ -72,9 +72,9 @@ import {
   SpeakerWaveIcon,
 } from "@heroicons/vue/24/outline";
 
-interface Props {
+type Props = {
   fileId: string;
-}
+};
 
 const props = defineProps<Props>();
 

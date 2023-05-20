@@ -98,10 +98,10 @@
 <script setup lang="ts">
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 
-interface Props {
+type Props = {
   toastStoreId: string;
   toastId: string;
-}
+};
 
 const props = defineProps<Props>();
 

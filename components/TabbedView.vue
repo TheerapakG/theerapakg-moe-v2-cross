@@ -78,13 +78,13 @@ interface View {
   closable?: boolean;
 }
 
-interface Props {
+type Props = {
   views: { [id: string]: View };
-}
+};
 
-interface Emits {
-  (event: "removeView", id: string): void;
-}
+type Emits = {
+  removeView: [id: string];
+};
 
 const emit = defineEmits<Emits>();
 

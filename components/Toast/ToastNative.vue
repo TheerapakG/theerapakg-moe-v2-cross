@@ -7,9 +7,9 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-interface Props {
+type Props = {
   toastStoreId: string;
-}
+};
 
 const props = defineProps<Props>();
 const { toastStoreId } = toRefs(props);

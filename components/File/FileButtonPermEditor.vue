@@ -71,11 +71,11 @@ import {
 import { storeToRefs } from "pinia";
 import { User, useUserStore } from "~/store/user";
 
-interface Props {
+type Props = {
   fileId: string;
   perm: string;
   userCount: number;
-}
+};
 
 const props = defineProps<Props>();
 

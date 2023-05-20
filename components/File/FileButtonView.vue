@@ -15,10 +15,10 @@
 <script setup lang="ts">
 import MimeType from "whatwg-mimetype";
 
-interface Props {
+type Props = {
   fileId: string;
   mime: string;
-}
+};
 
 const props = defineProps<Props>();
 

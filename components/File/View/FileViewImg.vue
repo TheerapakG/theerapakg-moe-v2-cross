@@ -50,9 +50,9 @@ import {
 } from "@heroicons/vue/24/outline";
 import { Handler, addV } from "@vueuse/gesture";
 
-interface Props {
+type Props = {
   fileId: string;
-}
+};
 
 defineProps<Props>();
 

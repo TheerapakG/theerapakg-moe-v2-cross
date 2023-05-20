@@ -12,17 +12,17 @@
 </template>
 
 <script setup lang="tsx">
-interface Props {
+type Props = {
   fileId: string;
   name: string;
   download?: boolean;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), { download: true });
 
-interface Emits {
-  (event: "refresh"): void;
-}
+type Emits = {
+  refresh: [];
+};
 
 const emit = defineEmits<Emits>();
 

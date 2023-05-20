@@ -24,9 +24,9 @@
 <script setup lang="ts">
 import { WatchStopHandle } from "vue";
 
-interface Emits {
-  (event: "swiped"): void;
-}
+type Emits = {
+  swiped: [];
+};
 
 const emit = defineEmits<Emits>();
 

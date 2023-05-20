@@ -66,7 +66,7 @@ import { DocumentIcon } from "@heroicons/vue/24/outline";
 import _ from "lodash";
 import { Ref } from "vue";
 
-interface Props {
+type Props = {
   checkDraggingData?: (
     data:
       | (
@@ -85,16 +85,16 @@ interface Props {
   ) => boolean;
   file?: boolean;
   effect?: "none" | "copy" | "link" | "move";
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
   checkDraggingData: () => true,
   file: true,
   effect: undefined,
 });
-interface Emits {
-  (
-    event: "dropped-data",
+
+type Emits = {
+  "dropped-data": [
     payload:
       | (
           | {
@@ -109,8 +109,8 @@ interface Emits {
             }
         )[]
       | undefined
-  ): true;
-}
+  ];
+};
 
 const emit = defineEmits<Emits>();
 

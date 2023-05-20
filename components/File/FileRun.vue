@@ -19,9 +19,9 @@
 import { PlayIcon } from "@heroicons/vue/24/outline";
 import { NuxtLink } from "#components";
 
-interface Props {
+type Props = {
   fileId: string;
-}
+};
 
 const props = defineProps<Props>();
 

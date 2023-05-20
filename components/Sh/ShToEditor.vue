@@ -3,16 +3,16 @@
 </template>
 
 <script setup lang="tsx">
-interface Props {
+type Props = {
   from: string;
   to: string;
-}
+};
 
 const props = defineProps<Props>();
 
-interface Emits {
-  (event: "refresh"): void;
-}
+type Emits = {
+  refresh: [];
+};
 
 const emit = defineEmits<Emits>();
 

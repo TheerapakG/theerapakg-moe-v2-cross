@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+type Props = {
   fileId: string;
   lang?: string;
   activatePortal?: boolean;
-}
+};
 
 const props = defineProps<Props>();
 

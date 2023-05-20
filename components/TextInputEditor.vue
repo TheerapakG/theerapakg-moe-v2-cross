@@ -42,15 +42,15 @@
 <script setup lang="ts">
 import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 
-interface Props {
+type Props = {
   modelValue: string;
-}
+};
 
 const props = defineProps<Props>();
 
-interface Emits {
-  (event: "update:modelValue", value: string): void;
-}
+type Emits = {
+  "update:modelValue": [value: string];
+};
 
 const emit = defineEmits<Emits>();
 

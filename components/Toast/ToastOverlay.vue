@@ -12,9 +12,9 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+type Props = {
   toastStoreId: string;
-}
+};
 
 const props = defineProps<Props>();
 const { toastStoreId } = toRefs(props);

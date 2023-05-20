@@ -18,20 +18,20 @@
 <script setup lang="ts">
 import { UseSwipeDirection } from "@vueuse/core";
 
-interface Props {
+type Props = {
   threshold?: number;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
   threshold: 50,
 });
 
-interface Emits {
-  (event: "swipe-start", e: PointerEvent): void;
-  (event: "swipe", e: PointerEvent): void;
-  (event: "swipe-success", e: PointerEvent, direction: UseSwipeDirection): void;
-  (event: "swipe-fail", e: PointerEvent, direction: UseSwipeDirection): void;
-}
+type Emits = {
+  "swipe-start": [e: PointerEvent];
+  swipe: [e: PointerEvent];
+  "swipe-success": [e: PointerEvent, direction: UseSwipeDirection];
+  "swipe-fail": [e: PointerEvent, direction: UseSwipeDirection];
+};
 
 const emit = defineEmits<Emits>();
 

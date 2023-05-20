@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import type * as _monaco from "monaco-editor";
 
-interface Props {
+type Props = {
   options?: _monaco.editor.IStandaloneEditorConstructionOptions;
   override?: _monaco.editor.IEditorOverrideServices;
   commands?: {
@@ -13,7 +13,7 @@ interface Props {
     handler: _monaco.editor.ICommandHandler;
     context?: string;
   }[];
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
   options: undefined,

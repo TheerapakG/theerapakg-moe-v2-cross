@@ -69,11 +69,11 @@
 <script setup lang="ts">
 import _ from "lodash";
 
-interface Props {
+type Props = {
   widths: string[];
   bodyCount: number;
   tableHeader?: boolean;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), { tableHeader: true });
 const computedWidths = computed(() => props.widths.join(" "));

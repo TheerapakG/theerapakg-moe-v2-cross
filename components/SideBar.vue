@@ -38,15 +38,15 @@
 import { Ref } from "vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
-interface Emits {
-  (event: "update:modelValue", value: boolean): void;
-}
+type Emits = {
+  "update:modelValue": [value: boolean];
+};
 
 const emit = defineEmits<Emits>();
 
-interface Props {
+type Props = {
   modelValue?: boolean | undefined;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,

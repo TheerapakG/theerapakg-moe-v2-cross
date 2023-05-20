@@ -5,11 +5,11 @@
 <script setup lang="tsx">
 import { cloneVNode, VNode } from "vue";
 
-interface Props {
+type Props = {
   renderNode: VNode;
   renderKey?: string | number | symbol;
   tag?: string;
-}
+};
 
 const props = withDefaults(defineProps<Props>(), { renderKey: "", tag: "" });
 const { renderNode, renderKey, tag } = toRefs(props);

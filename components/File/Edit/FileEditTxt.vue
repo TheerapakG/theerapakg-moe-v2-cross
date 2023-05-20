@@ -47,11 +47,11 @@
 import CloudArrowUpIcon from "@heroicons/vue/24/outline/CloudArrowUpIcon";
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 
-interface Props {
+type Props = {
   fileId: string;
   lang?: string;
   activatePortal?: boolean;
-}
+};
 
 const props = defineProps<Props>();
 

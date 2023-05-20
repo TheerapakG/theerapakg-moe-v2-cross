@@ -25,15 +25,15 @@
 <script setup lang="tsx">
 import { storeToRefs } from "pinia";
 
-interface Props {
+type Props = {
   fileId: string;
-}
+};
 
 const props = defineProps<Props>();
 
-interface Emits {
-  (event: "refresh"): void;
-}
+type Emits = {
+  refresh: [];
+};
 
 const emit = defineEmits<Emits>();
 
