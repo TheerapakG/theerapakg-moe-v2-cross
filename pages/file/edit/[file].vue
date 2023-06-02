@@ -83,7 +83,12 @@
 </template>
 
 <script setup lang="tsx">
-import { EyeIcon, KeyIcon, PencilIcon } from "@heroicons/vue/24/outline";
+import {
+  ArrowDownTrayIcon,
+  EyeIcon,
+  KeyIcon,
+  PencilIcon,
+} from "@heroicons/vue/24/outline";
 import { storeToRefs } from "pinia";
 import { mountedKey } from "./provides";
 

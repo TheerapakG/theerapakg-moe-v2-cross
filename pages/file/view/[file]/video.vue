@@ -8,11 +8,10 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
+import { fileInfoKey } from "../provides";
 
-const { data: fileInfo } = await useApiFetch(
-  `/api/file/${route.params.file}/info`
-);
+const route = useRoute();
+const fileInfo = inject(fileInfoKey, ref(null));
 
 const url = useRequestURL();
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col place-content-center place-items-center">
+  <div class="flex flex-col place-content-center place-items-center gap-y-2">
     <audio ref="audio" />
     <div
       class="flex w-80 flex-grow flex-col place-content-center place-items-center gap-y-2 overflow-auto"
@@ -12,7 +12,7 @@
         :max="duration"
         step="0.01"
       />
-      <div class="flex place-content-center place-items-center gap-x-2">
+      <div class="flex w-80 place-content-center place-items-center gap-x-2">
         <button
           class="button-default flex h-8 w-8 place-content-center place-items-center rounded-full"
           @click="() => (playing ? audio?.pause() : audio?.play())"

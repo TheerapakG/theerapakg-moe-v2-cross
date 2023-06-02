@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
-import { mountedKey } from "./provides";
+import { mountedKey, fileInfoKey } from "./provides";
 
 provide(mountedKey, useMounted());
 
@@ -60,6 +60,8 @@ const {
   data: fileInfo,
   //error: fileInfoError,
 } = await useApiFetch(`/api/file/${route.params.file}/info`);
+
+provide(fileInfoKey, fileInfo);
 
 routeStore.setTitle(
   computed(() => `theerapakg-moe-app: ${fileInfo.value?.name}`)
