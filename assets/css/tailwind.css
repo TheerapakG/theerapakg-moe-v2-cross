@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  transition-duration: 0s;
+  animation-duration: 0s;
+}
+
 body {
   @apply bg-white dark:bg-black
 }
