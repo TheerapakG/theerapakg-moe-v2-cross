@@ -1,31 +1,29 @@
 <template>
-  <div class="flex place-content-center place-items-center">
-    <select v-model="templateSelection" class="input-default">
-      <option
-        v-for="(_, template) in templateSubroutes"
-        :key="template"
-        class="bg-white dark:bg-black"
-      >
-        {{ template }}
-      </option>
-    </select>
-    <button class="icon-button t-transition-default" @click="run">
-      <PlayIcon class="h-6 w-6" />
-    </button>
+  <div class="flex place-content-center place-items-center gap-x-2">
+    <USelectMenu
+      v-model="templateSelection"
+      class="w-48"
+      :options="templateKeys"
+      searchable
+    />
+    <UButton
+      variant="ghost"
+      size="xl"
+      icon="i-heroicons-play"
+      :ui="{ rounded: 'rounded-full' }"
+      @click="run"
+    />
   </div>
 </template>
 
 <script setup lang="tsx">
-import { PlayIcon } from "@heroicons/vue/24/outline";
-import { NuxtLink } from "#components";
-
 type Props = {
   fileId: string;
 };
 
 const props = defineProps<Props>();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const templateSubroutes = {
   "Python 3.11": "python/3.11",
@@ -43,6 +41,8 @@ const templateSubroutes = {
   "g++ 12": "gcc/cpp/12",
 };
 
+const templateKeys = useKeys(templateSubroutes);
+
 const templateSelection = ref<keyof typeof templateSubroutes>();
 const subrouteSelection = computed(() =>
   templateSelection.value
@@ -51,30 +51,35 @@ const subrouteSelection = computed(() =>
 );
 
 const run = async () => {
-  try {
-    const { container } = await $apiFetch(
-      `/api/container/run/file/${props.fileId}/${subrouteSelection.value}`,
-      {
-        method: "PUT",
-      }
-    );
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+  const container = await (async () => {
+    try {
+      const { container } = await $apiFetch(
+        `/api/container/run/file/${props.fileId}/${subrouteSelection.value}`,
+        {
+          method: "PUT",
+        }
+      );
+      return container;
+    } catch {
+      toast.add({
+        title: "Run Error",
+        description: "Cannot run",
+        icon: "i-heroicons-exclaimation-circle",
+        color: "red",
+      });
+      return;
+    }
+  })();
+
+  if (container) {
+    toast.add({
       title: "Started running",
-      description: (
-        <NuxtLink to={`/container/${container}/logs`}>view logs</NuxtLink>
-      ),
-      altDescription: `view logs at /container/${container}/logs`,
-      icon: <ExclamationCircleIcon />,
+      description: "view logs",
+      click: async () => {
+        await navigateTo(`/container/${container}/logs`);
+      },
+      icon: "i-heroicons-exclaimation-circle",
     });
-  } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
-      title: "Run Error",
-      description: "Cannot run",
-      icon: <ExclamationCircleIcon />,
-    });
-    return;
   }
 };
 </script>

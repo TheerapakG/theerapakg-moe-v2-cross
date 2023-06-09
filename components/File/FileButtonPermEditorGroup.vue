@@ -1,5 +1,7 @@
 <template>
-  <div class="flex place-content-center place-items-center gap-2">
+  <div
+    class="inline-flex w-min place-content-center place-items-center gap-x-1"
+  >
     <FileButtonPermEditor
       v-for="(estimatedPermUserCount, perm) in userCount"
       :key="perm"
@@ -9,7 +11,7 @@
       :user-count="estimatedPermUserCount"
     >
       <slot :perm="perm" :perm-user-count="permUserCount">
-        <button>{{ perm }}: {{ permUserCount }} users</button>
+        <UButton :label="`${perm}: ${permUserCount} users`" />
       </slot>
     </FileButtonPermEditor>
   </div>

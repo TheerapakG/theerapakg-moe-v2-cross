@@ -27,10 +27,15 @@ const query = isEmpty(route.query)
       )
       .join("&")}`;
 
-await navigateTo({
-  path: "/ext_redirect",
-  query: {
-    path: encodeURIComponent(`https://github.com/TheerapakG${slug}${query}`),
+await navigateTo(
+  {
+    path: "/ext_redirect",
+    query: {
+      path: encodeURIComponent(`https://github.com/TheerapakG${slug}${query}`),
+    },
   },
-});
+  {
+    replace: true,
+  }
+);
 </script>

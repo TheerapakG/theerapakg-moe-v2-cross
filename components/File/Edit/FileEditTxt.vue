@@ -13,13 +13,14 @@
       />
       <portal v-if="activatePortal" to="file-menu-left">
         <div class="flex place-content-center place-items-center gap-2">
-          <button
-            class="icon-button t-transition-default"
+          <UButton
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-cloud-arrow-up"
             :disabled="!status.has('edited')"
+            :ui="{ rounded: 'rounded-full' }"
             @click="save"
-          >
-            <CloudArrowUpIcon class="h-6 w-6" />
-          </button>
+          />
           <FileRun :file-id="fileId" />
         </div>
       </portal>
@@ -44,7 +45,6 @@
 </template>
 
 <script setup lang="tsx">
-import CloudArrowUpIcon from "@heroicons/vue/24/outline/CloudArrowUpIcon";
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 
 type Props = {
@@ -62,7 +62,7 @@ const data = await $apiFetch<string>(`/api/file/${props.fileId}/download`, {
 const status = ref(new Set<string>());
 
 const importStore = useImportStore();
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const monacoEditor = ref<InstanceType<typeof MonacoEditor> | null>(null);
 const monacoModel = computed(() => monacoEditor.value?.editor?.getModel());
@@ -106,13 +106,11 @@ const save = async () => {
         },
       });
     } catch {
-      const { ExclamationCircleIcon } = await import(
-        "@heroicons/vue/24/outline"
-      );
-      toastStore.spawn({
+      toast.add({
         title: "Save Error",
         description: "Cannot save",
-        icon: <ExclamationCircleIcon />,
+        icon: "i-heroicons-exclaimation-circle",
+        color: "red",
       });
       return;
     }

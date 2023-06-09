@@ -32,15 +32,16 @@
                   v-if="currentViewId === (id as string)"
                   class="absolute -right-2 bottom-0 h-2 w-2 fill-gray-300 dark:fill-gray-600"
                 />
-                <button
+                <UButton
                   v-if="view.closable"
+                  variant="ghost"
+                  size="xs"
+                  :padded="false"
+                  icon="i-heroicons-x-mark"
+                  :ui="{ rounded: 'rounded-full' }"
                   @pointerdown.stop=""
                   @click.stop="emit('removeView', id as string)"
-                >
-                  <XMarkIcon
-                    class="h-4 w-4 rounded-full stroke-black hover:bg-gray-400 dark:stroke-white dark:hover:bg-gray-500"
-                  />
-                </button>
+                />
                 <div class="grow truncate md:w-full md:grow-0">
                   {{ view.name }}
                 </div>
@@ -70,7 +71,6 @@
 
 <script setup lang="ts">
 import { VNode } from "vue";
-import { XMarkIcon } from "@heroicons/vue/24/outline";
 
 interface View {
   name: string;

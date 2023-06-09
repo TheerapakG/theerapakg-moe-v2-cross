@@ -1,48 +1,35 @@
 <template>
   <div class="flex place-content-center place-items-center gap-x-2">
-    <button
-      title="system theme"
-      class="system-btn button-default flex h-12 w-12 place-content-center place-items-center rounded-full"
-      :class="{ activated: colorMode.preference === 'system' }"
-      @click="colorMode.preference = 'system'"
-    >
-      <div class="h-8 w-8">
-        <DevicePhoneMobileIcon />
-      </div>
-    </button>
+    <UButton
+      aria-label="system theme"
+      :disabled="$colorMode.preference === 'system'"
+      :color="$colorMode.preference === 'system' ? 'black' : 'white'"
+      size="xl"
+      icon="i-heroicons-device-phone-mobile"
+      :ui="{ rounded: 'rounded-full' }"
+      @click="$colorMode.preference = 'system'"
+    />
 
-    <button
-      title="light theme"
-      class="light-btn button-default flex h-12 w-12 place-content-center place-items-center rounded-full"
-      :class="{ activated: colorMode.preference === 'light' }"
-      @click="colorMode.preference = 'light'"
-    >
-      <div class="h-8 w-8">
-        <SunIcon />
-      </div>
-    </button>
+    <UButton
+      aria-label="light theme"
+      :disabled="$colorMode.preference === 'light'"
+      :color="$colorMode.preference === 'light' ? 'black' : 'white'"
+      size="xl"
+      icon="i-heroicons-sun"
+      :ui="{ rounded: 'rounded-full' }"
+      @click="$colorMode.preference = 'light'"
+    />
 
-    <button
-      title="dark theme"
-      class="dark-btn button-default flex h-12 w-12 place-content-center place-items-center rounded-full"
-      :class="{ activated: colorMode.preference === 'dark' }"
-      @click="colorMode.preference = 'dark'"
-    >
-      <div class="h-8 w-8">
-        <MoonIcon />
-      </div>
-    </button>
+    <UButton
+      aria-label="dark theme"
+      :disabled="$colorMode.preference === 'dark'"
+      :color="$colorMode.preference === 'dark' ? 'black' : 'white'"
+      size="xl"
+      icon="i-heroicons-moon"
+      :ui="{ rounded: 'rounded-full' }"
+      @click="$colorMode.preference = 'dark'"
+    />
   </div>
 </template>
 
-<script setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {
-  DevicePhoneMobileIcon,
-  SunIcon,
-  MoonIcon,
-} from "@heroicons/vue/24/outline";
-import { useColorMode } from "#imports";
-
-const colorMode = useColorMode();
-</script>
+<script setup lang="ts"></script>

@@ -1,7 +1,8 @@
 import fs from "fs";
-import _ from "lodash";
 import mime from "mime";
+import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
 import path from "path";
+
 import { useRedis } from "~/utils/server/useRedis";
 import { getUser } from "~/utils/server/getUser";
 import { getSafeIdFromIdObject } from "~/utils/server/getId";
@@ -17,7 +18,7 @@ export default defineEventHandler(
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
-      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      ? useMin([parseInt(query.size as string), 50]) ?? 10
       : 10;
     const start = (page - 1) * size;
 
@@ -40,10 +41,10 @@ export default defineEventHandler(
     const [errs, [files, viewPerms, editPerms]] =
       ids.length <= 0
         ? [[], [[], [], []]]
-        : (_.zip(
+        : (useZip(
             ...(await Promise.all([
               (async () =>
-                _.zip(
+                useZip(
                   ...((await useRedis()
                     .multi(ids.map((id) => ["hgetall", `file:${id}`]))
                     .exec()) ?? [])
@@ -53,7 +54,7 @@ export default defineEventHandler(
                 ])(),
 
               (async () =>
-                _.zip(
+                useZip(
                   ...((await useRedis()
                     .multi(
                       ids.map((id) => [
@@ -67,7 +68,7 @@ export default defineEventHandler(
                 ) as [Error[], string[]])(),
 
               (async () =>
-                _.zip(
+                useZip(
                   ...((await useRedis()
                     .multi(
                       ids.map((id) => [
@@ -98,7 +99,7 @@ export default defineEventHandler(
       totalCount: await useRedis().zcount("file:ids", "-inf", "inf"),
       queryCount: queryCount ?? Infinity,
       files: await Promise.all(
-        _.zipWith(
+        useZipWith(
           ids,
           files,
           viewPerms,

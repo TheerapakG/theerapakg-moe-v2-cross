@@ -1,24 +1,39 @@
 <template>
   <div class="pointer-events-none">
     <Transition name="slide-right">
-      <div
-        v-if="open"
-        class="absolute inset-0 bg-gray-300 dark:bg-gray-600"
-      ></div>
+      <div v-if="open" class="absolute inset-0 bg-white dark:bg-black"></div>
     </Transition>
-    <button
-      class="icon-button pointer-events-auto absolute left-8 top-8"
-      :title="open ? 'close sidebar' : 'open sidebar'"
-      @click="toggle"
-    >
+    <div class="pointer-events-auto absolute left-8 top-8 h-8 w-8">
       <Transition
         :name="open ? 'rotate-ccw-out' : 'rotate-cw-out'"
         mode="out-in"
       >
-        <Bars3Icon v-if="!open" class="h-8 w-8 transition duration-300" />
-        <XMarkIcon v-else class="h-8 w-8 transition duration-300" />
+        <UButton
+          v-if="open"
+          aria-label="close sidebar"
+          variant="ghost"
+          :padded="false"
+          icon="i-heroicons-x-mark"
+          :ui="{
+            icon: { size: { [appConfig.ui.button.default.size]: 'h-8 w-8' } },
+          }"
+          @click="toggle"
+        >
+        </UButton>
+        <UButton
+          v-else
+          aria-label="open sidebar"
+          variant="ghost"
+          :padded="false"
+          icon="i-heroicons-bars-3"
+          :ui="{
+            icon: { size: { [appConfig.ui.button.default.size]: 'h-8 w-8' } },
+          }"
+          @click="toggle"
+        >
+        </UButton>
       </Transition>
-    </button>
+    </div>
     <Transition name="slide-right">
       <div
         v-if="open"
@@ -36,7 +51,6 @@
 
 <script setup lang="ts">
 import { Ref } from "vue";
-import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
 type Emits = {
   "update:modelValue": [value: boolean];
@@ -51,6 +65,9 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
 });
+
+const appConfig = useAppConfig();
+
 const { open, toggle } =
   props.modelValue !== undefined
     ? {

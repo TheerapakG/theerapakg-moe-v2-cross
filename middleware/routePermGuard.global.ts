@@ -5,11 +5,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!to.meta.perms) return;
 
-  if (
-    (
-      await Promise.all(to.meta.perms.map((perm) => permStore.usePerm(perm)))
-    ).some((permRef) => !permRef.value)
-  ) {
+  const permRefs = await Promise.all(
+    to.meta.perms.map((perm) => permStore.usePerm(perm))
+  );
+
+  if (permRefs.some((permRef) => !permRef.value)) {
     throw createError({ statusCode: 404, statusMessage: "Page not found" });
   }
 

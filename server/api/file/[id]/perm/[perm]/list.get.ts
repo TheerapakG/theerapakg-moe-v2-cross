@@ -1,4 +1,5 @@
-import _ from "lodash";
+import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
+
 import { useRedis } from "~/utils/server/useRedis";
 import { getUser } from "~/utils/server/getUser";
 import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
@@ -19,7 +20,7 @@ export default defineEventHandler(
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
-      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      ? useMin([parseInt(query.size as string), 50]) ?? 10
       : 10;
     const start = (page - 1) * size;
 
@@ -42,7 +43,7 @@ export default defineEventHandler(
     const [errs2, perms] =
       users.length <= 0
         ? [[], []]
-        : (_.zip(
+        : (useZip(
             ...((await useRedis()
               .multi(
                 users.map((user) => [
@@ -65,7 +66,7 @@ export default defineEventHandler(
         "inf"
       ),
       queryCount: queryCount ?? Infinity,
-      users: _.zipWith(users, perms, (user, perm) => {
+      users: useZipWith(users, perms, (user, perm) => {
         return {
           id: user,
           perm: parseInt(perm) > 0,

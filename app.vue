@@ -19,7 +19,7 @@
       </div>
     </NuxtLayout>
     <div class="pointer-events-none absolute inset-0">
-      <portal-target name="over-app" />
+      <portal-target name="over-layout" />
     </div>
   </div>
 </template>

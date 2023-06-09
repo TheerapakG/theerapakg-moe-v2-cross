@@ -1,13 +1,6 @@
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  modules: [
-    "@nuxtjs/tailwindcss",
-    "@pinia/nuxt",
-    "@nuxtjs/color-mode",
-    "@vueuse/nuxt",
-    // "floating-vue/nuxt",
-    "nuxt-lodash",
-  ],
+  modules: ["@nuxthq/ui", "@pinia/nuxt", "@vueuse/nuxt", "nuxt-lodash"],
 
   build: {
     transpile: ["trpc-nuxt"],
@@ -60,16 +53,10 @@ export default defineNuxtConfig({
     },
   },
 
-  experimental: {
-    // externalVue: true,
-  },
-
   imports: {
     dirs: ["store", "trpc"],
   },
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   colorMode: {
     classSuffix: "",
   },

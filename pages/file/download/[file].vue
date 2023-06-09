@@ -9,15 +9,18 @@
       <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
     </div>
     <div class="flex place-content-center place-items-center gap-2">
-      <button class="button-default h-12 w-32" @click="startDownload">
-        Download
-      </button>
       <FileButtonView
         :file-id="(route.params.file as string)"
         :mime="fileInfo.mime"
       >
-        <button class="button-default h-12 w-32">View Online</button>
+        <UButton size="xl" label="view online" />
       </FileButtonView>
+      <UButton
+        color="black"
+        size="xl"
+        label="download"
+        @click="startDownload"
+      />
     </div>
   </div>
 </template>
@@ -36,7 +39,7 @@ definePageMeta({
 
 const route = useRoute();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const startDownload = () => {
   const { url, name } = fileInfo.value ?? {};
@@ -46,7 +49,7 @@ const startDownload = () => {
   link.setAttribute("download", name);
   link.click();
   link.remove();
-  toastStore.spawn({
+  toast.add({
     title: `Downloading ${name}`,
     description: `size: ${fileInfo.value?.size} bytes`,
   });

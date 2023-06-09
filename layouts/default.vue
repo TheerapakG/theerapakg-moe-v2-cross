@@ -7,53 +7,45 @@
         <slot />
       </div>
     </div>
-    <div
-      class="pointer-events-none absolute bottom-8 top-24 flex w-full flex-col place-items-center content-center justify-end md:bottom-0 md:right-8 md:top-0 md:w-auto md:justify-start"
-    >
-      <ToastOverlay class="h-full w-80" toast-store-id="layout" />
-    </div>
+    <UNotifications />
     <Transition name="fade">
       <LoadingCircleOverlay v-if="routeStore.navigating" />
     </Transition>
     <Transition name="fade">
       <button
         v-if="menu?.open"
-        class="absolute inset-0 bg-black bg-opacity-50"
+        class="absolute inset-0 bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-20"
         aria-hidden="true"
         @click="menu?.toggle"
       />
     </Transition>
-    <nav class="pointer-events-none absolute left-0 top-0 h-full w-64">
-      <SideBar ref="menu">
-        <template #content>
-          <div
-            class="flex flex-col place-content-center place-items-center gap-y-2"
-          >
-            <div
-              v-for="routeInfo in routeInfos"
-              :key="routeInfo.fullPath"
-              class="flex flex-col place-content-center place-items-center"
-            >
-              <NuxtLink :to="routeInfo.fullPath">
-                <button
-                  :title="routeInfo.routeName"
-                  class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-                >
-                  <div>{{ routeInfo.routeName }}</div>
-                </button>
-              </NuxtLink>
-            </div>
-            <ColorModeSelector />
-            <UserDisplay />
-          </div>
-        </template>
-      </SideBar>
-    </nav>
+    <SideBar
+      ref="menu"
+      class="pointer-events-none absolute left-0 top-0 h-full w-64"
+    >
+      <template #content>
+        <div
+          class="flex flex-col place-content-center place-items-center gap-y-2"
+        >
+          <UVerticalNavigation
+            :ui="{
+              wrapper: 'relative w-full',
+              base: 'flex w-full border-l',
+              rounded: '',
+            }"
+            :links="links"
+          />
+          <ColorModeSelector />
+          <UserDisplay />
+        </div>
+      </template>
+    </SideBar>
   </div>
 </template>
 
 <script setup lang="ts">
 import SideBar from "~/components/SideBar.vue";
+import { RouteInfo } from "~/store/route";
 const routeStore = useRouteStore();
 
 useHead({
@@ -66,5 +58,14 @@ const sideBarPaths = ["/", "/github/"];
 
 const routeInfos = computed(() =>
   useMap(sideBarPaths, (path: string) => routeStore.info(path).value)
+);
+
+const links = computed(() =>
+  useMap(routeInfos.value, (path: RouteInfo) => {
+    return {
+      label: path.routeName ?? "<unknown route>",
+      to: path.fullPath,
+    };
+  })
 );
 </script>

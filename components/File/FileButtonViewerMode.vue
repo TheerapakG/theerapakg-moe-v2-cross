@@ -1,68 +1,55 @@
 <template>
-  <VDropdown
-    :distance="8"
-    :boundary="pageContainerDom"
-    placement="bottom"
-    theme="context-menu"
-  >
-    <button
-      class="button-default flex h-8 place-content-center place-items-center p-2"
-    >
-      mode
-    </button>
-
-    <template #popper>
-      <div
-        class="flex flex-col place-content-center place-items-center gap-y-2"
-      >
-        <button
-          class="icon-button t-transition-default grid grid-cols-[1.5rem_4rem] place-content-center place-items-center"
-          :disabled="!perms['view']"
-          @click="viewFile('view')"
-        >
-          <EyeIcon class="h-6 w-6" />
-          <div>view</div>
-        </button>
-        <button
-          class="icon-button t-transition-default grid grid-cols-[1.5rem_4rem] place-content-center place-items-center"
-          :disabled="!perms['edit']"
-          @click="viewFile('edit')"
-        >
-          <PencilIcon class="h-6 w-6" />
-          <div>edit</div>
-        </button>
-      </div>
-    </template>
-  </VDropdown>
+  <UDropdown :items="dropdownItems" :popper="{ placement: 'bottom-start' }">
+    <UButton label="mode" />
+  </UDropdown>
 </template>
 
 <script setup lang="ts">
-import { EyeIcon, PencilIcon } from "@heroicons/vue/24/outline";
-import { TypedInternalResponse } from "nitropack";
-import { storeToRefs } from "pinia";
+import { FetchResult } from "nuxt/app";
 import MimeType from "whatwg-mimetype";
 
 type Props = {
-  fileId: string;
-  mime: string;
-  perms: TypedInternalResponse<`/api/file/${string}/info`>["perms"]["user"];
+  fileInfo:
+    | (FetchResult<`/api/file/${string}/info`, "get"> & { id: string })
+    | null;
 };
 
 const props = defineProps<Props>();
 
-const pageStore = usePageStore();
-
-const { pageContainerDom } = storeToRefs(pageStore);
-
 const viewFile = async (mode: "edit" | "view") => {
+  if (!props.fileInfo) return;
+
+  if (!props.fileInfo.mime) {
+    await navigateTo(`/file/${mode}/mime/text/plain/${props.fileInfo.id}`);
+    return;
+  }
+
   try {
-    const mimeType = new MimeType(props.mime);
+    const mimeType = new MimeType(props.fileInfo.mime);
     await navigateTo({
-      path: `/file/${mode}/mime/${mimeType.type}/${mimeType.subtype}/${props.fileId}`,
+      path: `/file/${mode}/mime/${mimeType.type}/${mimeType.subtype}/${props.fileInfo.id}`,
       query: Object.fromEntries(mimeType.parameters),
     });
+    return;
   } catch {
-    await navigateTo(`/file/${mode}/mime/text/plain/${props.fileId}`);
+    await navigateTo(`/file/${mode}/mime/text/plain/${props.fileInfo.id}`);
   }
 };
+
+const dropdownItems = computed(() => [
+  [
+    {
+      label: "view",
+      icon: "i-heroicons-eye",
+      disabled: !(props.fileInfo?.perms.user.view ?? false),
+      click: async () => await viewFile("view"),
+    },
+    {
+      label: "edit",
+      icon: "i-heroicons-pencil",
+      disabled: !(props.fileInfo?.perms.user.edit ?? false),
+      click: async () => await viewFile("edit"),
+    },
+  ],
+]);
 </script>

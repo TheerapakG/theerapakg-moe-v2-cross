@@ -12,18 +12,14 @@
         <div
           class="absolute right-0 flex place-content-center place-items-center gap-x-2"
         >
-          <NuxtLink :to="`/file/download/${route.params.file}`">
-            <button
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <ArrowDownTrayIcon class="h-6 w-6" />
-            </button>
-          </NuxtLink>
-          <FileButtonViewerMode
-            :file-id="(route.params.file as string)"
-            :mime="fileInfo?.mime"
-            :perms="fileInfo?.perms.user"
+          <UButton
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-arrow-down-tray"
+            :ui="{ rounded: 'rounded-full' }"
+            :to="`/file/download/${route.params.file}`"
           />
+          <FileButtonViewerMode :file-info="fileInfoState" />
         </div>
         <div class="mx-24 flex h-full place-content-center place-items-center">
           <div
@@ -38,19 +34,25 @@
       class="flex w-full flex-grow flex-col place-content-start place-items-center px-8"
     >
       <div
-        class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg bg-gray-300 p-4 dark:bg-gray-600"
+        class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg border-2 border-gray-500 p-4 dark:border-gray-400"
       >
-        <NuxtPage class="w-full flex-grow" :file-info="fileInfo" />
+        <NuxtPage class="w-full flex-grow" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
-import { mountedKey, fileInfoKey } from "./provides";
+import { useMountedState, useFileInfoState } from "./states";
 
-provide(mountedKey, useMounted());
+const mountedState = useMountedState();
+const fileInfoState = useFileInfoState();
+
+const mounted = useMounted();
+watch(mounted, () => {
+  mountedState.value = mounted.value;
+});
+mountedState.value = mounted.value;
 
 const route = useRoute();
 const routeStore = useRouteStore();
@@ -61,7 +63,17 @@ const {
   //error: fileInfoError,
 } = await useApiFetch(`/api/file/${route.params.file}/info`);
 
-provide(fileInfoKey, fileInfo);
+const fileInfoComputed = computed(
+  () =>
+    (fileInfoState.value = fileInfo.value
+      ? { ...fileInfo.value, id: route.params.file as string }
+      : null)
+);
+
+watch(fileInfoComputed, () => {
+  fileInfoState.value = fileInfoComputed.value;
+});
+fileInfoState.value = fileInfoComputed.value;
 
 routeStore.setTitle(
   computed(() => `theerapakg-moe-app: ${fileInfo.value?.name}`)

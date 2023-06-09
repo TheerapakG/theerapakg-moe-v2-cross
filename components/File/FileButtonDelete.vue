@@ -1,30 +1,21 @@
 <template>
   <div class="relative">
-    <VDropdown
-      :distance="8"
-      :boundary="pageContainerDom"
-      placement="bottom"
-      theme="context-menu"
-    >
+    <UPopover>
       <slot />
 
-      <template #popper>
+      <template #panel>
         <div
-          class="flex flex-col place-content-center place-items-center gap-y-4"
+          class="flex flex-col place-content-center place-items-center gap-y-2 p-4"
         >
           <div>confirm</div>
-          <button class="button-default h-12 w-32" @click="deleteFile">
-            delete
-          </button>
+          <UButton label="delete" @click="deleteFile" />
         </div>
       </template>
-    </VDropdown>
+    </UPopover>
   </div>
 </template>
 
 <script setup lang="tsx">
-import { storeToRefs } from "pinia";
-
 type Props = {
   fileId: string;
 };
@@ -37,10 +28,7 @@ type Emits = {
 
 const emit = defineEmits<Emits>();
 
-const pageStore = usePageStore();
-const toastStore = useToastStore("layout");
-
-const { pageContainerDom } = storeToRefs(pageStore);
+const toast = useToast();
 
 const deleteFile = async () => {
   try {
@@ -48,20 +36,19 @@ const deleteFile = async () => {
       method: "DELETE",
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+    toast.add({
       title: "Delete Error",
       description: "Cannot delete",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
     });
     emit("refresh");
     return;
   }
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-  toastStore.spawn({
+  toast.add({
     title: "Delete Success",
     description: "Successfully deleted",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   });
   emit("refresh");
 };

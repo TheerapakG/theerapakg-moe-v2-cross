@@ -1,4 +1,5 @@
-import _ from "lodash";
+import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
+
 import { useRedis } from "~/utils/server/useRedis";
 import { getSafeIdFromId, getSafeIdFromIdObject } from "~/utils/server/getId";
 import { wrapHandler } from "~/utils/server/wrapHandler";
@@ -18,7 +19,7 @@ export default defineEventHandler(
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
-      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      ? useMin([parseInt(query.size as string), 50]) ?? 10
       : 10;
     const start = (page - 1) * size;
     const stop = start + size - 1;
@@ -29,7 +30,7 @@ export default defineEventHandler(
       stop
     )) as `container:${string}`[];
 
-    const [errs, owners] = _.zip(
+    const [errs, owners] = useZip(
       ...((await useRedis()
         .multi(ids.map((id) => ["hget", id, "owner"]))
         .exec()) ?? [])
@@ -45,7 +46,7 @@ export default defineEventHandler(
 
     return {
       count: await useRedis().zcount("container:ids", "-inf", "inf"),
-      users: _.zipWith(strippedIds, owners, (id, owner) => {
+      users: useZipWith(strippedIds, owners, (id, owner) => {
         return {
           id,
           owner,

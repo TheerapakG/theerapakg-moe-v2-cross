@@ -2,7 +2,7 @@
   <div>
     <div class="m-8 text-4xl">UPLOAD</div>
     <div
-      class="mx-auto h-16 w-64 rounded-lg border-2 border-black dark:border-white"
+      class="m-8 mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
     >
       <DropZone
         :check-dragging-data="checkDraggingData"
@@ -10,9 +10,7 @@
         @dropped-data="onDroppedData"
       />
     </div>
-    <button class="button-default m-4 h-12 w-32 rounded-lg" @click="upload()">
-      Upload
-    </button>
+    <UButton color="black" size="xl" label="upload" @click="upload()" />
   </div>
 </template>
 
@@ -25,7 +23,7 @@ definePageMeta({
 
 const file = shallowRef<File | null>(null);
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const checkDraggingData = (
   data:
@@ -79,21 +77,18 @@ const upload = async () => {
         },
       });
     } catch {
-      const { ExclamationCircleIcon } = await import(
-        "@heroicons/vue/24/outline"
-      );
-      toastStore.spawn({
+      toast.add({
         title: "Upload Error",
         description: "Cannot upload",
-        icon: <ExclamationCircleIcon />,
+        icon: "i-heroicons-exclaimation-circle",
+        color: "red",
       });
       return;
     }
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+    toast.add({
       title: "Upload Success",
       description: "Successfully uploaded",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
     });
   });
 

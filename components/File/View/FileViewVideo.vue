@@ -2,7 +2,7 @@
   <div class="flex flex-col place-content-center place-items-center gap-y-2">
     <video ref="video" />
     <div
-      class="flex w-full flex-col place-content-center place-items-center gap-y-2 overflow-auto"
+      class="flex w-full flex-col place-content-center place-items-center gap-y-2"
     >
       <input
         v-model="currentTime"
@@ -13,15 +13,15 @@
         step="0.01"
       />
       <div class="flex w-80 place-content-center place-items-center gap-x-2">
-        <button
-          class="button-default flex h-8 w-8 place-content-center place-items-center rounded-full"
-          @click="() => (playing ? video?.pause() : video?.play())"
-        >
-          <div class="h-6 w-6">
-            <PauseIcon v-if="playing" />
-            <PlayIcon v-else />
-          </div>
-        </button>
+        <div class="w-8">
+          <UButton
+            class="h-8"
+            block
+            :icon="playing ? 'i-heroicons-pause' : 'i-heroicons-play'"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="() => (playing ? video?.pause() : video?.play())"
+          />
+        </div>
         <div class="min-w-[10rem]">
           {{ formatDuration(currentTime) }} / {{ formatDuration(duration) }}
         </div>
@@ -41,39 +41,34 @@
               max="1"
               step="0.01"
             />
-            <button
-              class="button-default flex h-8 w-8 place-content-center place-items-center rounded-full"
-              :class="{ activated: showVolumeControl }"
-              @click="showVolumeControl = !showVolumeControl"
-            >
-              <div class="h-6 w-6">
-                <SpeakerWaveIcon />
-              </div>
-            </button>
+            <div class="w-8">
+              <UButton
+                class="h-8"
+                block
+                :color="showVolumeControl ? 'black' : 'white'"
+                icon="i-heroicons-speaker-wave"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="showVolumeControl = !showVolumeControl"
+              />
+            </div>
           </div>
         </div>
-        <button
-          class="button-default flex h-8 w-8 place-content-center place-items-center rounded-full"
-          :class="{ activated: loop }"
-          @click="loop = !loop"
-        >
-          <div class="h-6 w-6">
-            <ArrowPathIcon />
-          </div>
-        </button>
+        <div class="w-8">
+          <UButton
+            class="h-8"
+            block
+            :color="loop ? 'black' : 'white'"
+            icon="i-heroicons-arrow-path"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="loop = !loop"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  PlayIcon,
-  PauseIcon,
-  ArrowPathIcon,
-  SpeakerWaveIcon,
-} from "@heroicons/vue/24/outline";
-
 type Props = {
   fileId: string;
 };

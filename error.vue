@@ -9,20 +9,22 @@ const error = useError();
 onMounted(() => {
   if (process.client) {
     try {
-      const toastStore = useToastStore("layout");
+      const toast = useToast();
       if (
         !error.value ||
         (!isNuxtError(error.value) && !("message" in error.value))
       ) {
-        toastStore.spawn({
+        toast.add({
           title: "Error loading the page",
           description: "error encountered while loading the page",
+          color: "red",
         });
         throw undefined;
       }
-      toastStore.spawn({
+      toast.add({
         title: "Error loading the page",
         description: error.value.message,
+        color: "red",
       });
     } catch {}
 

@@ -19,35 +19,33 @@
     <Transition name="fade">
       <div
         v-if="controlVisible"
-        class="absolute bottom-4 flex place-content-center place-items-center gap-2 rounded-lg bg-gray-400 px-4 py-2 dark:bg-gray-500"
+        class="absolute bottom-4 flex place-content-center place-items-center gap-2 rounded-lg border-2 border-gray-500 bg-white px-4 py-2 dark:border-gray-400 dark:bg-black"
       >
         <div class="min-w-[4rem] font-bold">{{ factor }}%</div>
-        <button
-          class="button-default flex h-8 w-8 place-content-center place-items-center rounded-full"
-          @click="factor += 10"
-        >
-          <div class="h-6 w-6">
-            <MagnifyingGlassPlusIcon />
-          </div>
-        </button>
-        <button
-          class="button-default flex h-8 w-8 place-content-center place-items-center rounded-full"
-          @click="factor -= 10"
-        >
-          <div class="h-6 w-6">
-            <MagnifyingGlassMinusIcon />
-          </div>
-        </button>
+        <div class="w-8">
+          <UButton
+            class="h-8"
+            block
+            icon="i-heroicons-magnifying-glass-plus"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="factor += 10"
+          />
+        </div>
+        <div class="w-8">
+          <UButton
+            class="h-8"
+            block
+            icon="i-heroicons-magnifying-glass-minus"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="factor -= 10"
+          />
+        </div>
       </div>
     </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  MagnifyingGlassPlusIcon,
-  MagnifyingGlassMinusIcon,
-} from "@heroicons/vue/24/outline";
 import { Handler, addV } from "@vueuse/gesture";
 
 type Props = {

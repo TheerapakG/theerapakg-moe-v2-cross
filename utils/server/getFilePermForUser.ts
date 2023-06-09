@@ -1,4 +1,5 @@
-import _ from "lodash";
+import { zip as useZip } from "lodash-es";
+
 import { useRedis } from "./useRedis";
 
 interface FilePermission {
@@ -14,7 +15,7 @@ export const getFilePermForUser = async (
   const [
     errs,
     [viewPerm, listPerm, editPerm, fileViewPerm, fileEditPerm, owner],
-  ] = _.zip(
+  ] = useZip(
     ...((await useRedis()
       .multi()
       .sismember(`perms:${user}`, "perms:file:view")

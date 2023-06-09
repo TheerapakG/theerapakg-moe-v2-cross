@@ -16,7 +16,7 @@ type Emits = {
 
 const emit = defineEmits<Emits>();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const changeTarget = async (target: string) => {
   try {
@@ -27,20 +27,19 @@ const changeTarget = async (target: string) => {
       },
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+    toast.add({
       title: "Error Changing Target",
       description: "Cannot change target",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
     });
     emit("refresh");
     return;
   }
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-  toastStore.spawn({
+  toast.add({
     title: "Target Changed",
     description: "Successfully changed target",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   });
   emit("refresh");
 };

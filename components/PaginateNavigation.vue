@@ -2,71 +2,67 @@
   <div
     class="mx-auto grid h-8 w-80 grid-cols-[repeat(4,2rem)_3rem_repeat(4,2rem)] place-content-center place-items-center gap-x-0.5"
   >
-    <button
-      class="button-default h-8 w-8 rounded-full"
+    <UButton
+      block
       :disabled="page == 1"
+      :ui="{ rounded: 'rounded-full', font: 'font-bold' }"
+      label="&lt;&lt;"
       @click="emits('update:modelValue', 1)"
-    >
-      &lt;&lt;
-    </button>
+    />
     <div>
       <div v-if="page - 2 > 1">...</div>
     </div>
     <div>
-      <button
-        v-if="page - 1 > 1"
-        class="button-default h-8 w-8 rounded-full"
+      <UButton
+        v-if="page > 2"
+        block
+        :ui="{ rounded: 'rounded-full', font: 'font-bold' }"
+        :label="`${page - 2}`"
         @click="emits('update:modelValue', page - 2)"
-      >
-        {{ page - 2 }}
-      </button>
-    </div>
-    <div>
-      <button
-        v-if="page > 1"
-        class="button-default h-8 w-8 rounded-full"
-        @click="emits('update:modelValue', page - 1)"
-      >
-        {{ page - 1 }}
-      </button>
-    </div>
-    <div>
-      <input
-        class="input-default w-12 text-center font-bold"
-        :value="page"
-        @change="
-          (event) => emits('update:modelValue', parseInt((event.target as HTMLInputElement).value))
-        "
       />
     </div>
     <div>
-      <button
+      <UButton
+        v-if="page > 1"
+        block
+        :ui="{ rounded: 'rounded-full', font: 'font-bold' }"
+        :label="`${page - 1}`"
+        @click="emits('update:modelValue', page - 1)"
+      />
+    </div>
+    <UInput
+      class="w-12 text-center font-bold"
+      :model-value="page"
+      @change="onChange"
+    />
+    <div>
+      <UButton
         v-if="page < pageCount"
-        class="button-default h-8 w-8 rounded-full"
+        block
+        :ui="{ rounded: 'rounded-full', font: 'font-bold' }"
+        :label="`${page + 1}`"
         @click="emits('update:modelValue', page + 1)"
-      >
-        {{ page + 1 }}
-      </button>
+      />
     </div>
     <div>
-      <button
-        v-if="page + 1 < pageCount"
-        class="button-default h-8 w-8 rounded-full"
+      <UButton
+        v-if="page < pageCount - 1"
+        block
+        :ui="{ rounded: 'rounded-full', font: 'font-bold' }"
+        :label="`${page + 2}`"
         @click="emits('update:modelValue', page + 2)"
-      >
-        {{ page + 2 }}
-      </button>
+      />
     </div>
     <div>
       <div v-if="page + 2 < pageCount">...</div>
     </div>
-    <button
-      class="button-default h-8 w-8 rounded-full"
+    <UButton
+      block
       :disabled="page == pageCount"
+      :ui="{ rounded: 'rounded-full', font: 'font-bold' }"
+      label="&gt;&gt;"
       @click="emits('update:modelValue', pageCount)"
-    >
-      &gt;&gt;
-    </button>
+    />
   </div>
 </template>
 
@@ -86,4 +82,7 @@ type Emits = {
 };
 
 const emits = defineEmits<Emits>();
+
+const onChange = (event: { target: HTMLInputElement }) =>
+  emits("update:modelValue", parseInt(event.target.value));
 </script>

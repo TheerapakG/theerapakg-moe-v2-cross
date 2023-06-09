@@ -26,7 +26,7 @@ type Emits = {
 
 const emit = defineEmits<Emits>();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const rename = async (newname: string) => {
   try {
@@ -37,20 +37,19 @@ const rename = async (newname: string) => {
       },
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+    toast.add({
       title: "Rename Error",
       description: "Cannot rename",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
     });
     emit("refresh");
     return;
   }
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-  toastStore.spawn({
+  toast.add({
     title: "Rename Success",
     description: "Successfully renamed",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   });
   emit("refresh");
 };

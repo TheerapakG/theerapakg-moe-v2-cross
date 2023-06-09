@@ -8,17 +8,18 @@
 </template>
 
 <script setup lang="ts">
-import { fileInfoKey } from "../provides";
+import { useFileInfoState } from "../states";
+
+const fileInfoState = useFileInfoState();
 
 const route = useRoute();
-const fileInfo = inject(fileInfoKey, ref(null));
 
 const url = useRequestURL();
 
 useSeoMeta({
-  ogTitle: fileInfo.value?.name,
+  ogTitle: fileInfoState.value?.name,
   ogType: "video.other",
   ogUrl: url.origin + url.pathname,
-  ogVideo: url.origin + fileInfo.value?.url,
+  ogVideo: url.origin + fileInfoState.value?.url,
 });
 </script>

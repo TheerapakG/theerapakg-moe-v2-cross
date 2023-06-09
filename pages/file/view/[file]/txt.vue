@@ -3,15 +3,16 @@
     <FileViewTxt
       :file-id="(route.params.file as string)"
       :lang="(route.params.lang as string | undefined)"
-      :activate-portal="pageMounted"
+      :activate-portal="mountedState"
       class="w-full flex-grow"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { mountedKey } from "../provides";
+import { useMountedState } from "../states";
+
+const mountedState = useMountedState();
 
 const route = useRoute();
-const pageMounted = inject(mountedKey, ref(false));
 </script>

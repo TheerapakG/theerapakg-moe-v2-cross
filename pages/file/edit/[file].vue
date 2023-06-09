@@ -10,50 +10,40 @@
           <portal-target name="file-menu-left" />
         </div>
         <div
-          class="absolute right-0 flex h-full place-content-center place-items-center gap-x-2"
+          class="absolute right-0 inline-flex h-full place-content-center place-items-center gap-x-2"
         >
-          <NuxtLink :to="`/file/download/${route.params.file}`">
-            <button
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <ArrowDownTrayIcon class="h-6 w-6" />
-            </button>
-          </NuxtLink>
-          <VDropdown
-            :distance="8"
-            :boundary="pageContainerDom"
-            placement="bottom"
-            theme="context-menu"
-            class="flex place-content-center place-items-center"
-          >
-            <button class="icon-button t-transition-default">
-              <KeyIcon class="h-6 w-6" />
-            </button>
-
-            <template #popper>
-              <div class="flex place-content-center place-items-center gap-2">
-                <FileButtonPermEditorGroup
-                  v-slot="{ perm, permUserCount }"
-                  :file-id="(route.params.file as string)"
-                  :user-count="fileInfo.perms.count"
-                >
-                  <button
-                    class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-                  >
-                    {{ permUserCount }}
-                    <VNodeTemplate
-                      :render-node="perms[perm as keyof typeof perms]"
-                    />
-                  </button>
-                </FileButtonPermEditorGroup>
-              </div>
-            </template>
-          </VDropdown>
-          <FileButtonViewerMode
-            :file-id="(route.params.file as string)"
-            :mime="fileInfo?.mime"
-            :perms="fileInfo?.perms.user"
+          <UButton
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-arrow-down-tray"
+            :ui="{ rounded: 'rounded-full' }"
+            :to="`/file/download/${route.params.file}`"
           />
+          <UPopover>
+            <UButton
+              variant="ghost"
+              size="xl"
+              icon="i-heroicons-key"
+              :ui="{ rounded: 'rounded-full' }"
+            />
+
+            <template #panel>
+              <FileButtonPermEditorGroup
+                v-slot="{ perm, permUserCount }"
+                :file-id="(route.params.file as string)"
+                :user-count="fileInfo.perms.count"
+              >
+                <UButton
+                  variant="ghost"
+                  size="xl"
+                  :trailing-icon="perms[perm]"
+                  :label="`${permUserCount}`"
+                  :ui="{ rounded: 'rounded-full' }"
+                />
+              </FileButtonPermEditorGroup>
+            </template>
+          </UPopover>
+          <FileButtonViewerMode :file-info="fileInfoState" />
         </div>
         <div class="mx-32 flex h-full place-content-center place-items-center">
           <FileNameEditor
@@ -74,7 +64,7 @@
       class="flex w-full flex-grow flex-col place-content-start place-items-center px-8"
     >
       <div
-        class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg bg-gray-300 p-4 dark:bg-gray-600"
+        class="flex w-full flex-grow flex-col place-content-start place-items-center rounded-lg border-2 border-gray-500 p-4 dark:border-gray-400"
       >
         <NuxtPage class="w-full flex-grow" />
       </div>
@@ -82,28 +72,24 @@
   </div>
 </template>
 
-<script setup lang="tsx">
-import {
-  ArrowDownTrayIcon,
-  EyeIcon,
-  KeyIcon,
-  PencilIcon,
-} from "@heroicons/vue/24/outline";
-import { storeToRefs } from "pinia";
-import { mountedKey } from "./provides";
+<script setup lang="ts">
+import { useMountedState, useFileInfoState } from "./states";
 
-provide(mountedKey, useMounted());
+const mountedState = useMountedState();
+const fileInfoState = useFileInfoState();
+
+const mounted = useMounted();
+watch(mounted, () => {
+  mountedState.value = mounted.value;
+});
+mountedState.value = mounted.value;
 
 const route = useRoute();
 const routeStore = useRouteStore();
 
-const pageStore = usePageStore();
-
-const { pageContainerDom } = storeToRefs(pageStore);
-
 const perms = {
-  view: <EyeIcon class="h-6 w-6" />,
-  edit: <PencilIcon class="h-6 w-6" />,
+  view: "i-heroicons-eye",
+  edit: "i-heroicons-pencil",
 };
 
 const {
@@ -111,6 +97,18 @@ const {
   data: fileInfo,
   //error: fileInfoError,
 } = await useApiFetch(`/api/file/${route.params.file}/info`);
+
+const fileInfoComputed = computed(
+  () =>
+    (fileInfoState.value = fileInfo.value
+      ? { ...fileInfo.value, id: route.params.file as string }
+      : null)
+);
+
+watch(fileInfoComputed, () => {
+  fileInfoState.value = fileInfoComputed.value;
+});
+fileInfoState.value = fileInfoComputed.value;
 
 routeStore.setTitle(
   computed(() => `theerapakg-moe-app: ${fileInfo.value?.name}`)

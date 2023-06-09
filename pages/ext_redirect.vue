@@ -13,7 +13,7 @@ definePageMeta({
 
 const route = useRoute();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const target = route.query.path
   ? decodeURIComponent(route.query.path as string)
@@ -25,42 +25,43 @@ onMounted(async () => {
       try {
         const { host, pathname, searchParams, hash } = new URL(target);
 
-        toastStore.spawn({
+        toast.add({
           title: "Redirecting...",
           description: `redirecting to ${target}`,
         });
 
         if (host === new URL(window.location.href).host) {
-          await navigateTo({
-            path: pathname,
-            query: {
-              ...searchParams[Symbol.iterator],
+          await navigateTo(
+            {
+              path: pathname,
+              query: {
+                ...searchParams[Symbol.iterator],
+              },
+              hash,
             },
-            hash,
-          });
+            {
+              replace: true,
+            }
+          );
         } else {
-          window.location.href = target;
+          window.location.replace(target);
         }
       } catch (e) {
         if (e instanceof TypeError) {
-          const { ExclamationCircleIcon } = await import(
-            "@heroicons/vue/24/outline"
-          );
-          toastStore.spawn({
+          toast.add({
             title: "Redirection Error",
             description: "Malformed URL! Maybe try going back?",
-            icon: <ExclamationCircleIcon />,
+            icon: "i-heroicons-exclaimation-circle",
+            color: "red",
           });
         }
       }
     } else {
-      const { ExclamationCircleIcon } = await import(
-        "@heroicons/vue/24/outline"
-      );
-      toastStore.spawn({
+      toast.add({
         title: "Redirection Error",
         description: "No redirection target! Maybe try going back?",
-        icon: <ExclamationCircleIcon />,
+        icon: "i-heroicons-exclaimation-circle",
+        color: "red",
       });
     }
   }

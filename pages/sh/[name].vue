@@ -18,13 +18,12 @@ const targetValue = "value" in target ? (target.value as string) : null;
 
 onMounted(async () => {
   if (!targetValue) {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    const toastStore = useToastStore("layout");
+    const toastStore = useToast();
 
-    toastStore.spawn({
+    toastStore.add({
       title: "Redirection Error",
       description: "No shortened target! Maybe try going back?",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
     });
   } else {
     try {
@@ -39,24 +38,27 @@ onMounted(async () => {
           hash,
         });
       } else {
-        await navigateTo({
-          path: "/ext_redirect",
-          query: {
-            path: encodeURIComponent(targetValue),
+        await navigateTo(
+          {
+            path: "/ext_redirect",
+            query: {
+              path: encodeURIComponent(targetValue),
+            },
           },
-        });
+          {
+            replace: true,
+          }
+        );
       }
     } catch (e) {
       if (e instanceof TypeError) {
-        const { ExclamationCircleIcon } = await import(
-          "@heroicons/vue/24/outline"
-        );
-        const toastStore = useToastStore("layout");
+        const toast = useToast();
 
-        toastStore.spawn({
+        toast.add({
           title: "Redirection Error",
           description: "Malformed URL! Maybe try going back?",
-          icon: <ExclamationCircleIcon />,
+          icon: "i-heroicons-exclaimation-circle",
+          color: "red",
         });
       }
     }

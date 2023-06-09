@@ -1,46 +1,41 @@
-import { $Fetch, NitroFetchOptions, NitroFetchRequest } from "nitropack";
+import { NitroFetchOptions, NitroFetchRequest } from "nitropack";
 import { FetchContext } from "ofetch";
 
-let _globalApiFetch: $Fetch<unknown | NitroFetchRequest> | undefined;
-
 const _apiFetch = () => {
-  if (_globalApiFetch) return _globalApiFetch;
-
   const tryHandleCommonResponseError = async (ctx: FetchContext) => {
     if (!ctx.response?.ok) {
       if (ctx.response?.statusText === "session expired") {
+        if (process.dev) return;
+
         const userStore = useUserStore();
         await userStore.refreshCurrent();
 
         await navigateTo("/");
 
-        const { ExclamationCircleIcon } = await import(
-          "@heroicons/vue/24/outline"
-        );
-        const toastStore = useToastStore("layout");
-        toastStore.spawn({
+        const toast = useToast();
+        toast.add({
           title: "Session Expired",
           description: "Re-login required",
-          icon: h(ExclamationCircleIcon),
-          actions: {
-            login: {
-              title: "go to login",
-              action: () => navigateTo("/login"),
+          icon: "i-heroicons-exclaimation-circle",
+          actions: [
+            {
+              label: "go to login",
+              click: async () => await navigateTo("/login"),
             },
-          },
+          ],
+          color: "red",
         });
       }
     }
   };
+
   const config = useRuntimeConfig();
 
-  _globalApiFetch = $fetch.create({
+  return $fetch.create({
     headers: useRequestHeaders(["cookie"]) as HeadersInit,
     baseURL: config.public?.apiBaseURL ?? "/",
     onResponseError: tryHandleCommonResponseError,
   });
-
-  return _globalApiFetch;
 };
 
 const _useApiFetch = async <

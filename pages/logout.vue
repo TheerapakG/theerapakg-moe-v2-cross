@@ -2,9 +2,7 @@
   <div v-if="!current || current.id === 'default'">You are not logged in!</div>
   <div v-else>
     <div class="m-8 text-4xl">LOGOUT</div>
-    <button class="button-default m-4 h-12 w-32" @click="logout()">
-      Logout
-    </button>
+    <UButton color="black" size="xl" label="logout" @click="logout()" />
   </div>
 </template>
 
@@ -21,7 +19,7 @@ definePageMeta({
 const userStore = useUserStore();
 const current = await userStore.useCurrent();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const pending = ref(false);
 
@@ -33,21 +31,20 @@ const logout = async () => {
       method: "POST",
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+    toast.add({
       title: "Logout Error",
       description: "Cannot log out.",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
     });
     return;
   }
 
   pending.value = false;
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-  toastStore.spawn({
+  toast.add({
     title: "Logout Success",
     description: "Successfully logged out.",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   });
   await Promise.all([
     userStore.refreshCurrent(),

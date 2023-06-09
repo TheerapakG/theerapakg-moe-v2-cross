@@ -3,12 +3,18 @@
   <div v-else>
     <div class="m-8 text-4xl">LOGIN</div>
     <div class="m-4">
-      username: <input v-model="user" class="input-default" />
+      username: <UInput v-model="user" class="inline-block w-80" size="md" />
     </div>
     <div class="m-4">
-      password: <input v-model="pass" type="password" class="input-default" />
+      password:
+      <UInput
+        v-model="pass"
+        type="password"
+        class="inline-block w-80"
+        size="md"
+      />
     </div>
-    <button class="button-default m-4 h-12 w-32" @click="login()">Login</button>
+    <UButton color="black" size="xl" label="login" @click="login()" />
   </div>
 </template>
 
@@ -25,7 +31,7 @@ definePageMeta({
 const userStore = useUserStore();
 const current = await userStore.useCurrent();
 
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const user = ref("");
 const pass = ref("");
@@ -43,22 +49,21 @@ const login = async () => {
       },
     });
   } catch {
-    const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-    toastStore.spawn({
+    toast.add({
       title: "Login Error",
       description: "Cannot log in. Check username/password.",
-      icon: <ExclamationCircleIcon />,
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
     });
     return;
   }
 
   pending.value = false;
 
-  const { ExclamationCircleIcon } = await import("@heroicons/vue/24/outline");
-  toastStore.spawn({
+  toast.add({
     title: "Login Success",
     description: "Successfully logged in.",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   });
   await Promise.all([
     userStore.refreshCurrent(),

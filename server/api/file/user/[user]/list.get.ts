@@ -1,6 +1,7 @@
 import fs from "fs";
+import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
 import path from "path";
-import _ from "lodash";
+
 import { useRedis } from "~/utils/server/useRedis";
 import { getUser } from "~/utils/server/getUser";
 import { getSafeIdFromId, getSafeIdFromIdObject } from "~/utils/server/getId";
@@ -20,7 +21,7 @@ export default defineEventHandler(
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
-      ? _.min([parseInt(query.size as string), 50]) ?? 10
+      ? useMin([parseInt(query.size as string), 50]) ?? 10
       : 10;
     const start = (page - 1) * size;
     const stop = start + size - 1;
@@ -32,17 +33,17 @@ export default defineEventHandler(
 
     if (!ids) return;
 
-    const [errs, [files, viewPerms, editPerms]] = _.zip(
+    const [errs, [files, viewPerms, editPerms]] = useZip(
       ...(await Promise.all([
         (async () =>
-          _.zip(
+          useZip(
             ...((await useRedis()
               .multi(ids.map((id) => ["hgetall", id]))
               .exec()) ?? [])
           ) as [Error[], { dir: string; owner: `user:id:${string}` }[]])(),
 
         (async () =>
-          _.zip(
+          useZip(
             ...((await useRedis()
               .multi(
                 ids.map((id) => ["zcount", `perms:${id}:view`, "-inf", "inf"])
@@ -51,7 +52,7 @@ export default defineEventHandler(
           ) as [Error[], string[]])(),
 
         (async () =>
-          _.zip(
+          useZip(
             ...((await useRedis()
               .multi(
                 ids.map((id) => ["zcount", `perms:${id}:edit`, "-inf", "inf"])
@@ -78,7 +79,7 @@ export default defineEventHandler(
     return {
       count: await useRedis().zcount("file:ids", "-inf", "inf"),
       files: await Promise.all(
-        _.zipWith(
+        useZipWith(
           strippedIds,
           files,
           viewPerms,

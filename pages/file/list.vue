@@ -1,127 +1,107 @@
 <template>
-  <div class="relative">
-    <Transition name="fade">
-      <LoadingCircleOverlay v-if="pending" />
-    </Transition>
-    <ResponsiveList
-      :widths="['32rem', '8rem', '8rem', '8rem', '12rem']"
-      :body-count="fileList.length"
-    >
-      <template #header>
-        <div
-          class="input-default flex w-full place-content-center place-items-center gap-x-2 p-2"
-        >
-          <MagnifyingGlassIcon class="h-6 w-6" />
-          <input v-model="fileSearch" class="input-hidden flex-grow" />
-        </div>
-      </template>
-      <template #header-col-0><div>file</div></template>
-      <template #content-col-0="{ index }">
-        <FileNameEditor
-          class="w-full"
-          :file-id="fileList[index].id"
-          :name="fileList[index].name"
-          @refresh="refresh"
+  <UContainer
+    class="thin-scrollbars relative flex flex-col gap-y-2 overflow-x-auto pt-0 md:pt-16 2xl:pt-0"
+  >
+    <UInput v-model="fileSearch" class="w-full" size="md">
+      <template #leading>
+        <UIcon
+          :name="
+            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
+          "
+          :class="{ 'animate-spin': pending }"
         />
       </template>
-      <template #header-col-1><div>size (bytes)</div></template>
-      <template #content-col-1="{ index }">
-        <div>{{ formatPretty(fileList[index].size) }}</div>
-      </template>
-      <template #header-col-2><div>owner</div></template>
-      <template #content-col-2="{ index }">
-        <div>
-          {{ fileList[index].owner?.name ?? "(loading...)" }}
-        </div>
-      </template>
-      <template #header-col-3><div>perms</div></template>
-      <template #content-col-3="{ index }">
-        <div class="flex place-content-center place-items-center gap-2">
-          <FileButtonPermEditorGroup
-            v-slot="{ perm, permUserCount }"
-            :file-id="fileList[index].id"
-            :user-count="fileList[index].perms.count"
-          >
-            <button
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              {{ permUserCount }}
-              <VNodeTemplate :render-node="perms[perm]" />
-            </button>
-          </FileButtonPermEditorGroup>
-        </div>
-      </template>
-      <template #header-col-4><div>actions</div></template>
-      <template #content-col-4="{ index }">
+    </UInput>
+    <UTable
+      class="thin-scrollbars overflow-x-auto"
+      :columns="tableColumns"
+      :rows="tableData"
+    >
+      <template #name-data="{ row }">
         <div
-          class="grid grid-cols-5 place-content-center place-items-center gap-2"
+          class="flex min-w-[16rem] max-w-[32rem] place-content-center place-items-center"
         >
-          <FileButtonView
-            :file-id="fileList[index].id"
-            :mime="fileList[index].mime"
-            class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-          >
-            <button
-              :title="`view ${fileList[index].name}`"
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <EyeIcon class="h-6 w-6" />
-            </button>
-          </FileButtonView>
-          <FileButtonEdit
-            :file-id="fileList[index].id"
-            :mime="fileList[index].mime"
+          <FileNameEditor
+            class="w-full"
+            :file-id="row.id"
+            :name="row.name"
             @refresh="refresh"
-          >
-            <button
-              :title="`edit ${fileList[index].name}`"
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <PencilIcon class="h-6 w-6" />
-            </button>
+          />
+        </div>
+      </template>
+      <template #perms-data="{ row }">
+        <FileButtonPermEditorGroup
+          v-slot="{ perm, permUserCount }"
+          class="h-8"
+          :file-id="row.id"
+          :user-count="row.perms.count"
+        >
+          <UButton
+            variant="ghost"
+            size="xl"
+            :trailing-icon="perms[perm]"
+            :label="`${permUserCount}`"
+            :ui="{ rounded: 'rounded-full' }"
+          />
+        </FileButtonPermEditorGroup>
+      </template>
+      <template #actions-data="{ row }">
+        <div
+          class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
+        >
+          <FileButtonView :file-id="row.id" :mime="row.mime">
+            <UButton
+              variant="ghost"
+              size="xl"
+              icon="i-heroicons-eye"
+              :aria-label="`view ${row.name}`"
+              :ui="{ rounded: 'rounded-full' }"
+            />
+          </FileButtonView>
+          <FileButtonEdit :file-id="row.id" :mime="row.mime">
+            <UButton
+              variant="ghost"
+              size="xl"
+              icon="i-heroicons-pencil"
+              :aria-label="`edit ${row.name}`"
+              :ui="{ rounded: 'rounded-full' }"
+            />
           </FileButtonEdit>
-          <FileButtonUpload :file-id="fileList[index].id" @refresh="refresh">
-            <button
-              :title="`upload ${fileList[index].name}`"
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <CloudArrowUpIcon class="h-6 w-6" />
-            </button>
+          <FileButtonUpload :file-id="row.id" @refresh="refresh">
+            <UButton
+              variant="ghost"
+              size="xl"
+              icon="i-heroicons-cloud-arrow-up"
+              :aria-label="`upload ${row.name}`"
+              :ui="{ rounded: 'rounded-full' }"
+            />
           </FileButtonUpload>
-          <NuxtLink :to="`/file/download/${fileList[index].id}`">
-            <button
-              :title="`download ${fileList[index].name}`"
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <ArrowDownTrayIcon class="h-6 w-6" />
-            </button>
-          </NuxtLink>
-          <FileButtonDelete :file-id="fileList[index].id" @refresh="refresh">
-            <button
-              :title="`delete ${fileList[index].name}`"
-              class="icon-button t-transition-default flex place-content-center place-items-center gap-1"
-            >
-              <MinusIcon class="h-6 w-6" />
-            </button>
+          <UButton
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-arrow-down-tray"
+            :aria-label="`download ${row.name}`"
+            :ui="{ rounded: 'rounded-full' }"
+            :to="`/file/download/${row.id}`"
+          />
+          <FileButtonDelete :file-id="row.id" @refresh="refresh">
+            <UButton
+              variant="ghost"
+              size="xl"
+              icon="i-heroicons-minus"
+              :aria-label="`delete ${row.name}`"
+              :ui="{ rounded: 'rounded-full' }"
+            />
           </FileButtonDelete>
         </div>
       </template>
-      <template #footer>
-        <PaginateNavigation v-model="page" :page-count="pageCount" />
-      </template>
-    </ResponsiveList>
-  </div>
+    </UTable>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
+  </UContainer>
 </template>
 
-<script setup lang="tsx">
-import {
-  ArrowDownTrayIcon,
-  CloudArrowUpIcon,
-  EyeIcon,
-  MagnifyingGlassIcon,
-  MinusIcon,
-  PencilIcon,
-} from "@heroicons/vue/24/outline";
+<script setup lang="ts">
+import { LocationQueryValue } from "vue-router";
 import { User } from "~/store/user";
 import { formatPretty } from "~/utils/formatPretty";
 
@@ -136,33 +116,31 @@ const route = useRoute();
 const userStore = useUserStore();
 
 const perms = {
-  view: <EyeIcon class="h-6 w-6" />,
-  edit: <PencilIcon class="h-6 w-6" />,
+  view: "i-heroicons-eye",
+  edit: "i-heroicons-pencil",
 };
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
-const _size = route.query.size ? parseInt(route.query.size as string) : 15;
-const size = ref(isNaN(_size) ? 15 : _size);
+const _size = route.query.size ? parseInt(route.query.size as string) : 10;
+const size = ref(isNaN(_size) ? 10 : _size);
 
-const fileSearch = ref(route.query.q ?? "");
+const fileSearch = ref((route.query.q as LocationQueryValue) ?? "");
 const fileSearchDebounced = refDebounced(fileSearch, 300);
 
-if (process.client) {
-  watch([page, size], async () => {
-    if (!isNaN(page.value) && !isNaN(size.value)) {
-      await navigateTo({
-        path: route.path,
-        query: {
-          page: page.value,
-          size: size.value,
-          ...(fileSearchDebounced.value && { q: fileSearchDebounced.value }),
-        },
-        replace: true,
-      });
-    }
-  });
-}
+watch([page, size, fileSearchDebounced], async () => {
+  if (!isNaN(page.value) && !isNaN(size.value)) {
+    await navigateTo({
+      path: route.path,
+      query: {
+        page: page.value,
+        size: size.value,
+        ...(fileSearchDebounced.value && { q: fileSearchDebounced.value }),
+      },
+      replace: true,
+    });
+  }
+});
 
 const {
   pending,
@@ -202,6 +180,27 @@ const {
 
 const fileQueryCount = computed(() => fileListData.value?.queryCount ?? 0);
 const fileList = computed(() => fileListData.value?.files ?? []);
+
+const tableColumns = [
+  { key: "name", label: "Name" },
+  { key: "size", label: "Size (Bytes)" },
+  { key: "owner", label: "Owner" },
+  { key: "perms", label: "Perms" },
+  { key: "actions", label: "Actions" },
+];
+
+const tableData = computed(() =>
+  useMap(fileList.value, ({ id, name, owner, perms, size, mime }) => {
+    return {
+      id,
+      name,
+      owner: owner.name ?? "(loading ...)",
+      perms,
+      size: formatPretty(size),
+      mime,
+    };
+  })
+);
 
 const { pageCount } = useOffsetPagination({
   total: fileQueryCount,

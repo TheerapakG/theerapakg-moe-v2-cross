@@ -2,72 +2,58 @@
   <div class="relative">
     <Transition name="fade">
       <LoadingCircleOverlay v-if="pending" />
-    </Transition>
-    <ResponsiveList
-      :widths="['32rem', '8rem', '16rem']"
-      :body-count="containerList.length"
-    >
-      <template #header-col-0><div>container ID</div></template>
-      <template #content-col-0="{ index }">
-        {{ containerList[index].id }}
-      </template>
-      <template #header-col-1><div>status</div></template>
-      <template #content-col-1="{ index }">
-        {{ containerList[index].state.status }}
-      </template>
-      <template #header-col-2><div>actions</div></template>
-      <template #content-col-2="{ index }">
-        <div class="flex place-content-center place-items-center gap-x-1">
-          <NuxtLink :to="`/container/${containerList[index].id}/logs`">
-            <button
-              class="icon-button t-transition-default flex place-content-center place-items-center"
+      <UContainer v-else class="thin-scrollbars overflow-x-auto">
+        <UTable :columns="tableColumns" :rows="tableData">
+          <template #actions-data="{ row }">
+            <div
+              class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
             >
-              <DocumentTextIcon class="h-6 w-6" />
-            </button>
-          </NuxtLink>
-          <button
-            class="icon-button t-transition-default"
-            @click="pauseContainer(containerList[index].id)"
-          >
-            <PauseIcon class="h-6 w-6" />
-          </button>
-          <button
-            class="icon-button t-transition-default"
-            @click="unpauseContainer(containerList[index].id)"
-          >
-            <PlayIcon class="h-6 w-6" />
-          </button>
-          <button
-            class="icon-button t-transition-default"
-            @click="killContainer(containerList[index].id)"
-          >
-            <StopIcon class="h-6 w-6" />
-          </button>
-          <button
-            class="icon-button t-transition-default"
-            @click="removeContainer(containerList[index].id)"
-          >
-            <MinusIcon class="h-6 w-6" />
-          </button>
-        </div>
-      </template>
-      <template #footer>
-        <PaginateNavigation v-model="page" :page-count="pageCount" />
-      </template>
-    </ResponsiveList>
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-document-text"
+                :ui="{ rounded: 'rounded-full' }"
+                :to="`/container/${row.id}/logs`"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-pause"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="pauseContainer(row.id)"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-play"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="unpauseContainer(row.id)"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-stop"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="killContainer(row.id)"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-minus"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="removeContainer(row.id)"
+              />
+            </div>
+          </template>
+        </UTable>
+      </UContainer>
+    </Transition>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
   </div>
 </template>
 
-<script setup lang="tsx">
-import {
-  DocumentTextIcon,
-  ExclamationCircleIcon,
-  MinusIcon,
-  PauseIcon,
-  PlayIcon,
-  StopIcon,
-} from "@heroicons/vue/24/outline";
-import { ToastOptions } from "~/store/toast";
+<script setup lang="ts">
+import type { Notification } from "@nuxthq/ui/dist/runtime/types";
 
 definePageMeta({
   title: "theerapakg-moe-app: container manager",
@@ -76,12 +62,12 @@ definePageMeta({
 });
 
 const route = useRoute();
-const toastStore = useToastStore("layout");
+const toast = useToast();
 
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
-const _size = route.query.size ? parseInt(route.query.size as string) : 15;
-const size = ref(isNaN(_size) ? 15 : _size);
+const _size = route.query.size ? parseInt(route.query.size as string) : 10;
+const size = ref(isNaN(_size) ? 10 : _size);
 
 const {
   pending,
@@ -98,6 +84,21 @@ const {
 const containerQueryCount = computed(() => containerListData.value?.count ?? 0);
 const containerList = computed(() => containerListData.value?.containers ?? []);
 
+const tableColumns = [
+  { key: "id", label: "ID" },
+  { key: "status", label: "Status" },
+  { key: "actions", label: "Actions" },
+];
+
+const tableData = computed(() =>
+  useMap(containerList.value, ({ id, state }) => {
+    return {
+      id: id,
+      status: state.status,
+    };
+  })
+);
+
 const { pageCount } = useOffsetPagination({
   total: containerQueryCount,
   page,
@@ -110,18 +111,18 @@ type Func = (...args: any) => any;
 const wrapToast =
   <T extends Func>(
     func: (...args: Parameters<T>) => ReturnType<T>,
-    errorToast: ToastOptions,
-    successToast: ToastOptions
+    errorToast: Partial<Notification>,
+    successToast: Partial<Notification>
   ): ((...args: Parameters<T>) => Promise<ReturnType<T> | undefined>) =>
   async (...args: Parameters<T>) => {
     let ret;
     try {
       ret = await func(...args);
     } catch {
-      toastStore.spawn(errorToast);
+      toast.add(errorToast);
       return;
     }
-    toastStore.spawn(successToast);
+    toast.add(successToast);
     return ret;
   };
 
@@ -134,11 +135,12 @@ const pauseContainer = wrapToast(
   },
   {
     title: "Error Pausing Container",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
+    color: "red",
   },
   {
     title: "Container Paused",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   }
 );
 
@@ -151,11 +153,12 @@ const unpauseContainer = wrapToast(
   },
   {
     title: "Error Unpausing Container",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
+    color: "red",
   },
   {
     title: "Container Unpaused",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   }
 );
 
@@ -168,11 +171,12 @@ const killContainer = wrapToast(
   },
   {
     title: "Error Killing Container",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
+    color: "red",
   },
   {
     title: "Container Killed",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   }
 );
 
@@ -185,11 +189,12 @@ const removeContainer = wrapToast(
   },
   {
     title: "Error Deleting Container",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
+    color: "red",
   },
   {
     title: "Container Deleted",
-    icon: <ExclamationCircleIcon />,
+    icon: "i-heroicons-exclaimation-circle",
   }
 );
 </script>
