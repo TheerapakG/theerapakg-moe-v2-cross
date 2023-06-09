@@ -1,7 +1,15 @@
 <template>
   <div class="relative">
     <UPopover>
-      <slot />
+      <slot>
+        <UButton
+          variant="ghost"
+          size="xl"
+          icon="i-heroicons-minus"
+          :aria-label="ariaLabel"
+          :ui="{ rounded: 'rounded-full' }"
+        />
+      </slot>
 
       <template #panel>
         <div
@@ -18,6 +26,7 @@
 <script setup lang="tsx">
 type Props = {
   fileId: string;
+  ariaLabel?: string;
 };
 
 const props = defineProps<Props>();

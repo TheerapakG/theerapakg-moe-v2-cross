@@ -49,33 +49,21 @@
         <div
           class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
         >
-          <FileButtonView :file-id="row.id" :mime="row.mime">
-            <UButton
-              variant="ghost"
-              size="xl"
-              icon="i-heroicons-eye"
-              :aria-label="`view ${row.name}`"
-              :ui="{ rounded: 'rounded-full' }"
-            />
-          </FileButtonView>
-          <FileButtonEdit :file-id="row.id" :mime="row.mime">
-            <UButton
-              variant="ghost"
-              size="xl"
-              icon="i-heroicons-pencil"
-              :aria-label="`edit ${row.name}`"
-              :ui="{ rounded: 'rounded-full' }"
-            />
-          </FileButtonEdit>
-          <FileButtonUpload :file-id="row.id" @refresh="refresh">
-            <UButton
-              variant="ghost"
-              size="xl"
-              icon="i-heroicons-cloud-arrow-up"
-              :aria-label="`upload ${row.name}`"
-              :ui="{ rounded: 'rounded-full' }"
-            />
-          </FileButtonUpload>
+          <FileButtonView
+            :file-id="row.id"
+            :mime="row.mime"
+            :aria-label="`view ${row.name}`"
+          />
+          <FileButtonEdit
+            :file-id="row.id"
+            :mime="row.mime"
+            :aria-label="`edit ${row.name}`"
+          />
+          <FileButtonUpload
+            :file-id="row.id"
+            :aria-label="`upload ${row.name}`"
+            @refresh="refresh"
+          />
           <UButton
             variant="ghost"
             size="xl"
@@ -84,15 +72,11 @@
             :ui="{ rounded: 'rounded-full' }"
             :to="`/file/download/${row.id}`"
           />
-          <FileButtonDelete :file-id="row.id" @refresh="refresh">
-            <UButton
-              variant="ghost"
-              size="xl"
-              icon="i-heroicons-minus"
-              :aria-label="`delete ${row.name}`"
-              :ui="{ rounded: 'rounded-full' }"
-            />
-          </FileButtonDelete>
+          <FileButtonDelete
+            :file-id="row.id"
+            :aria-label="`delete ${row.name}`"
+            @refresh="refresh"
+          />
         </div>
       </template>
     </UTable>

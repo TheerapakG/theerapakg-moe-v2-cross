@@ -17,12 +17,6 @@ const _apiFetch = () => {
           title: "Session Expired",
           description: "Re-login required",
           icon: "i-heroicons-exclaimation-circle",
-          actions: [
-            {
-              label: "go to login",
-              click: async () => await navigateTo("/login"),
-            },
-          ],
           color: "red",
         });
       }

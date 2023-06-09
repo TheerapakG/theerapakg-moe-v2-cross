@@ -7,11 +7,11 @@
         class="flex place-content-center place-items-center gap-x-2"
       >
         <div>not logged in</div>
-        <UButton label="login" to="/login" />
+        <UserLoginButton />
       </div>
       <div v-else class="flex place-content-center place-items-center gap-x-2">
         <div>user: {{ current.name }}</div>
-        <UButton label="logout" to="/logout" />
+        <UserLogoutButton />
       </div>
     </div>
   </Suspense>

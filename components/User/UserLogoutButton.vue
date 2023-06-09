@@ -1,25 +1,38 @@
 <template>
-  <div v-if="!current || current.id === 'default'">You are not logged in!</div>
-  <div v-else>
-    <div class="m-8 text-4xl">LOGOUT</div>
-    <UButton color="black" size="xl" label="logout" @click="logout()" />
+  <div>
+    <UButton
+      label="logout"
+      :disabled="!current || current.id === 'default'"
+      @click="open = true"
+    />
+
+    <UModal v-model="open">
+      <UCard>
+        <template #header>
+          <div class="text-center text-4xl">LOGOUT</div>
+        </template>
+
+        <div class="flex place-content-center place-items-center">
+          <UButton
+            color="black"
+            size="xl"
+            :loading="pending"
+            label="logout"
+            @click="logout"
+          />
+        </div>
+      </UCard>
+    </UModal>
   </div>
 </template>
 
-<script setup lang="tsx">
-definePageMeta({
-  title: "theerapakg-moe: logout",
-  pageTransition: {
-    name: "slide-left-uni",
-    mode: "out-in",
-  },
-  name: "Logout",
-});
-
+<script setup lang="ts">
 const userStore = useUserStore();
 const current = await userStore.useCurrent();
 
 const toast = useToast();
+
+const open = ref(false);
 
 const pending = ref(false);
 
