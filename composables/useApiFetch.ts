@@ -1,7 +1,20 @@
-import { NitroFetchOptions, NitroFetchRequest } from "nitropack";
-import { FetchContext } from "ofetch";
+import { defu } from "defu";
+import {
+  AvailableRouterMethod,
+  NitroFetchOptions,
+  NitroFetchRequest,
+  $Fetch,
+} from "nitropack";
+import { FetchResult, UseFetchOptions } from "nuxt/app";
+import { KeysOf } from "nuxt/dist/app/composables/asyncData";
+import { FetchContext, FetchError, FetchOptions } from "ofetch";
 
-const _apiFetch = () => {
+const _apiFetch = <
+  T = unknown,
+  R extends NitroFetchRequest = NitroFetchRequest
+>(
+  defaults: FetchOptions
+) => {
   const tryHandleCommonResponseError = async (ctx: FetchContext) => {
     if (!ctx.response?.ok) {
       if (ctx.response?.statusText === "session expired") {
@@ -25,64 +38,68 @@ const _apiFetch = () => {
 
   const config = useRuntimeConfig();
 
-  return $fetch.create({
-    headers: useRequestHeaders(["cookie"]) as HeadersInit,
-    baseURL: config.public?.apiBaseURL ?? "/",
-    onResponseError: tryHandleCommonResponseError,
-  });
+  return $fetch.create<T, R>(
+    defu(defaults, {
+      headers: useRequestHeaders(["cookie"]),
+      baseURL: config.public?.apiBaseURL ?? "/",
+      onResponseError: tryHandleCommonResponseError,
+    })
+  );
 };
 
-const _useApiFetch = async <
-  ResT = void,
-  ErrorT = Error,
-  ReqT extends NitroFetchRequest = NitroFetchRequest,
-  OptsT extends Parameters<typeof useFetch<ResT, ErrorT, ReqT>>[1] = Parameters<
-    typeof useFetch<ResT, ErrorT, ReqT>
-  >[1]
->(
-  request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: OptsT
-) => {
-  return await useFetch<ResT, ErrorT, ReqT>(request, {
-    ...{
-      $fetch: _apiFetch(),
-    },
-    ...opts,
-  });
-};
-
-export const $apiFetch = async <
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export const $apiFetch = (<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
   O extends NitroFetchOptions<R> = NitroFetchOptions<R>
 >(
   request: R,
   options?: O
-) => {
-  return await _apiFetch()<T, R, O>(request, options);
-};
+) => _apiFetch({})<T, R, O>(request, options)) as $Fetch;
 
-export const $apiRawFetch = async <
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+$apiFetch.raw = <
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
   O extends NitroFetchOptions<R> = NitroFetchOptions<R>
 >(
   request: R,
   options?: O
-) => {
-  return await _apiFetch().raw<T, R, O>(request, options);
-};
+) => _apiFetch({}).raw<T, R, O>(request, options);
+$apiFetch.create = _apiFetch;
 
 export const useApiFetch = async <
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
-  OptsT extends Parameters<typeof useFetch<ResT, ErrorT, ReqT>>[1] = Parameters<
-    typeof useFetch<ResT, ErrorT, ReqT>
-  >[1]
+  Method extends AvailableRouterMethod<ReqT> = ResT extends void
+    ? "get" extends AvailableRouterMethod<ReqT>
+      ? "get"
+      : AvailableRouterMethod<ReqT>
+    : AvailableRouterMethod<ReqT>,
+  _ResT = ResT extends void ? FetchResult<ReqT, Method> : ResT,
+  DataT = _ResT,
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+  DefaultT = null
 >(
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: OptsT
+  opts?: UseFetchOptions<_ResT, DataT, PickKeys, DefaultT, ReqT, Method>
 ) => {
-  return await _useApiFetch<ResT, ErrorT, ReqT>(request, opts);
+  return await useFetch<
+    ResT,
+    ErrorT,
+    ReqT,
+    Method,
+    _ResT,
+    DataT,
+    PickKeys,
+    DefaultT
+  >(request, {
+    ...{
+      $fetch: $apiFetch,
+    },
+    ...opts,
+  });
 };

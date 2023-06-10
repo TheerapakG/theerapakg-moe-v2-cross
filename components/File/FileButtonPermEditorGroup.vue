@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { TypedInternalResponse } from "nitropack";
+import type { FetchResult } from "nuxt/app";
 
 type Props = {
   fileId: string;
-  userCount: TypedInternalResponse<`/api/file/${string}/info`>["perms"]["count"];
+  userCount: FetchResult<`/api/file/${string}/info`, "get">["perms"]["count"];
 };
 
 defineProps<Props>();
