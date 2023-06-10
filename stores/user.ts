@@ -21,7 +21,7 @@ export const useUserStore = defineStore("user", () => {
     };
     users.value[id] = {
       pending: false,
-      data: await $fetch(`/api/user/${id}/info`),
+      data: await $apiFetch<User>(`/api/user/${id}/info`),
     };
   };
 
