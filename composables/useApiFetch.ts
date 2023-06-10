@@ -1,4 +1,5 @@
 import { defu } from "defu";
+import { hash } from "ohash";
 import {
   AvailableRouterMethod,
   NitroFetchOptions,
@@ -6,7 +7,11 @@ import {
   $Fetch,
 } from "nitropack";
 import { FetchResult, UseFetchOptions } from "nuxt/app";
-import { KeysOf } from "nuxt/dist/app/composables/asyncData";
+import {
+  AsyncData,
+  KeysOf,
+  PickFrom,
+} from "nuxt/dist/app/composables/asyncData";
 import { FetchContext, FetchError, FetchOptions } from "ofetch";
 
 const _apiFetch = <
@@ -72,7 +77,7 @@ $apiFetch.create = _apiFetch;
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-export const useApiFetch = async <
+export function useApiFetch<
   ResT = void,
   ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
@@ -88,20 +93,51 @@ export const useApiFetch = async <
 >(
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts?: UseFetchOptions<_ResT, DataT, PickKeys, DefaultT, ReqT, Method>
-) => {
-  return await useFetch<
-    ResT,
-    ErrorT,
-    ReqT,
-    Method,
-    _ResT,
-    DataT,
-    PickKeys,
-    DefaultT
-  >(request, {
-    ...{
+): AsyncData<PickFrom<DataT, PickKeys> | DefaultT, ErrorT | null>;
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export function useApiFetch<
+  ResT = void,
+  ErrorT = FetchError,
+  ReqT extends NitroFetchRequest = NitroFetchRequest,
+  Method extends AvailableRouterMethod<ReqT> = ResT extends void
+    ? "get" extends AvailableRouterMethod<ReqT>
+      ? "get"
+      : AvailableRouterMethod<ReqT>
+    : AvailableRouterMethod<ReqT>,
+  _ResT = ResT extends void ? FetchResult<ReqT, Method> : ResT,
+  DataT = _ResT,
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+  DefaultT = null
+>(
+  request: Ref<ReqT> | ReqT | (() => ReqT),
+  arg1?:
+    | string
+    | UseFetchOptions<_ResT, DataT, PickKeys, DefaultT, ReqT, Method>,
+  arg2?: string
+) {
+  const config = useRuntimeConfig();
+
+  const [opts = {}, autoKey] =
+    typeof arg1 === "string" ? [{}, arg1] : [arg1, arg2];
+
+  const _key =
+    opts?.key ??
+    hash([
+      autoKey,
+      unref(opts?.baseURL) ?? config.public?.apiBaseURL ?? "/",
+      typeof request === "string" ? request : "",
+      unref(opts?.params) ?? unref(opts?.query),
+    ]);
+
+  const key = _key === autoKey ? "$f" + _key : _key;
+
+  return useFetch<ResT, ErrorT, ReqT, Method, _ResT, DataT, PickKeys, DefaultT>(
+    request,
+    defu(opts, {
+      key,
       $fetch: $apiFetch,
-    },
-    ...opts,
-  });
-};
+    })
+  );
+}

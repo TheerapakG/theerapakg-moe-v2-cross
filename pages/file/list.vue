@@ -126,24 +126,26 @@ watch([page, size, fileSearchDebounced], async () => {
   }
 });
 
-const {
-  pending,
-  refresh,
-  data: fileListData,
-} = await useAsyncData(
-  async () => {
-    const { queryCount, files } = await $apiFetch("/api/file/list", {
-      params: {
-        page: page.value,
-        size: size.value,
-        ...(fileSearchDebounced.value && { file: fileSearchDebounced.value }),
-      },
-    });
+const params = computed(() => {
+  return {
+    page: page.value,
+    size: size.value,
+    ...(fileSearchDebounced.value && { file: fileSearchDebounced.value }),
+  };
+});
+const { refresh, data: fileListData } = await useApiFetch("/api/file/list", {
+  params,
+});
 
-    return {
-      queryCount,
-      files: await Promise.all(
-        files.map(async ({ id, name, owner, perms, size, mime }) => {
+const fileQueryCount = computed(() => fileListData.value?.queryCount ?? 0);
+
+const pending = ref(false);
+
+const fileList = computedAsync(
+  async () =>
+    await Promise.all(
+      fileListData.value?.files?.map(
+        async ({ id, name, owner, perms, size, mime }) => {
           const ownerUser = await userStore.useUser(owner);
           return {
             id,
@@ -153,17 +155,12 @@ const {
             size,
             mime,
           };
-        })
-      ),
-    };
-  },
-  {
-    watch: [page, size, fileSearchDebounced],
-  }
+        }
+      ) ?? []
+    ),
+  null,
+  pending
 );
-
-const fileQueryCount = computed(() => fileListData.value?.queryCount ?? 0);
-const fileList = computed(() => fileListData.value?.files ?? []);
 
 const tableColumns = [
   { key: "name", label: "Name" },

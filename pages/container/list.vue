@@ -69,16 +69,18 @@ const page = ref(isNaN(_page) ? 1 : _page);
 const _size = route.query.size ? parseInt(route.query.size as string) : 10;
 const size = ref(isNaN(_size) ? 10 : _size);
 
+const params = computed(() => {
+  return {
+    page: page.value,
+    size: size.value,
+  };
+});
 const {
   pending,
   data: containerListData,
   refresh,
 } = await useApiFetch("/api/container/list", {
-  params: {
-    page: page.value,
-    size: size.value,
-  },
-  watch: [page, size],
+  params,
 });
 
 const containerQueryCount = computed(() => containerListData.value?.count ?? 0);

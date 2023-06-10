@@ -96,23 +96,20 @@ watch([page, size, shSearchDebounced], async () => {
   }
 });
 
+const params = computed(() => {
+  return {
+    page: page.value,
+    size: size.value,
+    ...(shSearchDebounced.value && { sh: shSearchDebounced.value }),
+  };
+});
 const {
   pending,
   data: shListData,
   refresh,
-} = await useAsyncData(
-  async () =>
-    await $apiFetch("/api/sh/list", {
-      params: {
-        page: page.value,
-        size: size.value,
-        ...(shSearchDebounced.value && { sh: shSearchDebounced.value }),
-      },
-    }),
-  {
-    watch: [page, size, shSearchDebounced],
-  }
-);
+} = await useApiFetch("/api/sh/list", {
+  params,
+});
 
 const shQueryCount = computed(() => shListData.value?.queryCount ?? 0);
 const shList = computed(() => shListData.value?.sh ?? []);

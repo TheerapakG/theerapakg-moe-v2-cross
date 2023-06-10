@@ -76,7 +76,9 @@ const { refresh, data: rawPermsData } = await useFetch(
   }
 );
 
-const { pending, data: permsData } = await useAsyncData(
+const pending = ref(false);
+
+const permsData = computedAsync(
   async () => {
     if (!rawPermsData.value) return null;
 
@@ -98,9 +100,8 @@ const { pending, data: permsData } = await useAsyncData(
       ),
     };
   },
-  {
-    watch: [rawPermsData],
-  }
+  null,
+  pending
 );
 
 const permQueryUserCount = computed(
