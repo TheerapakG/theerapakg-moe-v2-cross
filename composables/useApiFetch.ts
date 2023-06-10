@@ -70,6 +70,8 @@ $apiFetch.raw = <
 ) => _apiFetch({}).raw<T, R, O>(request, options);
 $apiFetch.create = _apiFetch;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const useApiFetch = async <
   ResT = void,
   ErrorT = FetchError,
