@@ -27,8 +27,7 @@
 </template>
 
 <script setup lang="ts">
-const userStore = useUserStore();
-const current = await userStore.useCurrent();
+const { data: current, refresh } = useApiFetch("/api/user/current");
 
 const toast = useToast();
 
@@ -54,16 +53,18 @@ const logout = async () => {
   }
 
   pending.value = false;
+  open.value = false;
+
   toast.add({
     title: "Logout Success",
     description: "Successfully logged out.",
     icon: "i-heroicons-exclaimation-circle",
   });
-  await Promise.all([
-    userStore.refreshCurrent(),
-    navigateTo({
-      path: "/",
-    }),
-  ]);
+
+  await refresh();
+
+  await navigateTo({
+    path: "/",
+  });
 };
 </script>

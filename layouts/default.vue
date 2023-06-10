@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import SideBar from "~/components/SideBar.vue";
-import { RouteInfo } from "~/store/route";
+import { RouteInfo } from "~/stores/route";
 const routeStore = useRouteStore();
 
 useHead({

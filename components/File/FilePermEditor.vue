@@ -40,8 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import { User, useUserStore } from "~/store/user";
-
 type Props = {
   fileId: string;
   perm: string;
@@ -63,51 +61,56 @@ const size = ref(5);
 const userSearch = ref("");
 const userSearchDebounced = refDebounced(userSearch, 300);
 
-const { refresh, data: rawPermsData } = await useFetch(
-  `/api/file/${props.fileId}/perm/${props.perm}/list`,
-  {
-    params: {
-      page: page.value,
-      size: size.value,
-      ...(userSearchDebounced.value && { user: userSearchDebounced.value }),
-    },
-    watch: [page, size, userSearchDebounced],
-    server: false,
-  }
-);
-
-const pending = ref(false);
-
-const permsData = computedAsync(
-  async () => {
-    if (!rawPermsData.value) return null;
-
-    const { totalCount, queryCount, users } = rawPermsData.value;
-
-    emit("user-count", totalCount);
-
-    return {
-      totalCount,
-      queryCount,
-      users: await Promise.all(
-        users.map(async ({ id, perm }) => {
-          const user = await userStore.useUser(id);
-          return {
-            user: user as unknown as User,
-            perm,
-          };
-        })
-      ),
-    };
+const {
+  pending,
+  data: rawPermsData,
+  refresh,
+} = await useApiFetch(`/api/file/${props.fileId}/perm/${props.perm}/list`, {
+  params: {
+    page: page.value,
+    size: size.value,
+    ...(userSearchDebounced.value && { user: userSearchDebounced.value }),
   },
-  null,
-  pending
-);
+  watch: [page, size, userSearchDebounced],
+});
 
 const permQueryUserCount = computed(
-  () => permsData.value?.queryCount ?? Infinity
+  () => rawPermsData.value?.queryCount ?? Infinity
 );
-const permUserList = computed(() => permsData.value?.users ?? []);
+
+const permTotalUserCount = computed(() => rawPermsData.value?.totalCount);
+watch(permTotalUserCount, () => {
+  const totalCount = permTotalUserCount.value;
+  if (totalCount !== undefined) emit("user-count", totalCount);
+});
+
+const permUserList = computed(() => {
+  const users = rawPermsData.value?.users;
+
+  if (!users) return [];
+  return users.map(({ id, perm }) => {
+    return {
+      user: {
+        id,
+        info: userStore.getUser(id),
+      },
+      perm,
+    };
+  });
+});
+const missingUserIDs = computed(() => {
+  return useUniq(
+    permUserList.value
+      .map((permUser) => permUser.user)
+      .filter((user) => user.info === undefined)
+      .map((user) => user.id)
+  );
+});
+const fetchMissingUser = async () => {
+  await Promise.all(
+    missingUserIDs.value.map(async (id) => userStore.fetchUser(id))
+  );
+};
 
 const tableColumns = [{ key: "name", label: "Name" }, { key: "actions" }];
 
@@ -115,7 +118,7 @@ const tableData = computed(() =>
   useMap(permUserList.value, ({ user, perm }) => {
     return {
       id: user.id,
-      name: user.name ?? "(loading...)",
+      name: user.info?.name ?? "(loading...)",
       perm,
     };
   })
@@ -133,4 +136,9 @@ const doUser = async (id: string, method: "PUT" | "DELETE") => {
   });
   await refresh();
 };
+
+onMounted(async () => {
+  watch(missingUserIDs, fetchMissingUser);
+  await fetchMissingUser();
+});
 </script>

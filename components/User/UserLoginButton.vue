@@ -2,7 +2,7 @@
   <div>
     <UButton
       label="login"
-      :disabled="current && current.id !== 'default'"
+      :disabled="!current || current.id !== 'default'"
       @click="open = true"
     />
 
@@ -47,8 +47,7 @@
 </template>
 
 <script setup lang="ts">
-const userStore = useUserStore();
-const current = await userStore.useCurrent();
+const { data: current, refresh } = useApiFetch("/api/user/current");
 
 const toast = useToast();
 
@@ -80,17 +79,14 @@ const login = async () => {
   }
 
   pending.value = false;
+  open.value = false;
 
   toast.add({
     title: "Login Success",
     description: "Successfully logged in.",
     icon: "i-heroicons-exclaimation-circle",
   });
-  await Promise.all([
-    userStore.refreshCurrent(),
-    navigateTo({
-      path: "/",
-    }),
-  ]);
+
+  await refresh();
 };
 </script>

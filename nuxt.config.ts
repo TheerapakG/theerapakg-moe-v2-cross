@@ -54,7 +54,7 @@ export default defineNuxtConfig({
   },
 
   imports: {
-    dirs: ["store", "trpc"],
+    dirs: ["stores", "trpc"],
   },
 
   colorMode: {

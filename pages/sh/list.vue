@@ -105,14 +105,14 @@ const params = computed(() => {
 });
 const {
   pending,
-  data: shListData,
+  data: rawShListData,
   refresh,
 } = await useApiFetch("/api/sh/list", {
   params,
 });
 
-const shQueryCount = computed(() => shListData.value?.queryCount ?? 0);
-const shList = computed(() => shListData.value?.sh ?? []);
+const shQueryCount = computed(() => rawShListData.value?.queryCount ?? 0);
+const shList = computed(() => rawShListData.value?.sh ?? []);
 
 const tableColumns = [
   { key: "from", label: "From" },

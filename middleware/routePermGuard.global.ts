@@ -1,15 +1,18 @@
 import { appendResponseHeader } from "h3";
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const permStore = usePermStore();
-
   if (!to.meta.perms) return;
 
-  const permRefs = await Promise.all(
-    to.meta.perms.map((perm) => permStore.usePerm(perm))
+  const permValues = await Promise.all(
+    to.meta.perms.map(
+      async (perm) =>
+        (
+          await $apiFetch(`/api/user/current/perm/${encodeURIComponent(perm)}`)
+        ).value
+    )
   );
 
-  if (permRefs.some((permRef) => !permRef.value)) {
+  if (!permValues.every((permValue) => permValue)) {
     throw createError({ statusCode: 404, statusMessage: "Page not found" });
   }
 

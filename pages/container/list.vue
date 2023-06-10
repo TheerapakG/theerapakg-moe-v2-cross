@@ -77,14 +77,18 @@ const params = computed(() => {
 });
 const {
   pending,
-  data: containerListData,
+  data: rawContainerListData,
   refresh,
 } = await useApiFetch("/api/container/list", {
   params,
 });
 
-const containerQueryCount = computed(() => containerListData.value?.count ?? 0);
-const containerList = computed(() => containerListData.value?.containers ?? []);
+const containerQueryCount = computed(
+  () => rawContainerListData.value?.count ?? 0
+);
+const containerList = computed(
+  () => rawContainerListData.value?.containers ?? []
+);
 
 const tableColumns = [
   { key: "id", label: "ID" },

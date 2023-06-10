@@ -86,7 +86,6 @@
 
 <script setup lang="ts">
 import { LocationQueryValue } from "vue-router";
-import { User } from "~/store/user";
 import { formatPretty } from "~/utils/formatPretty";
 
 definePageMeta({
@@ -96,7 +95,6 @@ definePageMeta({
 });
 
 const route = useRoute();
-
 const userStore = useUserStore();
 
 const perms = {
@@ -133,34 +131,48 @@ const params = computed(() => {
     ...(fileSearchDebounced.value && { file: fileSearchDebounced.value }),
   };
 });
-const { refresh, data: fileListData } = await useApiFetch("/api/file/list", {
+const {
+  pending,
+  data: rawFileListData,
+  refresh,
+} = await useApiFetch("/api/file/list", {
   params,
 });
 
-const fileQueryCount = computed(() => fileListData.value?.queryCount ?? 0);
+const fileQueryCount = computed(() => rawFileListData.value?.queryCount ?? 0);
+const fileList = computed(() => {
+  const files = rawFileListData.value?.files;
 
-const pending = ref(false);
-
-const fileList = computedAsync(
-  async () =>
-    await Promise.all(
-      fileListData.value?.files?.map(
-        async ({ id, name, owner, perms, size, mime }) => {
-          const ownerUser = await userStore.useUser(owner);
-          return {
-            id,
-            name,
-            owner: ownerUser as unknown as User,
-            perms,
-            size,
-            mime,
-          };
-        }
-      ) ?? []
-    ),
-  null,
-  pending
-);
+  if (!files) return [];
+  return (
+    files?.map(({ id, name, owner, perms, size, mime }) => {
+      return {
+        id,
+        name,
+        owner: {
+          id: owner,
+          info: userStore.getUser(owner),
+        },
+        perms,
+        size,
+        mime,
+      };
+    }) ?? []
+  );
+});
+const missingOwnerIDs = computed(() => {
+  return useUniq(
+    fileList.value
+      .map((file) => file.owner)
+      .filter((owner) => owner.info === undefined)
+      .map((owner) => owner.id)
+  );
+});
+const fetchMissingOwner = async () => {
+  await Promise.all(
+    missingOwnerIDs.value.map(async (id) => userStore.fetchUser(id))
+  );
+};
 
 const tableColumns = [
   { key: "name", label: "Name" },
@@ -175,7 +187,7 @@ const tableData = computed(() =>
     return {
       id,
       name,
-      owner: owner.name ?? "(loading ...)",
+      owner: owner.info?.name ?? "(loading ...)",
       perms,
       size: formatPretty(size),
       mime,
@@ -187,5 +199,10 @@ const { pageCount } = useOffsetPagination({
   total: fileQueryCount,
   page,
   pageSize: size,
+});
+
+onMounted(async () => {
+  watch(missingOwnerIDs, fetchMissingOwner);
+  await fetchMissingOwner();
 });
 </script>
