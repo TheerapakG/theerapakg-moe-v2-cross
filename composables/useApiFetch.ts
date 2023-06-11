@@ -22,9 +22,10 @@ const _apiFetch = <
   const tryHandleCommonResponseError = async (ctx: FetchContext) => {
     if (!ctx.response?.ok) {
       if (ctx.response?.statusText === "session expired") {
-        if (process.dev) return;
+        if (process.server) return;
 
-        await (await useApiFetch("/api/user/current")).refresh();
+        const userStore = useUserStore();
+        await userStore.fetchCurrent(true);
 
         await navigateTo("/");
 

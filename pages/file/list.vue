@@ -90,7 +90,7 @@ import { formatPretty } from "~/utils/formatPretty";
 
 definePageMeta({
   title: "theerapakg-moe-app: files",
-  name: "Files",
+  name: "File Manager",
   perms: ["perms:file:list"],
 });
 
@@ -151,7 +151,7 @@ const fileList = computed(() => {
         name,
         owner: {
           id: owner,
-          info: userStore.getUser(owner),
+          info: userStore.user(owner),
         },
         perms,
         size,
@@ -173,6 +173,8 @@ const fetchMissingOwner = async () => {
     missingOwnerIDs.value.map(async (id) => userStore.fetchUser(id))
   );
 };
+watch(missingOwnerIDs, fetchMissingOwner);
+await fetchMissingOwner();
 
 const tableColumns = [
   { key: "name", label: "Name" },
@@ -199,10 +201,5 @@ const { pageCount } = useOffsetPagination({
   total: fileQueryCount,
   page,
   pageSize: size,
-});
-
-onMounted(async () => {
-  watch(missingOwnerIDs, fetchMissingOwner);
-  await fetchMissingOwner();
 });
 </script>

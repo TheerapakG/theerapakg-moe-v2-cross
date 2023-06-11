@@ -92,7 +92,7 @@ const permUserList = computed(() => {
     return {
       user: {
         id,
-        info: userStore.getUser(id),
+        info: userStore.user(id),
       },
       perm,
     };
@@ -111,6 +111,8 @@ const fetchMissingUser = async () => {
     missingUserIDs.value.map(async (id) => userStore.fetchUser(id))
   );
 };
+watch(missingUserIDs, fetchMissingUser);
+await fetchMissingUser();
 
 const tableColumns = [{ key: "name", label: "Name" }, { key: "actions" }];
 
@@ -136,9 +138,4 @@ const doUser = async (id: string, method: "PUT" | "DELETE") => {
   });
   await refresh();
 };
-
-onMounted(async () => {
-  watch(missingUserIDs, fetchMissingUser);
-  await fetchMissingUser();
-});
 </script>

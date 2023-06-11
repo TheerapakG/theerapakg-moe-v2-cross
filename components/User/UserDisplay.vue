@@ -9,12 +9,16 @@
       <UserLoginButton />
     </div>
     <div v-else class="flex place-content-center place-items-center gap-x-2">
-      <div>user: {{ current.name }}</div>
+      <div>user: {{ current.data?.name ?? "(loading...)" }}</div>
       <UserLogoutButton />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { data: current } = useApiFetch("/api/user/current");
+import { storeToRefs } from "pinia";
+
+const userStore = useUserStore();
+const { current } = storeToRefs(userStore);
+await userStore.fetchCurrent();
 </script>

@@ -27,7 +27,11 @@
 </template>
 
 <script setup lang="ts">
-const { data: current, refresh } = useApiFetch("/api/user/current");
+import { storeToRefs } from "pinia";
+
+const userStore = useUserStore();
+const { current } = storeToRefs(userStore);
+await userStore.fetchCurrent();
 
 const toast = useToast();
 
@@ -61,7 +65,7 @@ const logout = async () => {
     icon: "i-heroicons-exclaimation-circle",
   });
 
-  await refresh();
+  await userStore.fetchCurrent(true);
 
   await navigateTo({
     path: "/",

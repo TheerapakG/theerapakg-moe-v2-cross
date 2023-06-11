@@ -14,10 +14,12 @@
     <Transition name="fade">
       <button
         v-if="menu?.open"
-        class="absolute inset-0 bg-black bg-opacity-20 dark:bg-white dark:bg-opacity-20"
+        class="absolute inset-0"
         aria-hidden="true"
         @click="menu?.toggle"
-      />
+      >
+        <InactiveOverlay />
+      </button>
     </Transition>
     <SideBar
       ref="menu"
@@ -54,14 +56,34 @@ useHead({
 
 const menu = ref<InstanceType<typeof SideBar> | null>(null);
 
-const sideBarPaths = ["/", "/github/"];
+const sideBarPaths = [
+  "/",
+  "/github/",
+  "/file/list",
+  "/container/list",
+  "/sh/list",
+];
 
 const routeInfos = computed(() =>
-  useMap(sideBarPaths, (path: string) => routeStore.info(path).value)
+  sideBarPaths.map((path: string) => routeStore.info(path).value)
 );
+const filteredRouteInfos = computed(() => {
+  return useCompact(
+    routeInfos.value.map((routeInfo) =>
+      useRoutePerm(routeInfo).value.havePerm ? routeInfo : undefined
+    )
+  );
+});
+const fetchAllRoutePerms = async () => {
+  await Promise.all(
+    routeInfos.value.map(async (routeInfo) => await fetchRoutePerm(routeInfo))
+  );
+};
+watch(routeInfos, fetchAllRoutePerms);
+await fetchAllRoutePerms();
 
 const links = computed(() =>
-  useMap(routeInfos.value, (path: RouteInfo) => {
+  filteredRouteInfos.value.map((path: RouteInfo) => {
     return {
       label: path.routeName ?? "<unknown route>",
       to: path.fullPath,
