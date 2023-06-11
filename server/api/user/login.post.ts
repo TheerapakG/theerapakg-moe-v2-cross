@@ -10,12 +10,19 @@ export default defineEventHandler(
     if (!(body.user && body.pass)) return;
 
     const user = await useRedis().get(`user:name:${body.user}`);
-    if (!user) return;
+    if (!user) {
+      console.log(`login attempt for user ${body.user}: FAIL`);
+      throw createError({
+        statusCode: 403,
+        statusMessage: "authentication failed",
+      });
+    }
 
     const phash = await useRedis().hget(user, "phash");
     if (!(phash && (await argon2.verify(phash, body.pass)))) {
       console.log(`login attempt for user ${body.user}: FAIL`);
       throw createError({
+        statusCode: 403,
         statusMessage: "authentication failed",
       });
     }

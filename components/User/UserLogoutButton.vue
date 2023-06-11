@@ -47,6 +47,8 @@ const logout = async () => {
       method: "POST",
     });
   } catch {
+    pending.value = false;
+
     toast.add({
       title: "Logout Error",
       description: "Cannot log out.",
