@@ -29,7 +29,5 @@ export default defineNitroPlugin(async () => {
     addr = `${addr.address}:${addr.port}`;
   }
 
-  // TODO: check if prod
-  console.log(`WebSocket server listening on ${addr}`);
   logger.success(`WebSocket server listening on ${addr}`);
 });
