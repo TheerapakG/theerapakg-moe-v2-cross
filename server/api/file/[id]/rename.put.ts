@@ -45,12 +45,11 @@ export default defineEventHandler(
 
       await useMeili(useRuntimeConfig().meiliApiKey)
         .index("files")
-        .addDocuments(
+        .updateDocuments(
           [
             {
               id,
               name: path.basename(dir),
-              owner: getSafeIdFromIdObject<"user:id">(user),
             },
           ],
           { primaryKey: "id" }

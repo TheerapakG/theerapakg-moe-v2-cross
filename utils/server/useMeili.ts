@@ -21,6 +21,8 @@ export interface FileDocument {
   id: string;
   name: string;
   owner: string;
+  created: number;
+  modified: number;
 }
 
 export interface ShDocument {

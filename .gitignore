@@ -4,6 +4,7 @@ node_modules
 .nuxt
 .redis
 .meili
+.postgres
 .vscode
 nuxt.d.ts
 .output

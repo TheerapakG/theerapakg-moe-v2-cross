@@ -1,6 +1,7 @@
 import fs from "fs";
 import fetch from "node-fetch";
 import { useRedis } from "~/utils/server/useRedis";
+import { useMeili } from "~/utils/server/useMeili";
 import { getUser } from "~/utils/server/getUser";
 import { getSafeIdFromId } from "~/utils/server/getId";
 import { wrapHandler } from "~/utils/server/wrapHandler";
@@ -32,6 +33,19 @@ export default defineEventHandler(
       await fs.promises.writeFile(dir, fileBody, {
         flag: "w",
       });
+
+      await useMeili(useRuntimeConfig().meiliApiKey)
+        .index("files")
+        .updateDocuments(
+          [
+            {
+              id,
+              modified: Date.now() / 1000,
+            },
+          ],
+          { primaryKey: "id" }
+        );
+
       return {};
     }
   })

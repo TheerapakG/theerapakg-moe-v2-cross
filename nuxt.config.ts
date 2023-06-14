@@ -22,6 +22,11 @@ export default defineNuxtConfig({
     dockerPort: process.env.NUXT_DOCKER_PORT ?? "",
     meiliSearchKey: process.env.NUXT_MEILI_SEARCH_KEY ?? "",
     meiliApiKey: process.env.NUXT_MEILI_API_KEY ?? "",
+    postgresHost: process.env.NUXT_POSTGRES_HOST ?? "",
+    postgresPort: process.env.NUXT_POSTGRES_PORT ?? "",
+    postgresUsername: process.env.NUXT_POSTGRES_USERNAME ?? "",
+    postgresPassword: process.env.NUXT_POSTGRES_PASSWORD ?? "",
+    postgresDatabase: process.env.NUXT_POSTGRES_DATABASE ?? "",
   },
 
   nitro: {

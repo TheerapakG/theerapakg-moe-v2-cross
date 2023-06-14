@@ -60,6 +60,8 @@ export default defineEventHandler(
             id,
             name: path.basename(dir),
             owner: getSafeIdFromIdObject<"user:id">(user),
+            created: Date.now() / 1000,
+            modified: Date.now() / 1000,
           },
         ],
         { primaryKey: "id" }
