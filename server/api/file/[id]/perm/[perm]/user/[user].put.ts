@@ -1,21 +1,33 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
-import { getSafeIdFromId } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+import {
+  FilePermission,
+  fileUserPermissions as fileUserPermisionsTable,
+} from "~/schema/file_permission";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params?.id);
-    const perm = getSafeIdFromId(event.context.params?.perm);
-    const targetId = getSafeIdFromId(event.context.params?.user);
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const { edit } = await getFilePermForUser(`file:${id}`, user);
+    const { edit } = await checkFileUserPerm(id, user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
-    await useRedis().zadd(`perms:file:${id}:${perm}`, 1, `user:id:${targetId}`);
+    const _perm = event.context.params?.perm;
+    if (!_perm) throw createError({ statusMessage: "invalid perm" });
+    const perm = `file!:${_perm}`;
+
+    const targetId = event.context.params?.user;
+    if (!targetId) throw createError({ statusMessage: "invalid user" });
+
+    await useDrizzle()
+      .insert(fileUserPermisionsTable)
+      .values({
+        file_id: id,
+        user_id: targetId,
+        permission: perm as (typeof FilePermission.enumValues)[number],
+      });
+
     return {};
   })
 );

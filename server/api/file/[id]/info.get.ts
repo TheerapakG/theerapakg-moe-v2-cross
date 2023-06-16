@@ -1,49 +1,67 @@
+import { eq, sql } from "drizzle-orm";
 import fs from "fs";
 import mime from "mime";
+import { keyBy as useKeyBy } from "lodash-es";
 import path from "path";
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
-import { getSafeIdFromId, getSafeIdFromIdObject } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+
+import { File, file as fileTable } from "~/schema/file";
+import { fileUserPermissions as fileUserPermisionsTable } from "~/schema/file_permission";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params?.id);
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const { view, edit, owner } = await getFilePermForUser(`file:${id}`, user);
-    if (!view) throw createError({ statusMessage: "no permission" });
+    const { owner, view, edit } = await checkFileUserPerm(id, user);
 
-    const dir = await useRedis().hget(`file:${id}`, "dir");
-    const viewPerm = await useRedis().zcount(
-      `perms:file:${id}:view`,
-      "-inf",
-      "inf"
-    );
-    const editPerm = await useRedis().zcount(
-      `perms:file:${id}:edit`,
-      "-inf",
-      "inf"
-    );
+    const { _file, perms } = await useDrizzle().transaction(async (tx) => {
+      const _file = await tx
+        .select()
+        .from(fileTable)
+        .where(eq(fileTable.id, id))
+        .limit(1);
 
-    if (dir) {
+      const perms = await tx
+        .select({
+          id: fileUserPermisionsTable.file_id,
+          permission: fileUserPermisionsTable.permission,
+          count: sql`count(*)`.as("count"),
+        })
+        .from(fileUserPermisionsTable)
+        .where(eq(fileUserPermisionsTable.file_id, id))
+        .groupBy(
+          fileUserPermisionsTable.file_id,
+          fileUserPermisionsTable.permission
+        );
+
+      return { _file, perms };
+    });
+
+    const file: File | undefined = _file[0];
+    const permMap = useKeyBy(perms, "permission");
+    const viewCount = permMap["file!:view"]?.count;
+    const editCount = permMap["file!:edit"]?.count;
+
+    if (file) {
       return {
-        name: path.basename(dir),
-        owner: getSafeIdFromIdObject<"user">(owner),
+        name: path.basename(file.dir),
+        owner,
         perms: {
           user: {
             view,
             edit,
           },
           count: {
-            view: viewPerm,
-            edit: editPerm,
+            view: typeof viewCount == "string" ? parseInt(viewCount) : 0,
+            edit: typeof editCount == "string" ? parseInt(editCount) : 0,
           },
         },
-        size: (await fs.promises.stat(dir)).size,
-        mime: mime.getType(dir) ?? "",
+        size: (await fs.promises.stat(file.dir)).size,
+        created: file.created,
+        modified: file.modified,
+        mime: mime.getType(file.dir) ?? "",
         url: `/api/file/${id}/download`,
       };
     }

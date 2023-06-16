@@ -1,5 +1,6 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+import { eq } from "drizzle-orm";
+
+import { sh as shTable } from "~/schema/sh";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -9,14 +10,15 @@ export default defineEventHandler(
         statusMessage: "invalid params",
       });
     }
-    if (event.context.params.name?.includes(":")) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid name",
-      });
-    }
-    return {
-      value: await useRedis().get(`sh::${event.context.params.name}`),
-    };
+
+    const _value = await useDrizzle()
+      .select({ to: shTable.to })
+      .from(shTable)
+      .where(eq(shTable.from, event.context.params.name))
+      .limit(1);
+
+    const value: { to: string } | undefined = _value[0];
+
+    return { value: value?.to };
   })
 );

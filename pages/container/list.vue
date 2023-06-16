@@ -58,7 +58,7 @@ import type { Notification } from "@nuxthq/ui/dist/runtime/types";
 definePageMeta({
   title: "theerapakg-moe-app: container manager",
   name: "Container Manager",
-  perms: ["perms:container:list"],
+  perms: ["container:list"],
 });
 
 const route = useRoute();

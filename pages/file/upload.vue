@@ -18,7 +18,7 @@
 definePageMeta({
   title: "theerapakg-moe-app: upload",
   name: "Upload",
-  perms: ["perms:file:edit"],
+  perms: ["file:edit"],
 });
 
 const file = shallowRef<File | null>(null);

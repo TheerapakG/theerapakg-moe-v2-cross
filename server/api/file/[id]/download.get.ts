@@ -1,21 +1,27 @@
+import { eq } from "drizzle-orm";
 import fs from "fs";
 import mime from "mime";
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
-import { getSafeIdFromId } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+
+import { file as fileTable } from "~/schema/file";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params?.id);
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const { view } = await getFilePermForUser(`file:${id}`, user);
+    const { view } = await checkFileUserPerm(id, user);
     if (!view) throw createError({ statusMessage: "no permission" });
 
-    const dir = await useRedis().hget(`file:${id}`, "dir");
+    const _dir = await useDrizzle()
+      .select({ dir: fileTable.dir })
+      .from(fileTable)
+      .where(eq(fileTable.id, id))
+      .limit(1);
+
+    const dir: string | undefined = _dir[0]?.dir;
+
     if (dir) {
       const length = (await fs.promises.stat(dir)).size;
 

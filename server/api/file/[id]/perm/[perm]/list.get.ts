@@ -1,22 +1,27 @@
-import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
+import { and, eq, inArray, sql } from "drizzle-orm";
+import { keyBy as useKeyBy, min as useMin } from "lodash-es";
 
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
-import { getSafeIdFromId } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { useMeili, UserDocument } from "~/utils/server/useMeili";
+import { UserDocument } from "~/documents/user";
+
+import {
+  FilePermission,
+  fileUserPermissions as fileUserPermisionsTable,
+} from "~/schema/file_permission";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = getQuery(event);
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params?.id);
-    const perm = getSafeIdFromId(event.context.params?.perm);
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const { view } = await getFilePermForUser(`file:${id}`, user);
-    if (!view) throw createError({ statusMessage: "no permission" });
+    await checkFileUserPerm(id, user);
+
+    const _perm = event.context.params?.perm;
+    if (!_perm) throw createError({ statusMessage: "invalid perm" });
+    const perm = `file!:${_perm}`;
+
+    const query = getQuery(event);
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
@@ -40,36 +45,50 @@ export default defineEventHandler(
 
     const users = hits.map((u) => u.id);
 
-    const [errs2, perms] =
-      users.length <= 0
-        ? [[], []]
-        : (useZip(
-            ...((await useRedis()
-              .multi(
-                users.map((user) => [
-                  "zscore",
-                  `perms:file:${id}:${perm}`,
-                  `user:id:${user}`,
-                ])
+    const { count: totalCount, perms } = await useDrizzle().transaction(
+      async (tx) => {
+        const [count] = await tx
+          .select({
+            count: sql<number>`count(*)`,
+          })
+          .from(fileUserPermisionsTable)
+          .where(
+            and(
+              eq(fileUserPermisionsTable.file_id, id),
+              eq(
+                fileUserPermisionsTable.permission,
+                perm as (typeof FilePermission.enumValues)[number]
               )
-              .exec()) ?? [])
-          ) as [Error[], string[]]);
+            )
+          );
 
-    errs2.forEach((e) => {
-      if (e) throw e;
-    });
+        const perms = await tx
+          .select()
+          .from(fileUserPermisionsTable)
+          .where(
+            and(
+              eq(fileUserPermisionsTable.file_id, id),
+              eq(
+                fileUserPermisionsTable.permission,
+                perm as (typeof FilePermission.enumValues)[number]
+              ),
+              inArray(fileUserPermisionsTable.user_id, users)
+            )
+          );
+
+        return { count, perms };
+      }
+    );
+
+    const permsMap = useKeyBy(perms, "user_id");
 
     return {
-      totalCount: await useRedis().zcount(
-        `perms:file:${id}:${perm}`,
-        "-inf",
-        "inf"
-      ),
+      totalCount: totalCount.count,
       queryCount: queryCount ?? Infinity,
-      users: useZipWith(users, perms, (user, perm) => {
+      users: users.map((id) => {
         return {
-          id: user,
-          perm: parseInt(perm) > 0,
+          id,
+          perm: permsMap[id] ? true : false,
         };
       }),
     };

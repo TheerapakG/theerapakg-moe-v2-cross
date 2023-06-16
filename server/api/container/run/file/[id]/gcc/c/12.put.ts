@@ -1,61 +1,39 @@
-import crypto from "crypto";
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { useDocker } from "~/utils/server/useDocker";
-import { getSafeIdFromId } from "~/utils/server/getId";
-import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
+import { eq } from "drizzle-orm";
+
+import { file as fileTable } from "~/schema/file";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    if (
-      (await useRedis().sismember(`perms:${user}`, "perms:container:manage")) <=
-      0
-    )
+    if (!(await checkUserPerm(user, "container:manage")))
       throw createError({ statusMessage: "no permission" });
 
-    const fileId = getSafeIdFromId(event.context.params?.id);
+    const fileId = event.context.params?.id;
+    if (!fileId) throw createError({ statusMessage: "invalid id" });
 
-    const { view } = await getFilePermForUser(`file:${fileId}`, user);
+    const { view } = await checkFileUserPerm(fileId, user);
     if (!view) throw createError({ statusMessage: "no permission" });
 
-    const dir = await useRedis().hget(`file:${fileId}`, "dir");
+    const _dir = await useDrizzle()
+      .select({ dir: fileTable.dir })
+      .from(fileTable)
+      .where(eq(fileTable.id, fileId))
+      .limit(1);
 
-    const id = crypto.randomUUID();
-    const containerId = `container:${id}` as const;
+    const dir: string | undefined = _dir[0]?.dir;
 
-    const dockerId = await new Promise<string>((resolve, reject) => {
-      useDocker().createContainer(
-        {
-          Image: "gcc:12",
-          Cmd: ["/bin/bash", "-c", "gcc /app/app.c -o /app/app; /app/app"],
-          Volumes: {
-            "/app/app.c": {},
-          },
-          HostConfig: {
-            Binds: [`${dir}:/app/app.c:ro`],
-          },
-          WorkingDir: "/app",
-          Tty: false,
-        },
-        (err, container) => {
-          if (!container) {
-            reject(err);
-            return;
-          }
-          resolve(container.id);
-          container.start({});
-        }
-      );
+    const id = createContainer(user, {
+      Image: "gcc:12",
+      Cmd: ["/bin/bash", "-c", "gcc /app/app.c -o /app/app; /app/app"],
+      Volumes: {
+        "/app/app.c": {},
+      },
+      HostConfig: {
+        Binds: [`${dir}:/app/app.c:ro`],
+      },
+      WorkingDir: "/app",
+      Tty: false,
     });
-
-    await useRedis()
-      .multi()
-      .hset(containerId, "dockerId", dockerId)
-      .zadd(`container:${user}:ids`, 1, containerId)
-      .zadd("container:ids", 1, containerId)
-      .exec();
 
     return {
       container: id,

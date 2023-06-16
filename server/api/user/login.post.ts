@@ -1,15 +1,25 @@
-import crypto from "crypto";
 import argon2 from "argon2";
+import crypto from "crypto";
+import { eq } from "drizzle-orm";
 
-import { useRedis } from "~/utils/server/useRedis";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+import { user as userTable } from "~/schema/user";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const body = await readBody(event);
-    if (!(body.user && body.pass)) return;
+    if (!body.user) return;
 
-    const user = await useRedis().get(`user:name:${body.user}`);
+    const _user = await useDrizzle()
+      .select({
+        id: userTable.id,
+        phash: userTable.phash,
+      })
+      .from(userTable)
+      .where(eq(userTable.name, body.user))
+      .limit(1);
+
+    const user: { id: string; phash: string | null } | undefined = _user[0];
+
     if (!user) {
       console.log(`login attempt for user ${body.user}: FAIL`);
       throw createError({
@@ -18,20 +28,21 @@ export default defineEventHandler(
       });
     }
 
-    const phash = await useRedis().hget(user, "phash");
-    if (!(phash && (await argon2.verify(phash, body.pass)))) {
-      console.log(`login attempt for user ${body.user}: FAIL`);
-      throw createError({
-        statusCode: 403,
-        statusMessage: "authentication failed",
-      });
+    if (body.pass) {
+      if (!(user.phash && (await argon2.verify(user.phash, body.pass)))) {
+        console.log(`login attempt for user ${body.user}: FAIL`);
+        throw createError({
+          statusCode: 403,
+          statusMessage: "authentication failed",
+        });
+      }
     }
 
     console.log(`login attempt for user ${body.user}: PASS`);
     const sessionId = crypto.randomUUID();
     await useRedis()
       .multi()
-      .set(`session:${sessionId}`, user)
+      .set(`session:${sessionId}`, user.id)
       .expire(`session:${sessionId}`, 60 * 60 * 24)
       .exec();
 

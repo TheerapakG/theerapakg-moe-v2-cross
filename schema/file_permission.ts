@@ -11,8 +11,12 @@ export const FilePermission = pgEnum("filepermission", [
 export const fileUserPermissions = pgTable(
   "file_user_permissions",
   {
-    file_id: uuid("file_id").references(() => file.id),
-    user_id: uuid("user_id").references(() => user.id),
+    file_id: uuid("file_id")
+      .references(() => file.id)
+      .notNull(),
+    user_id: uuid("user_id")
+      .references(() => user.id)
+      .notNull(),
     permission: FilePermission("permission").notNull(),
   },
   (table) => {

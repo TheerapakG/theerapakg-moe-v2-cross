@@ -1,12 +1,8 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    if (user === "user:id:default") {
+    if (user === "00000000-0000-0000-0000-000000000000") {
       throw createError({ statusMessage: "no permission" });
     }
 

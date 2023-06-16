@@ -2,10 +2,6 @@
 export default defineNuxtConfig({
   modules: ["@nuxthq/ui", "@pinia/nuxt", "@vueuse/nuxt", "nuxt-lodash"],
 
-  build: {
-    transpile: ["trpc-nuxt"],
-  },
-
   app: {
     baseURL: "/",
   },
@@ -59,7 +55,7 @@ export default defineNuxtConfig({
   },
 
   imports: {
-    dirs: ["stores", "trpc"],
+    dirs: ["stores"],
   },
 
   colorMode: {

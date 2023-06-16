@@ -91,7 +91,7 @@ import { formatPretty } from "~/utils/formatPretty";
 definePageMeta({
   title: "theerapakg-moe-app: files",
   name: "File Manager",
-  perms: ["perms:file:list"],
+  perms: ["file:list"],
 });
 
 const route = useRoute();

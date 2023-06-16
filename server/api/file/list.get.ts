@@ -1,20 +1,25 @@
+import { inArray, sql } from "drizzle-orm";
 import fs from "fs";
 import mime from "mime";
-import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
+import {
+  groupBy as useGroupBy,
+  keyBy as useKeyBy,
+  min as useMin,
+} from "lodash-es";
 import path from "path";
 
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { getSafeIdFromIdObject } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { FileDocument, useMeili } from "~/utils/server/useMeili";
+import { FileDocument } from "~/documents/file";
+
+import { file as fileTable } from "~/schema/file";
+import { fileUserPermissions as fileUserPermisionsTable } from "~/schema/file_permission";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = getQuery(event);
     const user = await getUser(event);
-    if ((await useRedis().sismember(`perms:${user}`, "perms:file:list")) <= 0)
-      throw createError({ statusMessage: "no permission" });
+    const perm = await checkUserPerm(user, "file:list");
+    if (!perm) throw createError({ statusMessage: "no permission" });
+
+    const query = getQuery(event);
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
@@ -38,89 +43,66 @@ export default defineEventHandler(
 
     const ids = hits.map((f) => f.id);
 
-    const [errs, [files, viewPerms, editPerms]] =
-      ids.length <= 0
-        ? [[], [[], [], []]]
-        : (useZip(
-            ...(await Promise.all([
-              (async () =>
-                useZip(
-                  ...((await useRedis()
-                    .multi(ids.map((id) => ["hgetall", `file:${id}`]))
-                    .exec()) ?? [])
-                ) as [
-                  Error[],
-                  { dir: string; owner: `user:id:${string}` }[]
-                ])(),
+    const {
+      count: totalCount,
+      files,
+      perms,
+    } = await useDrizzle().transaction(async (tx) => {
+      const [count] = await tx
+        .select({
+          count: sql<number>`count(*)`,
+        })
+        .from(fileTable);
 
-              (async () =>
-                useZip(
-                  ...((await useRedis()
-                    .multi(
-                      ids.map((id) => [
-                        "zcount",
-                        `perms:file:${id}:view`,
-                        "-inf",
-                        "inf",
-                      ])
-                    )
-                    .exec()) ?? [])
-                ) as [Error[], string[]])(),
+      const files = await tx
+        .select()
+        .from(fileTable)
+        .where(inArray(fileTable.id, ids))
+        .orderBy(fileTable.created);
 
-              (async () =>
-                useZip(
-                  ...((await useRedis()
-                    .multi(
-                      ids.map((id) => [
-                        "zcount",
-                        `perms:file:${id}:edit`,
-                        "-inf",
-                        "inf",
-                      ])
-                    )
-                    .exec()) ?? [])
-                ) as [Error[], string[]])(),
-            ]))
-          ) as [
-            Error[][],
-            [{ dir: string; owner: `user:id:${string}` }[], string[], string[]]
-          ]);
+      const perms = await tx
+        .select({
+          id: fileUserPermisionsTable.file_id,
+          permission: fileUserPermisionsTable.permission,
+          count: sql`count(*)`.as("count"),
+        })
+        .from(fileUserPermisionsTable)
+        .where(inArray(fileUserPermisionsTable.file_id, ids))
+        .groupBy(
+          fileUserPermisionsTable.file_id,
+          fileUserPermisionsTable.permission
+        );
 
-    errs.forEach((err) =>
-      err.forEach((e) => {
-        if (e) throw e;
-      })
-    );
+      return { count, files, perms };
+    });
 
-    if (!(files?.every((e) => e) && [viewPerms, editPerms].every((e) => e)))
-      return;
+    const filePermMap = useGroupBy(perms, "id");
 
     return {
-      totalCount: await useRedis().zcount("file:ids", "-inf", "inf"),
+      totalCount,
       queryCount: queryCount ?? Infinity,
       files: await Promise.all(
-        useZipWith(
-          ids,
-          files,
-          viewPerms,
-          editPerms,
-          async (id, file, viewPerm, editPerm) => {
-            return {
-              id,
-              name: path.basename(file.dir),
-              owner: getSafeIdFromIdObject<"user:id">(file.owner),
-              perms: {
-                count: {
-                  view: parseInt(viewPerm),
-                  edit: parseInt(editPerm),
-                },
+        files.map(async ({ id, dir, owner, created, modified }) => {
+          const permMap = useKeyBy(filePermMap[id], "permission");
+          const viewCount = permMap["file!:view"]?.count;
+          const editCount = permMap["file!:edit"]?.count;
+          return {
+            id,
+            name: path.basename(dir),
+            owner,
+            perms: {
+              count: {
+                view: typeof viewCount == "string" ? parseInt(viewCount) : 0,
+                edit: typeof editCount == "string" ? parseInt(editCount) : 0,
               },
-              size: (await fs.promises.stat(file.dir)).size,
-              mime: mime.getType(file.dir) ?? "",
-              url: `/api/file/download/${id}`,
-            };
-          }
-        )
+            },
+            size: (await fs.promises.stat(dir)).size,
+            created,
+            modified,
+            mime: mime.getType(dir) ?? "",
+            url: `/api/file/download/${id}`,
+          };
+        })
       ),
     };
   })

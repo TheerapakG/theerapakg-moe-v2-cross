@@ -1,16 +1,17 @@
+import { sql } from "drizzle-orm";
 import { map as useMap, min as useMin, zipWith as useZipWith } from "lodash-es";
 
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { ShDocument, useMeili } from "~/utils/server/useMeili";
+import { ShDocument } from "~/documents/sh";
+
+import { sh as shTable } from "~/schema/sh";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = getQuery(event);
     const user = await getUser(event);
-    if ((await useRedis().sismember(`perms:${user}`, "perms:sh:list")) <= 0)
-      throw createError({ statusMessage: "no permission" });
+    const perm = await checkUserPerm(user, "sh:list");
+    if (!perm) throw createError({ statusMessage: "no permission" });
+
+    const query = getQuery(event);
 
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
@@ -19,6 +20,10 @@ export default defineEventHandler(
     const start = (page - 1) * size;
 
     const shSearch = query.sh ? decodeURIComponent(query.sh as string) : "";
+
+    const [{ count: totalCount }] = await useDrizzle()
+      .select({ count: sql<number>`count(*)` })
+      .from(shTable);
 
     const { estimatedTotalHits: queryCount, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
@@ -33,7 +38,7 @@ export default defineEventHandler(
     const tos = useMap(hits, "to");
 
     return {
-      totalCount: await useRedis().zcount("sh:ids", "-inf", "inf"),
+      totalCount,
       queryCount: queryCount ?? Infinity,
       sh: useZipWith(froms, tos, (from, to) => {
         return { from, to };

@@ -1,13 +1,26 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getSafeIdFromId } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+import { eq } from "drizzle-orm";
+
+import { user as userTable } from "~/schema/user";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const id = getSafeIdFromId(event.context.params?.id);
+    const id = event.context.params?.id;
 
-    return {
-      name: await useRedis().hget(`user:id:${id}`, "name"),
-    };
+    if (id) {
+      const _user = await useDrizzle()
+        .select({
+          id: userTable.id,
+          name: userTable.name,
+        })
+        .from(userTable)
+        .where(eq(userTable.id, id))
+        .limit(1);
+
+      const user: { id: string; name: string } | undefined = _user[0];
+
+      return {
+        name: user?.name,
+      };
+    }
   })
 );

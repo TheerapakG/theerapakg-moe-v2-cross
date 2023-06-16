@@ -17,7 +17,9 @@ export const UserPermission = pgEnum("userpermission", [
 export const userPermissions = pgTable(
   "user_permissions",
   {
-    user_id: uuid("user_id").references(() => user.id),
+    user_id: uuid("user_id")
+      .references(() => user.id)
+      .notNull(),
     permission: UserPermission("permission").notNull(),
   },
   (table) => {

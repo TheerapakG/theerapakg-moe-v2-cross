@@ -69,7 +69,7 @@ import { LocationQueryValue } from "vue-router";
 definePageMeta({
   title: "theerapakg-moe-app: shortener manager",
   name: "Shortener Manager",
-  perms: ["perms:sh:list"],
+  perms: ["sh:list"],
 });
 
 const route = useRoute();

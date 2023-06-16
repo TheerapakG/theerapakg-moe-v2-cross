@@ -2,7 +2,7 @@
   <div v-if="!current">loading...</div>
   <div v-else class="flex place-content-center place-items-center">
     <div
-      v-if="current.id === 'default'"
+      v-if="current.id === '00000000-0000-0000-0000-000000000000'"
       class="flex place-content-center place-items-center gap-x-2"
     >
       <div>not logged in</div>

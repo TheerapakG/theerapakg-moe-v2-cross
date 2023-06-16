@@ -1,60 +1,40 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { ShDocument, useMeili } from "~/utils/server/useMeili";
+import { eq } from "drizzle-orm";
+
+import { ShDocument } from "~/documents/sh";
+
+import { sh as shTable } from "~/schema/sh";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
+    const user = await getUser(event);
+    const perm = await checkUserPerm(user, "sh:edit");
+    if (!perm) throw createError({ statusMessage: "no permission" });
+
     if (!event.context.params) {
       throw createError({
         statusCode: 500,
         statusMessage: "invalid params",
       });
     }
-    if (
-      event.context.params.name.includes(":") ||
-      event.context.params.newname.includes(":")
-    ) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid name",
+
+    const [update] = await useDrizzle()
+      .update(shTable)
+      .set({
+        from: event.context.params.newname,
+      })
+      .where(eq(shTable.from, event.context.params.name))
+      .returning({
+        name: shTable.from,
+        to: shTable.to,
       });
+
+    if (update) {
+      const index = useMeili(useRuntimeConfig().meiliApiKey).index<ShDocument>(
+        "shs"
+      );
+      index.addDocuments([update], { primaryKey: "name" });
+      index.deleteDocument(event.context.params.name);
     }
-
-    const user = await getUser(event);
-    if ((await useRedis().sismember(`perms:${user}`, "perms:sh:edit")) <= 0)
-      throw createError({ statusMessage: "no permission" });
-
-    const to = await useRedis().get(`sh::${event.context.params.name}`);
-    if (!to)
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid name",
-      });
-
-    await useRedis()
-      .multi()
-      .zrem("sh:ids", `sh::${event.context.params.name}`)
-      .zadd("sh:ids", 1, `sh::${event.context.params.newname}`)
-      .rename(
-        `sh::${event.context.params.name}`,
-        `sh::${event.context.params.newname}`
-      )
-      .exec();
-
-    const index = useMeili(useRuntimeConfig().meiliApiKey).index<ShDocument>(
-      "shs"
-    );
-    index.addDocuments(
-      [
-        {
-          name: event.context.params.newname,
-          to,
-        },
-      ],
-      { primaryKey: "name" }
-    );
-    index.deleteDocument(event.context.params.name);
 
     return {};
   })

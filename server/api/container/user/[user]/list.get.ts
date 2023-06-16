@@ -1,57 +1,70 @@
-import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
+import { eq, sql } from "drizzle-orm";
+import { min as useMin } from "lodash-es";
 
-import { useRedis } from "~/utils/server/useRedis";
-import { getSafeIdFromId, getSafeIdFromIdObject } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { getUser } from "~/utils/server/getUser";
+import { container as containerTable } from "~/schema/container";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = getQuery(event);
     const user = await getUser(event);
 
-    const target = getSafeIdFromId(event.context.params?.user);
-    if (
-      user !== target &&
-      (await useRedis().sismember(`perms:${user}`, "perms:file:list")) <= 0
-    )
-      throw createError({ statusMessage: "no permission" });
+    const target = event.context.params?.user;
 
+    if (user !== target) {
+      const perm = await checkUserPerm(user, "container:list");
+      if (!perm) throw createError({ statusMessage: "no permission" });
+    }
+
+    if (!target) throw createError({ statusMessage: "invalid user" });
+
+    const query = getQuery(event);
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
       ? useMin([parseInt(query.size as string), 50]) ?? 10
       : 10;
     const start = (page - 1) * size;
-    const stop = start + size - 1;
 
-    const ids = (await useRedis().zrange(
-      `container:${target}:ids`,
-      start,
-      stop
-    )) as `container:${string}`[];
+    const { count, containers } = await useDrizzle().transaction(async (tx) => {
+      const [count] = await tx
+        .select({
+          count: sql<number>`count(*)`,
+        })
+        .from(containerTable)
+        .where(eq(containerTable.owner, target));
 
-    const [errs, owners] = useZip(
-      ...((await useRedis()
-        .multi(ids.map((id) => ["hget", id, "owner"]))
-        .exec()) ?? [])
-    ) as [Error[], `user:id:${string}`[]];
+      const containers = await tx
+        .select()
+        .from(containerTable)
+        .where(eq(containerTable.owner, target))
+        .offset(start)
+        .limit(size);
 
-    errs.forEach((e) => {
-      if (e) throw e;
+      return { count, containers };
     });
 
-    if (owners.some((e) => !e)) return;
-
-    const strippedIds = ids.map(getSafeIdFromIdObject<"container">);
-
     return {
-      count: await useRedis().zcount("container:ids", "-inf", "inf"),
-      users: useZipWith(strippedIds, owners, (id, owner) => {
-        return {
-          id,
-          owner,
-        };
-      }),
+      count: count.count,
+      containers: await Promise.all(
+        containers.map(async ({ id, owner, dockerId }) => {
+          const {
+            State: {
+              Dead: dead,
+              Paused: paused,
+              Running: running,
+              Status: status,
+            },
+          } = await useDocker().getContainer(dockerId).inspect();
+          return {
+            id,
+            owner,
+            state: {
+              dead,
+              paused,
+              running,
+              status,
+            },
+          };
+        })
+      ),
     };
   })
 );

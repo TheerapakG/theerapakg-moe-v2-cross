@@ -1,91 +1,61 @@
-import { min as useMin, zip as useZip, zipWith as useZipWith } from "lodash-es";
+import { sql } from "drizzle-orm";
+import { min as useMin } from "lodash-es";
 
-import { useRedis } from "~/utils/server/useRedis";
-import { getSafeIdFromIdObject } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { getUser } from "~/utils/server/getUser";
-import { useDocker } from "~/utils/server/useDocker";
+import { container as containerTable } from "~/schema/container";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const query = getQuery(event);
     const user = await getUser(event);
-    if (
-      (await useRedis().sismember(`perms:${user}`, "perms:container:list")) <= 0
-    )
-      throw createError({ statusMessage: "no permission" });
 
+    const perm = await checkUserPerm(user, "container:list");
+    if (!perm) throw createError({ statusMessage: "no permission" });
+
+    const query = getQuery(event);
     const page = query.page ? parseInt(query.page as string) : 1;
     const size = query.size
       ? useMin([parseInt(query.size as string), 50]) ?? 10
       : 10;
     const start = (page - 1) * size;
-    const stop = start + size - 1;
 
-    const ids = (await useRedis().zrange(
-      "container:ids",
-      start,
-      stop
-    )) as `container:${string}`[];
+    const { count, containers } = await useDrizzle().transaction(async (tx) => {
+      const [count] = await tx
+        .select({
+          count: sql<number>`count(*)`,
+        })
+        .from(containerTable);
 
-    const containers = await (async () => {
-      const [errs, containers] = useZip(
-        ...((await useRedis()
-          .multi(ids.map((id) => ["hgetall", id]))
-          .exec()) ?? [])
-      ) as [
-        Error[] | undefined,
-        { dockerId: string; owner: `user:id:${string}` }[] | undefined
-      ];
+      const containers = await tx
+        .select()
+        .from(containerTable)
+        .offset(start)
+        .limit(size);
 
-      errs?.forEach((e) => {
-        if (e) throw e;
-      });
-
-      if (containers && containers.some((e) => !e)) return;
-      return containers ?? [];
-    })();
-
-    if (!containers) return;
-
-    const containerInfos = await Promise.all(
-      containers.map(async (container) => {
-        const {
-          State: {
-            Dead: dead,
-            Paused: paused,
-            Running: running,
-            Status: status,
-          },
-        } = await useDocker().getContainer(container.dockerId).inspect();
-        return {
-          state: {
-            dead,
-            paused,
-            running,
-            status,
-          },
-        };
-      })
-    );
-
-    if (!containerInfos) return;
-
-    const strippedIds = ids.map(getSafeIdFromIdObject<"container">);
+      return { count, containers };
+    });
 
     return {
-      count: await useRedis().zcount("container:ids", "-inf", "inf"),
-      containers: useZipWith(
-        strippedIds,
-        containers,
-        containerInfos,
-        (id, container, info) => {
+      count: count.count,
+      containers: await Promise.all(
+        containers.map(async ({ id, owner, dockerId }) => {
+          const {
+            State: {
+              Dead: dead,
+              Paused: paused,
+              Running: running,
+              Status: status,
+            },
+          } = await useDocker().getContainer(dockerId).inspect();
           return {
             id,
-            owner: container.owner,
-            state: info.state,
+            owner,
+            state: {
+              dead,
+              paused,
+              running,
+              status,
+            },
           };
-        }
+        })
       ),
     };
   })

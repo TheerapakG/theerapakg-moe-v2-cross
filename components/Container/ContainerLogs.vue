@@ -19,42 +19,23 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const utf8Logs = ref<
-  { type: "stdout" | "stderr"; time: string; msg: string }[]
->([]);
+const { data: rawLogs } = useApiFetch(
+  `/api/container/${props.containerId}/logs`
+);
 
-const useContainerSubscription = (containerId: string) => {
-  const wsClient = useTRPCWs();
-  utf8Logs.value = [];
-  return wsClient.container.logs.subscribe(
-    {
-      id: containerId,
-    },
-    {
-      onData: async ({ type, time, msg }) => {
-        utf8Logs.value.push({
-          type,
-          time,
-          msg: new TextDecoder().decode(
-            await (
-              await fetch(`data:application/octet-stream;base64,${msg}`)
-            ).arrayBuffer()
-          ),
-        });
-      },
-    }
-  );
-};
-
-onMounted(async () => {
-  let subscription = useContainerSubscription(props.containerId);
-  watch(
-    () => props.containerId,
-    () => {
-      subscription.unsubscribe();
-      subscription = useContainerSubscription(props.containerId);
-    }
-  );
-  onUnmounted(() => subscription.unsubscribe);
-});
+const utf8Logs = computedAsync(() =>
+  Promise.all(
+    rawLogs.value?.map(async ({ type, time, msg }) => {
+      return {
+        type,
+        time,
+        msg: new TextDecoder().decode(
+          await (
+            await fetch(`data:application/octet-stream;base64,${msg}`)
+          ).arrayBuffer()
+        ),
+      };
+    }) ?? []
+  )
+);
 </script>

@@ -1,9 +1,9 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
+import { UserPermission } from "~/schema/user_permission";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
+    const user = await getUser(event);
+
     if (!event.context.params) {
       throw createError({
         statusCode: 500,
@@ -11,14 +11,11 @@ export default defineEventHandler(
       });
     }
 
-    const user = await getUser(event);
-
     return {
-      value:
-        (await useRedis().sismember(
-          `perms:${user}`,
-          decodeURIComponent(event.context.params.perm)
-        )) > 0,
+      value: await checkUserPerm(
+        user,
+        event.context.params.perm as (typeof UserPermission.enumValues)[number]
+      ),
     };
   })
 );

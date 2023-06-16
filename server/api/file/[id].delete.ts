@@ -1,34 +1,41 @@
-import fs from "fs";
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { getSafeIdFromId } from "~/utils/server/getId";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { getFilePermForUser } from "~/utils/server/getFilePermForUser";
-import { FileDocument, useMeili } from "~/utils/server/useMeili";
+import { eq } from "drizzle-orm";
+import fs from "fs/promises";
+
+import { FileDocument } from "~/documents/file";
+
+import { file as fileTable } from "~/schema/file";
+import { fileUserPermissions as fileUserPermissionsTable } from "~/schema/file_permission";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = getSafeIdFromId(event.context.params?.id);
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const { edit } = await getFilePermForUser(`file:${id}`, user);
+    const { edit } = await checkFileUserPerm(id, user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
-    const dir = await useRedis().hget(`file:${id}`, "dir");
-    if (dir) {
-      await useMeili(useRuntimeConfig().meiliApiKey)
-        .index<FileDocument>("files")
-        .deleteDocument(id);
+    await useMeili(useRuntimeConfig().meiliApiKey)
+      .index<FileDocument>("files")
+      .deleteDocument(id);
 
-      await useRedis()
-        .multi()
-        .del(`file:${id}`, `perms:file:${id}:view`, `perms:file:${id}:edit`)
-        .zrem(`file:${user}:ids`, `file:${id}`)
-        .zrem("file:ids", `file:${id}`)
-        .exec();
-      await fs.promises.unlink(dir);
-      return {};
-    }
+    const _fileDir = await useDrizzle().transaction(async (tx) => {
+      await tx
+        .delete(fileUserPermissionsTable)
+        .where(eq(fileUserPermissionsTable.file_id, id));
+      const _fileDir = await tx
+        .delete(fileTable)
+        .where(eq(fileTable.id, id))
+        .returning({ dir: fileTable.dir });
+
+      return _fileDir;
+    });
+
+    const fileDir: string | undefined = _fileDir[0]?.dir;
+
+    await fs.unlink(fileDir);
+
+    return {};
   })
 );

@@ -1,47 +1,42 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { ShDocument, useMeili } from "~/utils/server/useMeili";
+import { ShDocument } from "~/documents/sh";
+
+import { sh as shTable } from "~/schema/sh";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
+    const user = await getUser(event);
+    const perm = await checkUserPerm(user, "sh:edit");
+    if (!perm) throw createError({ statusMessage: "no permission" });
+
+    const query = getQuery(event);
+
     if (!event.context.params) {
       throw createError({
         statusCode: 500,
         statusMessage: "invalid params",
       });
     }
-    if (event.context.params.name.includes(":")) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid name",
-      });
-    }
-
-    const query = getQuery(event);
-    const user = await getUser(event);
-    if ((await useRedis().sismember(`perms:${user}`, "perms:sh:edit")) <= 0)
-      throw createError({ statusMessage: "no permission" });
 
     const to = decodeURIComponent(query.target as string);
 
-    await useRedis()
-      .multi()
-      .set(`sh::${event.context.params.name}`, to)
-      .zadd("sh:ids", 1, `sh::${event.context.params.name}`)
-      .exec();
+    const [insert] = await useDrizzle()
+      .insert(shTable)
+      .values({
+        from: event.context.params.name,
+        to,
+      })
+      .onConflictDoUpdate({
+        target: shTable.from,
+        set: { to },
+      })
+      .returning({
+        name: shTable.from,
+        to: shTable.to,
+      });
 
     await useMeili(useRuntimeConfig().meiliApiKey)
       .index<ShDocument>("shs")
-      .addDocuments(
-        [
-          {
-            name: event.context.params.name,
-            to,
-          },
-        ],
-        { primaryKey: "name" }
-      );
+      .addDocuments([insert], { primaryKey: "name" });
 
     return {};
   })

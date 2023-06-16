@@ -2,7 +2,9 @@
   <div>
     <UButton
       label="login"
-      :disabled="!current || current.id !== 'default'"
+      :disabled="
+        !current || current.id !== '00000000-0000-0000-0000-000000000000'
+      "
       @click="open = true"
     />
 

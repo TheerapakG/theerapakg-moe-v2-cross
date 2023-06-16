@@ -1,21 +1,23 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { useDocker } from "~/utils/server/useDocker";
-import { getSafeIdFromId } from "~/utils/server/getId";
+import { eq } from "drizzle-orm";
+
+import { container as containerTable } from "~/schema/container";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    if (
-      (await useRedis().sismember(`perms:${user}`, "perms:container:manage")) <=
-      0
-    )
+    if (!(await checkUserPerm(user, "container:manage")))
       throw createError({ statusMessage: "no permission" });
 
-    const id = getSafeIdFromId(event.context.params?.id);
-    const containerId = `container:${id}` as const;
-    const dockerId = await useRedis().hget(containerId, "dockerId");
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
+
+    const _dockerId = await useDrizzle()
+      .select({ dockerId: containerTable.dockerId })
+      .from(containerTable)
+      .where(eq(containerTable.id, id))
+      .limit(1);
+
+    const dockerId: string | undefined = _dockerId[0]?.dockerId;
 
     if (!dockerId)
       throw createError({ statusMessage: "no specified container" });
@@ -24,12 +26,7 @@ export default defineEventHandler(
       force: true,
     });
 
-    await useRedis()
-      .multi()
-      .del(containerId)
-      .zrem(`container:${user}:id`, containerId)
-      .zrem("container:ids", containerId)
-      .exec();
+    await useDrizzle().delete(containerTable).where(eq(containerTable.id, id));
 
     return {};
   })

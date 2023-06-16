@@ -11,21 +11,3 @@ export const useMeili = (key: string) => {
 
   return meili[key];
 };
-
-export interface UserDocument {
-  id: string;
-  name: string;
-}
-
-export interface FileDocument {
-  id: string;
-  name: string;
-  owner: string;
-  created: number;
-  modified: number;
-}
-
-export interface ShDocument {
-  name: string;
-  to: string;
-}

@@ -1,23 +1,24 @@
-import { useRedis } from "~/utils/server/useRedis";
-import { getUser } from "~/utils/server/getUser";
-import { wrapHandler } from "~/utils/server/wrapHandler";
-import { useDocker } from "~/utils/server/useDocker";
-import { getSafeIdFromId } from "~/utils/server/getId";
+import { eq } from "drizzle-orm";
 import { Stream } from "stream";
+
+import { container as containerTable } from "~/schema/container";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    if (
-      (await useRedis().sismember(
-        `perms:${user}`,
-        "perms:container:inspect"
-      )) <= 0
-    )
+    if (!(await checkUserPerm(user, "container:inspect")))
       throw createError({ statusMessage: "no permission" });
 
-    const id = getSafeIdFromId(event.context.params?.id);
-    const dockerId = await useRedis().hget(`container:${id}`, "dockerId");
+    const id = event.context.params?.id;
+    if (!id) throw createError({ statusMessage: "invalid id" });
+
+    const _dockerId = await useDrizzle()
+      .select({ dockerId: containerTable.dockerId })
+      .from(containerTable)
+      .where(eq(containerTable.id, id))
+      .limit(1);
+
+    const dockerId: string | undefined = _dockerId[0]?.dockerId;
 
     if (!dockerId)
       throw createError({ statusMessage: "no specified container" });
@@ -30,17 +31,21 @@ export default defineEventHandler(
       timestamps: true,
     });
 
-    const logs: { type: "stdout" | "stderr"; msg: string }[] = [];
+    const logs: { type: "stdout" | "stderr"; time: string; msg: string }[] = [];
 
     const stdoutStream = new Stream.PassThrough();
     const stderrStream = new Stream.PassThrough();
 
-    stdoutStream.on("data", (data) =>
-      logs.push({ type: "stdout", msg: data.toString("base64") })
-    );
-    stderrStream.on("data", (data) =>
-      logs.push({ type: "stderr", msg: data.toString("base64") })
-    );
+    stdoutStream.on("data", (data) => {
+      const time = data.subarray(0, 30).toString();
+      const msg = data.subarray(31).toString("base64");
+      logs.push({ type: "stdout", time, msg });
+    });
+    stderrStream.on("data", (data) => {
+      const time = data.subarray(0, 30).toString();
+      const msg = data.subarray(31).toString("base64");
+      logs.push({ type: "stderr", time, msg });
+    });
 
     const logStreamEnd = new Promise((resolve) =>
       logStream.on("end", () => resolve(undefined))
