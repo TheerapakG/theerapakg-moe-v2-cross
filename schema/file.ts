@@ -10,8 +10,8 @@ export const file = pgTable(
     owner: uuid("owner")
       .references(() => user.id)
       .notNull(),
-    created: timestamp("created").notNull(),
-    modified: timestamp("modified").notNull(),
+    created: timestamp("created", { withTimezone: true }).notNull(),
+    modified: timestamp("modified", { withTimezone: true }).notNull(),
   },
   (table) => {
     return {

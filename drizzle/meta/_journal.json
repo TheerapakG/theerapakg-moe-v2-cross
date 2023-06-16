@@ -8,6 +8,13 @@
       "when": 1686741957877,
       "tag": "0000_yielding_medusa",
       "breakpoints": false
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1686923837576,
+      "tag": "0001_fancy_leo",
+      "breakpoints": false
     }
   ]
 }
