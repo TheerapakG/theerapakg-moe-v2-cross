@@ -1,8 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Stream } from "stream";
 
-import { container as containerTable } from "~/schema/container";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);

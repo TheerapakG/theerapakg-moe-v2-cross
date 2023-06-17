@@ -1,7 +1,5 @@
 import { eq } from "drizzle-orm";
 
-import { file as fileTable } from "~/schema/file";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -22,7 +20,7 @@ export default defineEventHandler(
 
     const dir: string | undefined = _dir[0]?.dir;
 
-    const id = createContainer(user, {
+    const id = await createContainer(user, {
       Image: "python:3.7",
       Cmd: ["python3", "/app/app.py"],
       Volumes: {

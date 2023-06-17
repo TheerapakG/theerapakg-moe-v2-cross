@@ -19,4 +19,7 @@ export const file = pgTable(
     };
   }
 );
-export type File = InferModel<typeof file>;
+
+export { file as fileTable };
+
+export type FileInfo = InferModel<typeof file>;

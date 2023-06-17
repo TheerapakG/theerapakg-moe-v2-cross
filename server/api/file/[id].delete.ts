@@ -1,11 +1,6 @@
 import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 
-import { FileDocument } from "~/documents/file";
-
-import { file as fileTable } from "~/schema/file";
-import { fileUserPermissions as fileUserPermissionsTable } from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -17,7 +12,7 @@ export default defineEventHandler(
     if (!edit) throw createError({ statusMessage: "no permission" });
 
     await useMeili(useRuntimeConfig().meiliApiKey)
-      .index<FileDocument>("files")
+      .index<typeof fileDocument>("files")
       .deleteDocument(id);
 
     const _fileDir = await useDrizzle().transaction(async (tx) => {

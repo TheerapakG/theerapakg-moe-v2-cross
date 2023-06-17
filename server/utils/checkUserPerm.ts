@@ -1,10 +1,5 @@
 import { and, eq } from "drizzle-orm";
 
-import {
-  UserPermission,
-  userPermissions as userPermissionsTable,
-} from "~/schema/user_permission";
-
 export const checkUserPerm = async (
   user: string,
   perm: (typeof UserPermission.enumValues)[number]

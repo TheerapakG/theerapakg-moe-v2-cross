@@ -1,8 +1,6 @@
 import { sql } from "drizzle-orm";
 import { min as useMin } from "lodash-es";
 
-import { user as userTable } from "~/schema/user";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const query = getQuery(event);

@@ -1,13 +1,6 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { keyBy as useKeyBy, min as useMin } from "lodash-es";
 
-import { UserDocument } from "~/documents/user";
-
-import {
-  FilePermission,
-  fileUserPermissions as fileUserPermisionsTable,
-} from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -36,8 +29,8 @@ export default defineEventHandler(
     const { estimatedTotalHits: queryCount, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
     )
-      .index<UserDocument>("users")
-      .search<UserDocument>(userSearch, {
+      .index<typeof userDocument>("users")
+      .search<typeof userDocument>(userSearch, {
         offset: start,
         limit: size,
         attributesToRetrieve: ["id"],
@@ -51,12 +44,12 @@ export default defineEventHandler(
           .select({
             count: sql<number>`count(*)`,
           })
-          .from(fileUserPermisionsTable)
+          .from(fileUserPermissionsTable)
           .where(
             and(
-              eq(fileUserPermisionsTable.file_id, id),
+              eq(fileUserPermissionsTable.file_id, id),
               eq(
-                fileUserPermisionsTable.permission,
+                fileUserPermissionsTable.permission,
                 perm as (typeof FilePermission.enumValues)[number]
               )
             )
@@ -64,15 +57,15 @@ export default defineEventHandler(
 
         const perms = await tx
           .select()
-          .from(fileUserPermisionsTable)
+          .from(fileUserPermissionsTable)
           .where(
             and(
-              eq(fileUserPermisionsTable.file_id, id),
+              eq(fileUserPermissionsTable.file_id, id),
               eq(
-                fileUserPermisionsTable.permission,
+                fileUserPermissionsTable.permission,
                 perm as (typeof FilePermission.enumValues)[number]
               ),
-              inArray(fileUserPermisionsTable.user_id, users)
+              inArray(fileUserPermissionsTable.user_id, users)
             )
           );
 

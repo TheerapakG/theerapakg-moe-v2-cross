@@ -1,8 +1,3 @@
-import {
-  FilePermission,
-  fileUserPermissions as fileUserPermisionsTable,
-} from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -21,7 +16,7 @@ export default defineEventHandler(
     if (!targetId) throw createError({ statusMessage: "invalid user" });
 
     await useDrizzle()
-      .insert(fileUserPermisionsTable)
+      .insert(fileUserPermissionsTable)
       .values({
         file_id: id,
         user_id: targetId,

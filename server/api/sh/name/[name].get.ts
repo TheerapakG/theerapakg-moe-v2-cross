@@ -1,7 +1,5 @@
 import { eq } from "drizzle-orm";
 
-import { sh as shTable } from "~/schema/sh";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     if (!event.context.params) {

@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
-export const container = pgTable(
+const container = pgTable(
   "container",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -24,4 +24,7 @@ export const container = pgTable(
     };
   }
 );
-export type Container = InferModel<typeof container>;
+
+export { container as containerTable };
+
+export type ContainerInfo = InferModel<typeof container>;

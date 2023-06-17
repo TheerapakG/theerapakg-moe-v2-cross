@@ -1,9 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
 
-import { file as fileTable } from "~/schema/file";
-import { fileUserPermissions as fileUserPermisionsTable } from "~/schema/file_permission";
-import { userPermissions as userPermisionsTable } from "~/schema/user_permission";
-
 export const checkFileUserPerm = async (file: string, user: string) => {
   const { _fileOwner, userPerms, filePerms } = await useDrizzle().transaction(
     async (tx) => {
@@ -17,25 +13,25 @@ export const checkFileUserPerm = async (file: string, user: string) => {
 
       const userPerms = await tx
         .select({
-          permission: userPermisionsTable.permission,
+          permission: userPermissionsTable.permission,
         })
-        .from(userPermisionsTable)
+        .from(userPermissionsTable)
         .where(
           and(
-            eq(userPermisionsTable.user_id, user),
-            inArray(userPermisionsTable.permission, ["file:view", "file:edit"])
+            eq(userPermissionsTable.user_id, user),
+            inArray(userPermissionsTable.permission, ["file:view", "file:edit"])
           )
         );
 
       const filePerms = await tx
         .select({
-          permission: fileUserPermisionsTable.permission,
+          permission: fileUserPermissionsTable.permission,
         })
-        .from(fileUserPermisionsTable)
+        .from(fileUserPermissionsTable)
         .where(
           and(
-            eq(fileUserPermisionsTable.user_id, user),
-            eq(fileUserPermisionsTable.file_id, file)
+            eq(fileUserPermissionsTable.user_id, user),
+            eq(fileUserPermissionsTable.file_id, file)
           )
         );
 

@@ -1,7 +1,5 @@
 import { ContainerCreateOptions } from "dockerode";
 
-import { container as containerTable } from "~/schema/container";
-
 export const createContainer = async (
   user: string,
   opts: ContainerCreateOptions

@@ -13,7 +13,7 @@ export default defineEventHandler(
     const image = decodeURIComponent(query.image as string);
     const cmd = Cmd.parse(JSON.parse(decodeURIComponent(query.cmd as string)));
 
-    const id = createContainer(user, {
+    const id = await createContainer(user, {
       Image: image,
       Cmd: cmd,
       Tty: false,

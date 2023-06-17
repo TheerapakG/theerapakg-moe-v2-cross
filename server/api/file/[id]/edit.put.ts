@@ -2,8 +2,6 @@ import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 import fetch from "node-fetch";
 
-import { file as fileTable } from "~/schema/file";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);

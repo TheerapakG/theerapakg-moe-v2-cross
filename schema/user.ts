@@ -15,4 +15,6 @@ export const user = pgTable(
   }
 );
 
-export type User = InferModel<typeof user>;
+export { user as userTable };
+
+export type UserInfo = InferModel<typeof user>;

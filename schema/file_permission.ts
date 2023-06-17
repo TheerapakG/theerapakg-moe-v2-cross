@@ -32,4 +32,7 @@ export const fileUserPermissions = pgTable(
     };
   }
 );
-export type FileUserPermissions = InferModel<typeof fileUserPermissions>;
+
+export { fileUserPermissions as fileUserPermissionsTable };
+
+export type FileUserPermissionsInfo = InferModel<typeof fileUserPermissions>;

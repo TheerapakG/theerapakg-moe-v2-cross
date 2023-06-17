@@ -4,9 +4,6 @@ import mime from "mime";
 import { keyBy as useKeyBy } from "lodash-es";
 import path from "path";
 
-import { File, file as fileTable } from "~/schema/file";
-import { fileUserPermissions as fileUserPermisionsTable } from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -25,21 +22,21 @@ export default defineEventHandler(
 
       const perms = await tx
         .select({
-          id: fileUserPermisionsTable.file_id,
-          permission: fileUserPermisionsTable.permission,
+          id: fileUserPermissionsTable.file_id,
+          permission: fileUserPermissionsTable.permission,
           count: sql`count(*)`.as("count"),
         })
-        .from(fileUserPermisionsTable)
-        .where(eq(fileUserPermisionsTable.file_id, id))
+        .from(fileUserPermissionsTable)
+        .where(eq(fileUserPermissionsTable.file_id, id))
         .groupBy(
-          fileUserPermisionsTable.file_id,
-          fileUserPermisionsTable.permission
+          fileUserPermissionsTable.file_id,
+          fileUserPermissionsTable.permission
         );
 
       return { _file, perms };
     });
 
-    const file: File | undefined = _file[0];
+    const file: (typeof _file)[number] | undefined = _file[0];
     const permMap = useKeyBy(perms, "permission");
     const viewCount = permMap["file!:view"]?.count;
     const editCount = permMap["file!:edit"]?.count;

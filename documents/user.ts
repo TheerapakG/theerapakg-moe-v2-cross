@@ -1,4 +1,6 @@
-export type UserDocument = {
-  id: string;
-  name: string;
+import crypto from "crypto";
+
+export const userDocument = {
+  id: crypto.randomUUID(),
+  name: "name",
 };

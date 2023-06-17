@@ -8,11 +8,6 @@ import {
 } from "lodash-es";
 import path from "path";
 
-import { FileDocument } from "~/documents/file";
-
-import { file as fileTable } from "~/schema/file";
-import { fileUserPermissions as fileUserPermisionsTable } from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -34,8 +29,8 @@ export default defineEventHandler(
     const { estimatedTotalHits: queryCount, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
     )
-      .index<FileDocument>("files")
-      .search<FileDocument>(fileSearch, {
+      .index<typeof fileDocument>("files")
+      .search<typeof fileDocument>(fileSearch, {
         offset: start,
         limit: size,
         attributesToRetrieve: ["id"],
@@ -62,15 +57,15 @@ export default defineEventHandler(
 
       const perms = await tx
         .select({
-          id: fileUserPermisionsTable.file_id,
-          permission: fileUserPermisionsTable.permission,
+          id: fileUserPermissionsTable.file_id,
+          permission: fileUserPermissionsTable.permission,
           count: sql`count(*)`.as("count"),
         })
-        .from(fileUserPermisionsTable)
-        .where(inArray(fileUserPermisionsTable.file_id, ids))
+        .from(fileUserPermissionsTable)
+        .where(inArray(fileUserPermissionsTable.file_id, ids))
         .groupBy(
-          fileUserPermisionsTable.file_id,
-          fileUserPermisionsTable.permission
+          fileUserPermissionsTable.file_id,
+          fileUserPermissionsTable.permission
         );
 
       return { count, files, perms };

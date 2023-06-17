@@ -1,10 +1,6 @@
 import { sql } from "drizzle-orm";
 import { map as useMap, min as useMin, zipWith as useZipWith } from "lodash-es";
 
-import { ShDocument } from "~/documents/sh";
-
-import { sh as shTable } from "~/schema/sh";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -28,8 +24,8 @@ export default defineEventHandler(
     const { estimatedTotalHits: queryCount, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
     )
-      .index<ShDocument>("shs")
-      .search<ShDocument>(shSearch, {
+      .index<typeof shDocument>("shs")
+      .search<typeof shDocument>(shSearch, {
         offset: start,
         limit: size,
       });

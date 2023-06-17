@@ -1,7 +1,5 @@
 import { eq } from "drizzle-orm";
 
-import { user as userTable } from "~/schema/user";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const id = event.context.params?.id;

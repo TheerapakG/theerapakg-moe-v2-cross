@@ -1,10 +1,5 @@
 import { and, eq } from "drizzle-orm";
 
-import {
-  FilePermission,
-  fileUserPermissions as fileUserPermisionsTable,
-} from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -23,13 +18,13 @@ export default defineEventHandler(
     if (!targetId) throw createError({ statusMessage: "invalid user" });
 
     await useDrizzle()
-      .delete(fileUserPermisionsTable)
+      .delete(fileUserPermissionsTable)
       .where(
         and(
-          eq(fileUserPermisionsTable.file_id, id),
-          eq(fileUserPermisionsTable.user_id, targetId),
+          eq(fileUserPermissionsTable.file_id, id),
+          eq(fileUserPermissionsTable.user_id, targetId),
           eq(
-            fileUserPermisionsTable.permission,
+            fileUserPermissionsTable.permission,
             perm as (typeof FilePermission.enumValues)[number]
           )
         )

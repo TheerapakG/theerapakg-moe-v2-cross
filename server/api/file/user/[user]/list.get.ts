@@ -8,9 +8,6 @@ import {
 } from "lodash-es";
 import path from "path";
 
-import { file as fileTable } from "~/schema/file";
-import { fileUserPermissions as fileUserPermisionsTable } from "~/schema/file_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -57,15 +54,15 @@ export default defineEventHandler(
         const perms = await tx
           .with(_files)
           .select({
-            id: fileUserPermisionsTable.file_id,
-            permission: fileUserPermisionsTable.permission,
+            id: fileUserPermissionsTable.file_id,
+            permission: fileUserPermissionsTable.permission,
             count: sql`count(*)`.as("count"),
           })
-          .from(fileUserPermisionsTable)
-          .innerJoin(_files, eq(fileUserPermisionsTable.file_id, _files.id))
+          .from(fileUserPermissionsTable)
+          .innerJoin(_files, eq(fileUserPermissionsTable.file_id, _files.id))
           .groupBy(
-            fileUserPermisionsTable.file_id,
-            fileUserPermisionsTable.permission
+            fileUserPermissionsTable.file_id,
+            fileUserPermissionsTable.permission
           );
 
         return { count, files, perms };

@@ -1,10 +1,7 @@
+import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
 import fetch from "node-fetch";
-
-import { FileDocument } from "~/documents/file";
-
-import { file as fileTable } from "~/schema/file";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -45,13 +42,13 @@ export default defineEventHandler(
       .returning();
 
     await useMeili(useRuntimeConfig().meiliApiKey)
-      .index<FileDocument>("files")
+      .index<typeof fileDocument>("files")
       .addDocuments(
         [
           {
-            id: insert.id,
+            id: insert.id as ReturnType<typeof crypto.randomUUID>,
             name: path.basename(insert.dir),
-            owner: insert.owner,
+            owner: insert.owner as ReturnType<typeof crypto.randomUUID>,
             created: insert.created.getTime() / 1000,
             modified: insert.modified.getTime() / 1000,
           },
@@ -60,6 +57,7 @@ export default defineEventHandler(
       );
 
     return {
+      id: insert.id,
       name: path.basename(dir),
       size: stat.size,
       url: `/api/file/download/${insert.id}`,

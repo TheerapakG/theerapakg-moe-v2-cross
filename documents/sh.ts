@@ -1,4 +1,4 @@
-export type ShDocument = {
-  name: string;
-  to: string;
+export const shDocument = {
+  name: "example",
+  to: "http://example.com/",
 };

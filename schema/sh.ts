@@ -5,4 +5,7 @@ export const sh = pgTable("sh", {
   from: text("from").primaryKey(),
   to: text("to").notNull(),
 });
-export type Sh = InferModel<typeof sh>;
+
+export { sh as shTable };
+
+export type ShInfo = InferModel<typeof sh>;

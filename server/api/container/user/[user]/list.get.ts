@@ -1,8 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import { min as useMin } from "lodash-es";
 
-import { container as containerTable } from "~/schema/container";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);

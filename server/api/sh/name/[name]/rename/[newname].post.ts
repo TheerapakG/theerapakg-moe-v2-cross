@@ -1,9 +1,5 @@
 import { eq } from "drizzle-orm";
 
-import { ShDocument } from "~/documents/sh";
-
-import { sh as shTable } from "~/schema/sh";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
@@ -29,9 +25,9 @@ export default defineEventHandler(
       });
 
     if (update) {
-      const index = useMeili(useRuntimeConfig().meiliApiKey).index<ShDocument>(
-        "shs"
-      );
+      const index = useMeili(useRuntimeConfig().meiliApiKey).index<
+        typeof shDocument
+      >("shs");
       index.addDocuments([update], { primaryKey: "name" });
       index.deleteDocument(event.context.params.name);
     }

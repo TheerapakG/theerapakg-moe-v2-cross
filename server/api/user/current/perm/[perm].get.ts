@@ -1,5 +1,3 @@
-import { UserPermission } from "~/schema/user_permission";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);

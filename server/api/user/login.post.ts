@@ -2,8 +2,6 @@ import argon2 from "argon2";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
 
-import { user as userTable } from "~/schema/user";
-
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const body = await readBody(event);
