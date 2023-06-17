@@ -68,28 +68,35 @@ const upload = async () => {
 
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
-    try {
-      await $apiFetch("/api/file/upload", {
-        method: "POST",
-        body: {
-          file: file.value?.name,
-          content: event.target?.result,
-        },
-      });
-    } catch {
+    const upload = await (async () => {
+      try {
+        return await $apiFetch("/api/file/upload", {
+          method: "POST",
+          body: {
+            file: file.value?.name,
+            content: event.target?.result,
+          },
+        });
+      } catch {
+        toast.add({
+          title: "Upload Error",
+          description: "Cannot upload",
+          icon: "i-heroicons-exclaimation-circle",
+          color: "red",
+        });
+        return;
+      }
+    })();
+    if (upload) {
       toast.add({
-        title: "Upload Error",
-        description: "Cannot upload",
+        title: "Upload Success",
+        description: "go to download page",
+        click: async () => {
+          await navigateTo(`/file/download/${upload.id}`);
+        },
         icon: "i-heroicons-exclaimation-circle",
-        color: "red",
       });
-      return;
     }
-    toast.add({
-      title: "Upload Success",
-      description: "Successfully uploaded",
-      icon: "i-heroicons-exclaimation-circle",
-    });
   });
 
   fileReader.readAsDataURL(file.value);
