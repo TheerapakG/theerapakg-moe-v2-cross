@@ -14,9 +14,7 @@
           <div class="text-center text-4xl">LOGIN</div>
         </template>
 
-        <div
-          class="place-itrms-center flex flex-col place-content-center gap-y-4"
-        >
+        <div class="flex flex-col place-content-center gap-y-4">
           <UFormGroup label="Username" :error="errorMsg">
             <UInput v-model="user" size="md" />
           </UFormGroup>
