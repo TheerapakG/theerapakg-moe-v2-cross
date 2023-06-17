@@ -5,7 +5,7 @@
       <div v-else-if="!fileInfo"></div>
       <div v-else class="relative h-full w-full">
         <div
-          class="absolute left-0 flex h-full place-content-center place-items-center md:left-16"
+          class="absolute left-0 inline-flex h-full place-content-center place-items-center md:left-16"
         >
           <portal-target name="file-menu-left" />
         </div>

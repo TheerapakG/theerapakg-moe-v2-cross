@@ -1,18 +1,47 @@
 <template>
   <div class="flex place-content-center place-items-center gap-x-2">
-    <USelectMenu
-      v-model="templateSelection"
-      class="w-48"
-      :options="templateKeys"
-      searchable
-    />
     <UButton
       variant="ghost"
       size="xl"
       icon="i-heroicons-play"
       :ui="{ rounded: 'rounded-full' }"
-      @click="run"
+      @click="open = true"
     />
+
+    <UModal
+      v-model="open"
+      :ui="{
+        base: 'relative text-left overflow-y-visible sm:my-8 w-full flex flex-col',
+      }"
+    >
+      <UCard :ui="{ base: 'overflow-y-visible' }">
+        <template #header>
+          <div class="text-center text-4xl">RUN</div>
+        </template>
+
+        <div class="flex flex-col place-content-center gap-y-4">
+          <UFormGroup label="Runner">
+            <USelectMenu
+              v-model="templateSelection"
+              :options="templateKeys"
+              searchable
+            />
+          </UFormGroup>
+        </div>
+
+        <template #footer>
+          <div class="flex place-content-center place-items-center">
+            <UButton
+              color="black"
+              size="xl"
+              :loading="pending"
+              label="run"
+              @click="run"
+            />
+          </div>
+        </template>
+      </UCard>
+    </UModal>
   </div>
 </template>
 
@@ -24,6 +53,9 @@ type Props = {
 const props = defineProps<Props>();
 
 const toast = useToast();
+
+const open = ref(false);
+const pending = ref(false);
 
 const templateSubroutes = {
   "Python 3.11": "python/3.11",
@@ -52,6 +84,7 @@ const subrouteSelection = computed(() =>
 
 const run = async () => {
   const container = await (async () => {
+    pending.value = true;
     try {
       const { container } = await $apiFetch(
         `/api/container/run/file/${props.fileId}/${subrouteSelection.value}`,
@@ -67,6 +100,8 @@ const run = async () => {
         icon: "i-heroicons-exclaimation-circle",
         color: "red",
       });
+      pending.value = false;
+      open.value = false;
       return;
     }
   })();
@@ -80,6 +115,8 @@ const run = async () => {
       },
       icon: "i-heroicons-exclaimation-circle",
     });
+    pending.value = false;
+    open.value = false;
   }
 };
 </script>

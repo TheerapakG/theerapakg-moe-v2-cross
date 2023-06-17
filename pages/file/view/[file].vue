@@ -5,12 +5,12 @@
       <div v-else-if="!fileInfo"></div>
       <div v-else class="relative h-full w-full">
         <div
-          class="absolute left-0 flex h-full place-content-center place-items-center md:left-16"
+          class="absolute left-0 inline-flex h-full place-content-center place-items-center md:left-16"
         >
           <portal-target name="file-menu-left" />
         </div>
         <div
-          class="absolute right-0 flex place-content-center place-items-center gap-x-2"
+          class="absolute right-0 inline-flex h-full place-content-center place-items-center gap-x-2"
         >
           <UButton
             variant="ghost"
@@ -21,7 +21,7 @@
           />
           <FileButtonViewerMode :file-info="fileInfoState" />
         </div>
-        <div class="mx-24 flex h-full place-content-center place-items-center">
+        <div class="mx-28 flex h-full place-content-center place-items-center">
           <div
             class="overflow-hidden text-ellipsis whitespace-nowrap font-bold"
           >
