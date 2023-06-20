@@ -10,10 +10,11 @@
     </div>
     <div class="flex place-content-center place-items-center gap-2">
       <FileButtonView
+        v-slot="{ to }"
         :file-id="(route.params.file as string)"
         :mime="fileInfo.mime"
       >
-        <UButton size="xl" label="view online" />
+        <UButton size="xl" label="view online" :to="to" />
       </FileButtonView>
       <UButton
         color="black"
