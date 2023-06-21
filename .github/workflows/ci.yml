@@ -8,7 +8,24 @@ on:
   workflow_dispatch:
 
 jobs:
+  cache-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node.js/yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install
+
   format:
+    needs: [cache-dependencies]
     runs-on: ubuntu-latest
 
     steps:
@@ -28,6 +45,7 @@ jobs:
         run: yarn prettier -c .
 
   lint:
+    needs: [cache-dependencies]
     runs-on: ubuntu-latest
 
     steps:
@@ -47,6 +65,7 @@ jobs:
         run: yarn eslint .
 
   typecheck:
+    needs: [cache-dependencies]
     runs-on: ubuntu-latest
 
     steps:
@@ -66,7 +85,7 @@ jobs:
         run: yarn nuxi typecheck
 
   build:
-    needs: [format, lint, typecheck]
+    needs: [cache-dependencies, format, lint, typecheck]
     runs-on: ubuntu-latest
 
     steps:
