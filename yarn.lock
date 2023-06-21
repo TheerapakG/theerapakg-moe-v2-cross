@@ -5901,11 +5901,6 @@ node-releases@^2.0.12:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.12.tgz#35627cc224a23bfb06fb3380f2b3afaaa7eb1039"
   integrity sha512-QzsYKWhXTWx8h1kIvqfnC++o0pEmpRQA/aenALsL2F4pqNVr7YzcdMlDij5WBnwftRbJCNJL/O7zdKaxKPHqgQ==
 
-node-which@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/node-which/-/node-which-1.0.0.tgz#ba90072fe546e95ee39d9e481405a3bb7e0530f2"
-  integrity sha512-PVVbv6DyDc3VkTizcd/7Xchn3NDh+OUnQkrHxgumQ+2lwoWE36KuQClfAVjTwEh3T0jzb1WHrbgCol5HbBZqdQ==
-
 nopt@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-5.0.0.tgz#530942bb58a512fccafe53fe210f13a25355dc88"
