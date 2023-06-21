@@ -10,20 +10,12 @@ module.exports = {
   },
   extends: [
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
     "plugin:vue/recommended",
     "plugin:nuxt/recommended",
     "@vue/eslint-config-typescript/recommended",
+    "prettier",
   ],
-  plugins: ["@typescript-eslint", "prettier", "vue", "nuxt"],
-  rules: {
-    "vue/singleline-html-element-content-newline": "off",
-    "vue/max-attributes-per-line": "off",
-    "vue/html-indent": "off",
-    "vue/html-self-closing": "off",
-    "vue/valid-attribute-name": "off",
-    "vue/valid-model-definition": "off",
-  },
+  plugins: ["@typescript-eslint", "vue", "nuxt"],
   overrides: [
     {
       files: ["layouts/**/*.vue", "pages/**/*.vue"],

@@ -2,75 +2,94 @@ name: CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node.js/yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run Format
+        run: yarn prettier -c .
+
   lint:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup node.js/yarn
-      uses: actions/setup-node@v3
-      with:
-        node-version: "16"
-        cache: 'yarn'
-        
-    - name: Install Dependencies
-      run: yarn install
-    
-    - name: Run Lint
-      run: yarn eslint .
+      - name: Setup node.js/yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run Lint
+        run: yarn eslint .
 
   typecheck:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup node.js/yarn
-      uses: actions/setup-node@v3
-      with:
-        node-version: "16"
-        cache: 'yarn'
-        
-    - name: Install Dependencies
-      run: yarn install
-    
-    - name: Run Typecheck
-      run: yarn nuxi typecheck
+      - name: Setup node.js/yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run Typecheck
+        run: yarn nuxi typecheck
 
   build:
-    needs: [lint, typecheck]
+    needs: [format, lint, typecheck]
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup node.js/yarn
-      uses: actions/setup-node@v3
-      with:
-        node-version: "16"
-        cache: 'yarn'
-        
-    - name: Install Dependencies
-      run: yarn install
-    
-    - name: Run Build
-      run: yarn nuxi build
+      - name: Setup node.js/yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          cache: "yarn"
 
-    - name: Tar Build
-      run: tar -czvf build.tar.gz .output
+      - name: Install Dependencies
+        run: yarn install
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: build
-        path: build.tar.gz
+      - name: Run Build
+        run: yarn nuxi build
+
+      - name: Tar Build
+        run: tar -czvf build.tar.gz .output
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build.tar.gz

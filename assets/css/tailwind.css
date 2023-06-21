@@ -10,24 +10,24 @@
 }
 
 body {
-  @apply bg-white dark:bg-black
+  @apply bg-white dark:bg-black;
 }
 
 .hide-scrollbars {
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE 10+ */
+  -ms-overflow-style: none; /* IE 10+ */
 
   &::-webkit-scrollbar {
-    @apply w-0 h-0 bg-transparent;
+    @apply h-0 w-0 bg-transparent;
   }
 }
 
 .thin-scrollbars {
-  scrollbar-color: rgba(0 0 0 / 0.5) rgba(0 0 0 / 0)
+  scrollbar-color: rgba(0 0 0 / 0.5) rgba(0 0 0 / 0);
 }
 
 .dark .thin-scrollbars {
-  scrollbar-color: rgba(255 255 255 / 0.5) rgba(0 0 0 / 0)
+  scrollbar-color: rgba(255 255 255 / 0.5) rgba(0 0 0 / 0);
 }
 
 .thin-scrollbars {
@@ -35,7 +35,7 @@ body {
 
   overflow: overlay;
   &::-webkit-scrollbar {
-    @apply w-1 h-1;
+    @apply h-1 w-1;
   }
   &::-webkit-scrollbar-thumb {
     @apply rounded-full bg-black bg-opacity-50 dark:bg-white dark:bg-opacity-50;
@@ -51,7 +51,7 @@ body {
   }
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-4 h-4 -translate-y-1.5 rounded-full bg-black;
+    @apply h-4 w-4 -translate-y-1.5 rounded-full bg-black;
   }
 }
 
@@ -64,7 +64,7 @@ body {
   }
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-4 h-4 -translate-y-1.5 rounded-full bg-white;
+    @apply h-4 w-4 -translate-y-1.5 rounded-full bg-white;
   }
 }
 

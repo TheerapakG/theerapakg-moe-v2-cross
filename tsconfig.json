@@ -1,9 +1,5 @@
 {
   // https://v3.nuxtjs.org/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
-  "jsx": "preserve",
-  // "vueCompilerOptions": {
-    // "jsxTemplates": true,
-    // "experimentalRfc436": true
-  // }
+  "jsx": "preserve"
 }
