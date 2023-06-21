@@ -5,7 +5,9 @@ export default defineEventHandler(
     const id = event.context.params?.id;
     if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const { edit } = await checkFileUserPerm(id, user);
+    const {
+      perms: { edit },
+    } = await checkFileUserPerm(id, user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
     const _perm = event.context.params?.perm;

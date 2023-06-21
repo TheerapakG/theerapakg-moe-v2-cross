@@ -1,11 +1,10 @@
-import { sql } from "drizzle-orm";
 import { map as useMap, min as useMin, zipWith as useZipWith } from "lodash-es";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    const perm = await checkUserPerm(user, "sh:list");
-    if (!perm) throw createError({ statusMessage: "no permission" });
+    if (!(await checkUserPerm(user)).includes("sh:list"))
+      throw createError({ statusMessage: "no permission" });
 
     const query = getQuery(event);
 
@@ -17,11 +16,7 @@ export default defineEventHandler(
 
     const shSearch = query.sh ? decodeURIComponent(query.sh as string) : "";
 
-    const [{ count: totalCount }] = await useDrizzle()
-      .select({ count: sql<number>`count(*)` })
-      .from(shTable);
-
-    const { estimatedTotalHits: queryCount, hits } = await useMeili(
+    const { estimatedTotalHits: count, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
     )
       .index<typeof shDocument>("shs")
@@ -34,8 +29,7 @@ export default defineEventHandler(
     const tos = useMap(hits, "to");
 
     return {
-      totalCount,
-      queryCount: queryCount ?? Infinity,
+      count: count ?? Infinity,
       sh: useZipWith(froms, tos, (from, to) => {
         return { from, to };
       }),

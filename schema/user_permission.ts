@@ -11,6 +11,8 @@ export const UserPermission = pgEnum("userpermission", [
   "container:list",
   "container:inspect",
   "container:manage",
+  "perm:list",
+  "perm:manage",
   "migrate",
 ]);
 

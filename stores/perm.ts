@@ -2,47 +2,42 @@ import { defu } from "defu";
 import { defineStore, storeToRefs } from "pinia";
 
 export const usePermStore = defineStore("perm", () => {
-  const permStates = ref<
-    Record<string, { pending?: Promise<boolean>; value?: boolean }>
-  >({});
+  const permStates = ref<{ pending?: Promise<string[]>; value?: string[] }>({});
 
   const perm = computed(() => {
-    return (perm: string) => permStates.value[perm]?.value;
+    return (perm: string) => permStates.value?.value?.includes(perm);
   });
 
-  const _fetchPerm = async (perm: string) => {
-    const { value } = await $apiFetch(`/api/user/current/perm/${perm}`);
-    permStates.value[perm] = { value };
-    return value;
+  const _fetchPerms = async () => {
+    const { perms } = await $apiFetch(`/api/user/current/perm`);
+    permStates.value = { value: perms };
+    return perms;
   };
 
-  const _fetchPermSetPending = async (perm: string) => {
-    const pending = _fetchPerm(perm);
-    permStates.value[perm] = defu({ pending }, permStates.value[perm]);
+  const _fetchPermsSetPending = async () => {
+    const pending = _fetchPerms();
+    permStates.value = defu({ pending }, permStates.value);
     return await pending;
   };
 
-  const fetchPerm = async (perm: string, force?: boolean) => {
-    if (permStates.value[perm]) {
-      if (permStates.value[perm].pending)
-        return await permStates.value[perm].pending;
-      if (permStates.value[perm].value !== undefined && !force)
-        return permStates.value[perm].value;
+  const fetchPerms = async (force?: boolean) => {
+    if (permStates.value) {
+      if (permStates.value.pending) return await permStates.value.pending;
+      if (permStates.value.value !== undefined && !force)
+        return permStates.value.value;
     }
-    return await _fetchPermSetPending(perm);
+    return await _fetchPermsSetPending();
   };
 
   const userStore = useUserStore();
   const { currentID } = storeToRefs(userStore);
   watch(currentID, async () => {
-    await Promise.all(
-      useKeys(permStates.value).map(async (perm) => await fetchPerm(perm, true))
-    );
+    await fetchPerms(true);
   });
 
   return {
     permStates,
     perm,
-    fetchPerm,
+    fetchPerms,
   };
 });

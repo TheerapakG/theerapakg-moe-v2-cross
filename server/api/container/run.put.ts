@@ -5,7 +5,7 @@ const Cmd = z.string().array();
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    if (!(await checkUserPerm(user, "container:manage")))
+    if (!(await checkUserPerm(user)).includes("container:manage"))
       throw createError({ statusMessage: "no permission" });
 
     const query = getQuery(event);

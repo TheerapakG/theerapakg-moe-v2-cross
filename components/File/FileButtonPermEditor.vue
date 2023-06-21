@@ -10,7 +10,7 @@
           :file-id="fileId"
           :perm="perm"
           class="p-4"
-          @user-count="setPermUserCount"
+          @refresh="refresh"
         />
       </template>
     </UPopover>
@@ -21,16 +21,16 @@
 type Props = {
   fileId: string;
   perm: string;
-  userCount: number;
 };
 
 const props = defineProps<Props>();
 
-const { userCount } = toRefs(props);
+const fetch = computed(() =>
+  useApiFetch(`/api/file/${props.fileId}/perm/${props.perm}/count`)
+);
 
-const permUserCount = ref(userCount.value);
-const setPermUserCount = (userCount: number) => {
-  permUserCount.value = userCount;
-};
-watch(userCount, () => setPermUserCount(userCount.value));
+const data = computed(() => fetch.value.data.value);
+const refresh = computed(() => fetch.value.refresh);
+
+const permUserCount = computed(() => data.value?.count);
 </script>

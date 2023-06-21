@@ -3,13 +3,15 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    if (!(await checkUserPerm(user, "container:manage")))
+    if (!(await checkUserPerm(user)).includes("container:manage"))
       throw createError({ statusMessage: "no permission" });
 
     const fileId = event.context.params?.id;
     if (!fileId) throw createError({ statusMessage: "invalid id" });
 
-    const { view } = await checkFileUserPerm(fileId, user);
+    const {
+      perms: { view },
+    } = await checkFileUserPerm(fileId, user);
     if (!view) throw createError({ statusMessage: "no permission" });
 
     const _dir = await useDrizzle()

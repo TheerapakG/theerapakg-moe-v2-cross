@@ -48,7 +48,7 @@ type Props = {
 const props = defineProps<Props>();
 
 type Emits = {
-  "user-count": [userCount: number];
+  refresh: [];
 };
 
 const emit = defineEmits<Emits>();
@@ -75,14 +75,8 @@ const {
 });
 
 const permQueryUserCount = computed(
-  () => rawPermsData.value?.queryCount ?? Infinity
+  () => rawPermsData.value?.count ?? Infinity
 );
-
-const permTotalUserCount = computed(() => rawPermsData.value?.totalCount);
-watch(permTotalUserCount, () => {
-  const totalCount = permTotalUserCount.value;
-  if (totalCount !== undefined) emit("user-count", totalCount);
-});
 
 const permUserList = computed(() => {
   const users = rawPermsData.value?.users;
@@ -137,5 +131,6 @@ const doUser = async (id: string, method: "PUT" | "DELETE") => {
     method,
   });
   await refresh();
+  emit("refresh");
 };
 </script>

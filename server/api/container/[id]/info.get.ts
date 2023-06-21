@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    if (!(await checkUserPerm(user, "container:inspect")))
+    if (!(await checkUserPerm(user)).includes("container:inspect"))
       throw createError({ statusMessage: "no permission" });
 
     const id = event.context.params?.id;

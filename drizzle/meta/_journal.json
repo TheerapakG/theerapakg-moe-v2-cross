@@ -15,6 +15,13 @@
       "when": 1686923837576,
       "tag": "0001_fancy_leo",
       "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1687325047395,
+      "tag": "0002_uneven_warpath",
+      "breakpoints": false
     }
   ]
 }

@@ -19,7 +19,7 @@
             :ui="{ rounded: 'rounded-full' }"
             :to="`/file/download/${route.params.file}`"
           />
-          <FileButtonViewerMode :file-info="fileInfoState" />
+          <FileButtonViewerMode :file-id="(route.params.file as string)" />
         </div>
         <div class="mx-28 flex h-full place-content-center place-items-center">
           <div

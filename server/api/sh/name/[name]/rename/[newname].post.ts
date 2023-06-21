@@ -3,8 +3,8 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    const perm = await checkUserPerm(user, "sh:edit");
-    if (!perm) throw createError({ statusMessage: "no permission" });
+    if (!(await checkUserPerm(user)).includes("sh:edit"))
+      throw createError({ statusMessage: "no permission" });
 
     if (!event.context.params) {
       throw createError({

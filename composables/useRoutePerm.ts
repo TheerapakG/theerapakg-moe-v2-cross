@@ -9,13 +9,11 @@ export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
     };
 
   const permStore = usePermStore();
-  const permValues = await Promise.all(
-    route.meta.perms.map((perm) => permStore.fetchPerm(perm))
-  );
+  const perms = await permStore.fetchPerms();
 
   return {
     requirePerm: true,
-    havePerm: permValues.every((permValue) => permValue),
+    havePerm: route.meta.perms.every((perm) => perms.includes(perm)),
   };
 };
 

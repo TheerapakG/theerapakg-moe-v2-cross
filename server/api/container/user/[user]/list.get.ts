@@ -8,8 +8,8 @@ export default defineEventHandler(
     const target = event.context.params?.user;
 
     if (user !== target) {
-      const perm = await checkUserPerm(user, "container:list");
-      if (!perm) throw createError({ statusMessage: "no permission" });
+      if (!(await checkUserPerm(user)).includes("container:list"))
+        throw createError({ statusMessage: "no permission" });
     }
 
     if (!target) throw createError({ statusMessage: "invalid user" });

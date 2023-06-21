@@ -5,35 +5,18 @@
 </template>
 
 <script setup lang="ts">
-import { FetchResult } from "nuxt/app";
-import MimeType from "whatwg-mimetype";
-
 type Props = {
-  fileInfo:
-    | (FetchResult<`/api/file/${string}/info`, "get"> & { id: string })
-    | null;
+  fileId: string;
 };
 
 const props = defineProps<Props>();
 
+const { data: perms } = useApiFetch(
+  `/api/file/${props.fileId}/user/current/perm`
+);
+
 const viewFile = async (mode: "edit" | "view") => {
-  if (!props.fileInfo) return;
-
-  if (!props.fileInfo.mime) {
-    await navigateTo(`/file/${mode}/mime/text/plain/${props.fileInfo.id}`);
-    return;
-  }
-
-  try {
-    const mimeType = new MimeType(props.fileInfo.mime);
-    await navigateTo({
-      path: `/file/${mode}/mime/${mimeType.type}/${mimeType.subtype}/${props.fileInfo.id}`,
-      query: Object.fromEntries(mimeType.parameters),
-    });
-    return;
-  } catch {
-    await navigateTo(`/file/${mode}/mime/text/plain/${props.fileInfo.id}`);
-  }
+  await navigateTo(`/file/${mode}/${props.fileId}`);
 };
 
 const dropdownItems = computed(() => [
@@ -41,13 +24,13 @@ const dropdownItems = computed(() => [
     {
       label: "view",
       icon: "i-heroicons-eye",
-      disabled: !(props.fileInfo?.perms.user.view ?? false),
+      disabled: !(perms.value?.view ?? false),
       click: async () => await viewFile("view"),
     },
     {
       label: "edit",
       icon: "i-heroicons-pencil",
-      disabled: !(props.fileInfo?.perms.user.edit ?? false),
+      disabled: !(perms.value?.edit ?? false),
       click: async () => await viewFile("edit"),
     },
   ],

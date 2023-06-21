@@ -4,9 +4,8 @@ import { min as useMin } from "lodash-es";
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-
-    const perm = await checkUserPerm(user, "container:list");
-    if (!perm) throw createError({ statusMessage: "no permission" });
+    if (!(await checkUserPerm(user)).includes("container:list"))
+      throw createError({ statusMessage: "no permission" });
 
     const query = getQuery(event);
     const page = query.page ? parseInt(query.page as string) : 1;

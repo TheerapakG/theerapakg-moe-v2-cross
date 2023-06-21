@@ -31,7 +31,6 @@
               <FileButtonPermEditorGroup
                 v-slot="{ perm, permUserCount }"
                 :file-id="(route.params.file as string)"
-                :user-count="fileInfo.perms.count"
               >
                 <UButton
                   variant="ghost"
@@ -43,7 +42,7 @@
               </FileButtonPermEditorGroup>
             </template>
           </UPopover>
-          <FileButtonViewerMode :file-info="fileInfoState" />
+          <FileButtonViewerMode :file-id="(route.params.file as string)" />
         </div>
         <div class="mx-32 flex h-full place-content-center place-items-center">
           <FileNameEditor

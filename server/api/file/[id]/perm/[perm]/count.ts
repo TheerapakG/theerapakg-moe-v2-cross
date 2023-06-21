@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -7,24 +7,20 @@ export default defineEventHandler(
     const id = event.context.params?.id;
     if (!id) throw createError({ statusMessage: "invalid id" });
 
-    const {
-      perms: { edit },
-    } = await checkFileUserPerm(id, user);
-    if (!edit) throw createError({ statusMessage: "no permission" });
+    await checkFileUserPerm(id, user);
 
     const _perm = event.context.params?.perm;
     if (!_perm) throw createError({ statusMessage: "invalid perm" });
     const perm = `file!:${_perm}`;
 
-    const targetId = event.context.params?.user;
-    if (!targetId) throw createError({ statusMessage: "invalid user" });
-
-    await useDrizzle()
-      .delete(fileUserPermissionsTable)
+    const [{ count }] = await useDrizzle()
+      .select({
+        count: sql`count(*)`,
+      })
+      .from(fileUserPermissionsTable)
       .where(
         and(
           eq(fileUserPermissionsTable.file_id, id),
-          eq(fileUserPermissionsTable.user_id, targetId),
           eq(
             fileUserPermissionsTable.permission,
             perm as (typeof FilePermission.enumValues)[number]
@@ -32,6 +28,6 @@ export default defineEventHandler(
         )
       );
 
-    return {};
+    return { count: typeof count === "string" ? parseInt(count) : 0 };
   })
 );

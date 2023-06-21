@@ -1,21 +1,12 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
-export const checkUserPerm = async (
-  user: string,
-  perm: (typeof UserPermission.enumValues)[number]
-) => {
+export const checkUserPerm = async (user: string) => {
   return (
-    (
-      await useDrizzle()
-        .select()
-        .from(userPermissionsTable)
-        .where(
-          and(
-            eq(userPermissionsTable.user_id, user),
-            eq(userPermissionsTable.permission, perm)
-          )
-        )
-        .limit(1)
-    ).length > 0
-  );
+    await useDrizzle()
+      .select({
+        permission: userPermissionsTable.permission,
+      })
+      .from(userPermissionsTable)
+      .where(eq(userPermissionsTable.user_id, user))
+  ).map((perm) => perm.permission);
 };

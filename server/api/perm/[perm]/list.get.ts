@@ -4,15 +4,11 @@ import { keyBy as useKeyBy, min as useMin } from "lodash-es";
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
+    if (!(await checkUserPerm(user)).includes("perm:list"))
+      throw createError({ statusMessage: "no permission" });
 
-    const id = event.context.params?.id;
-    if (!id) throw createError({ statusMessage: "invalid id" });
-
-    await checkFileUserPerm(id, user);
-
-    const _perm = event.context.params?.perm;
-    if (!_perm) throw createError({ statusMessage: "invalid perm" });
-    const perm = `file!:${_perm}`;
+    const perm = event.context.params?.perm;
+    if (!perm) throw createError({ statusMessage: "invalid perm" });
 
     const query = getQuery(event);
 
@@ -40,15 +36,14 @@ export default defineEventHandler(
 
     const perms = await useDrizzle()
       .select()
-      .from(fileUserPermissionsTable)
+      .from(userPermissionsTable)
       .where(
         and(
-          eq(fileUserPermissionsTable.file_id, id),
           eq(
-            fileUserPermissionsTable.permission,
-            perm as (typeof FilePermission.enumValues)[number]
+            userPermissionsTable.permission,
+            perm as (typeof UserPermission.enumValues)[number]
           ),
-          inArray(fileUserPermissionsTable.user_id, users)
+          inArray(userPermissionsTable.user_id, users)
         )
       );
 

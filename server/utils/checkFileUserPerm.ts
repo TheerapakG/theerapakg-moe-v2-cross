@@ -43,18 +43,23 @@ export const checkFileUserPerm = async (file: string, user: string) => {
   const userPermsArr = userPerms.map((perm) => perm.permission);
   const filePermsArr = filePerms.map((perm) => perm.permission);
 
-  if (!owner) throw createError({ statusMessage: "file not found" });
+  if (owner === undefined)
+    throw createError({ statusCode: 404, statusMessage: "file not found" });
 
   const edit =
     user === owner ||
-    "file:edit" in userPermsArr ||
-    "file!:edit" in filePermsArr;
+    userPermsArr.includes("file:edit") ||
+    filePermsArr.includes("file!:edit");
 
   const view =
-    edit || "file:view" in userPermsArr || "file!:view" in filePermsArr;
+    edit ||
+    userPermsArr.includes("file:view") ||
+    filePermsArr.includes("file!:view");
 
-  const visible = view || "file:list" in userPermsArr;
+  const visible = view || userPermsArr.includes("file:list");
 
-  if (visible) return { owner, view, edit };
-  throw createError({ statusMessage: "file not found" });
+  if (!visible)
+    throw createError({ statusCode: 404, statusMessage: "file not found" });
+
+  return { owner, perms: { view, edit } };
 };

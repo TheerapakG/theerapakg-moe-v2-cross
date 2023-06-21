@@ -111,7 +111,7 @@ const {
   params,
 });
 
-const shQueryCount = computed(() => rawShListData.value?.queryCount ?? 0);
+const shQueryCount = computed(() => rawShListData.value?.count ?? 0);
 const shList = computed(() => rawShListData.value?.sh ?? []);
 
 const tableColumns = [

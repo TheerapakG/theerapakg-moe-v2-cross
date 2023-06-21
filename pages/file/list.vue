@@ -34,13 +34,12 @@
           v-slot="{ perm, permUserCount }"
           class="h-8"
           :file-id="row.id"
-          :user-count="row.perms.count"
         >
           <UButton
             variant="ghost"
             size="xl"
             :trailing-icon="perms[perm]"
-            :label="`${permUserCount}`"
+            :label="`${permUserCount === undefined ? '...' : permUserCount}`"
             :ui="{ rounded: 'rounded-full' }"
           />
         </FileButtonPermEditorGroup>
@@ -139,13 +138,13 @@ const {
   params,
 });
 
-const fileQueryCount = computed(() => rawFileListData.value?.queryCount ?? 0);
+const fileQueryCount = computed(() => rawFileListData.value?.count ?? 0);
 const fileList = computed(() => {
   const files = rawFileListData.value?.files;
 
   if (!files) return [];
   return (
-    files?.map(({ id, name, owner, perms, size, mime }) => {
+    files?.map(({ id, name, owner, size, mime }) => {
       return {
         id,
         name,
@@ -153,7 +152,6 @@ const fileList = computed(() => {
           id: owner,
           info: userStore.user(owner),
         },
-        perms,
         size,
         mime,
       };
@@ -185,12 +183,11 @@ const tableColumns = [
 ];
 
 const tableData = computed(() =>
-  useMap(fileList.value, ({ id, name, owner, perms, size, mime }) => {
+  useMap(fileList.value, ({ id, name, owner, size, mime }) => {
     return {
       id,
       name,
       owner: owner.info?.name ?? "(loading ...)",
-      perms,
       size: formatPretty(size),
       mime,
     };

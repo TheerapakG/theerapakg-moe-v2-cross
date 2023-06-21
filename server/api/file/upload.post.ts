@@ -6,9 +6,8 @@ import fetch from "node-fetch";
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
-    const perm = await checkUserPerm(user, "file:edit");
-
-    if (!perm) throw createError({ statusMessage: "no permission" });
+    if (!(await checkUserPerm(user)).includes("file:edit"))
+      throw createError({ statusMessage: "no permission" });
 
     const body = await readBody(event);
     if (!body.content) return;
