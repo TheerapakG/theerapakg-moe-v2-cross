@@ -1,8 +1,15 @@
+import { type } from "arktype";
+import defu from "defu";
 import { inArray } from "drizzle-orm";
 import fs from "fs";
 import mime from "mime";
-import { min as useMin } from "lodash-es";
 import path from "path";
+
+const queryValidator = type({
+  "file?": "string",
+  "page?": ["parsedInteger", "|>", type("integer>0")],
+  "size?": ["parsedInteger", "|>", type("integer<=50")],
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -10,23 +17,15 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("file:list"))
       throw createError({ statusMessage: "no permission" });
 
-    const query = getQuery(event);
-
-    const page = query.page ? parseInt(query.page as string) : 1;
-    const size = query.size
-      ? useMin([parseInt(query.size as string), 50]) ?? 10
-      : 10;
+    const { query } = await validateEvent({ query: queryValidator }, event);
+    const { page, size, file: target } = defu(query, { page: 1, size: 10 });
     const start = (page - 1) * size;
-
-    const fileSearch = query.file
-      ? decodeURIComponent(query.file as string)
-      : "";
 
     const { estimatedTotalHits: count, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
     )
       .index<typeof fileDocument>("files")
-      .search<typeof fileDocument>(fileSearch, {
+      .search<typeof fileDocument>(target, {
         offset: start,
         limit: size,
         attributesToRetrieve: ["id"],

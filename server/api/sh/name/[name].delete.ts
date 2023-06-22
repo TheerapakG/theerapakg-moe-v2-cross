@@ -1,4 +1,13 @@
+import { type } from "arktype";
 import { eq } from "drizzle-orm";
+
+const paramValidator = type({
+  name: [
+    type(["string", "|>", (s) => decodeURIComponent(s)]),
+    "|>",
+    type(/^\w+$/),
+  ],
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -6,20 +15,15 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("sh:edit"))
       throw createError({ statusMessage: "no permission" });
 
-    if (!event.context.params) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid params",
-      });
-    }
+    const {
+      param: { name },
+    } = await validateEvent({ param: paramValidator }, event);
 
     await useMeili(useRuntimeConfig().meiliApiKey)
       .index<typeof shDocument>("shs")
-      .deleteDocument(event.context.params.name);
+      .deleteDocument(name);
 
-    await useDrizzle()
-      .delete(shTable)
-      .where(eq(shTable.from, event.context.params.name));
+    await useDrizzle().delete(shTable).where(eq(shTable.from, name));
 
     return {};
   })

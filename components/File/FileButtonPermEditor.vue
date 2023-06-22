@@ -26,7 +26,9 @@ type Props = {
 const props = defineProps<Props>();
 
 const fetch = computed(() =>
-  useApiFetch(`/api/file/${props.fileId}/perm/${props.perm}/count`)
+  useApiFetch(
+    `/api/file/${props.fileId}/perm/${encodeURIComponent(props.perm)}/count`
+  )
 );
 
 const data = computed(() => fetch.value.data.value);

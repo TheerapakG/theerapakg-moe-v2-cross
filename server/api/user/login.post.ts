@@ -1,11 +1,16 @@
+import { type } from "arktype";
 import argon2 from "argon2";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
 
+const bodyValidator = type({
+  user: "string",
+  pass: "string",
+});
+
 export default defineEventHandler(
   wrapHandler(async (event) => {
-    const body = await readBody(event);
-    if (!body.user) return;
+    const { body } = await validateEvent({ body: bodyValidator }, event);
 
     const _user = await useDrizzle()
       .select({

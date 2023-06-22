@@ -1,12 +1,6 @@
 import path from "path";
 
-export const getFileName = (user: string, name: unknown) => {
-  if (typeof name !== "string")
-    throw createError({
-      statusCode: 500,
-      statusMessage: "invalid file name",
-    });
-
+export const getFileName = (user: string, name: string) => {
   const base = path.resolve(
     useRuntimeConfig().downloadPath ?? "./.dist/files",
     `./${user}`

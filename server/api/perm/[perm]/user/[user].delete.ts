@@ -1,4 +1,14 @@
+import { type } from "arktype";
 import { and, eq } from "drizzle-orm";
+
+const paramValidator = type({
+  perm: [
+    type(["string", "|>", (s) => decodeURIComponent(s)]),
+    "|>",
+    type(getArkTypeEnumFromDrizzleEnum(UserPermission)),
+  ],
+  user: "uuid",
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -6,21 +16,16 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("perm:manage"))
       throw createError({ statusMessage: "no permission" });
 
-    const perm = event.context.params?.perm;
-    if (!perm) throw createError({ statusMessage: "invalid perm" });
-
-    const targetId = event.context.params?.user;
-    if (!targetId) throw createError({ statusMessage: "invalid user" });
+    const {
+      param: { perm, user: target },
+    } = await validateEvent({ param: paramValidator }, event);
 
     await useDrizzle()
       .delete(userPermissionsTable)
       .where(
         and(
-          eq(userPermissionsTable.user_id, targetId),
-          eq(
-            userPermissionsTable.permission,
-            perm as (typeof UserPermission.enumValues)[number]
-          )
+          eq(userPermissionsTable.user_id, target),
+          eq(userPermissionsTable.permission, perm)
         )
       );
 

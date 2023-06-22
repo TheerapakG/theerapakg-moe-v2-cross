@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+import defu from "defu";
 import { LocationQueryValue } from "vue-router";
 
 definePageMeta({
@@ -82,37 +83,36 @@ const size = ref(isNaN(_size) ? 10 : _size);
 const shSearch = ref((route.query.q as LocationQueryValue) ?? "");
 const shSearchDebounced = refDebounced(shSearch, 300);
 
-watch([page, size, shSearchDebounced], async () => {
-  if (!isNaN(page.value) && !isNaN(size.value)) {
+const params = computed(() => {
+  return defu(
+    shSearchDebounced.value ? { sh: shSearchDebounced.value } : undefined,
+    { page: page.value, size: size.value }
+  );
+});
+
+watch(params, async () => {
+  if (!isNaN(params.value.page) && !isNaN(params.value.size)) {
     await navigateTo({
       path: route.path,
-      query: {
-        page: page.value,
-        size: size.value,
-        ...(shSearchDebounced.value && { q: shSearchDebounced.value }),
-      },
+      query: defu(params.value.sh ? { q: params.value.sh } : undefined, {
+        page: params.value.page,
+        size: params.value.size,
+      }),
       replace: true,
     });
   }
 });
 
-const params = computed(() => {
-  return {
-    page: page.value,
-    size: size.value,
-    ...(shSearchDebounced.value && { sh: shSearchDebounced.value }),
-  };
-});
 const {
   pending,
-  data: rawShListData,
+  data: rawShList,
   refresh,
 } = await useApiFetch("/api/sh/list", {
   params,
 });
 
-const shQueryCount = computed(() => rawShListData.value?.count ?? 0);
-const shList = computed(() => rawShListData.value?.sh ?? []);
+const shQueryCount = computed(() => rawShList.value?.count ?? 0);
+const shList = computed(() => rawShList.value?.sh ?? []);
 
 const tableColumns = [
   { key: "from", label: "From" },
@@ -141,17 +141,17 @@ const newSh = ref("");
 const newTarget = ref("");
 
 const addSh = async () => {
-  await $apiFetch(`/api/sh/name/${newSh.value}`, {
+  await $apiFetch(`/api/sh/name/${encodeURIComponent(newSh.value)}`, {
     method: "PUT",
     params: {
-      target: encodeURIComponent(newTarget.value),
+      target: newTarget.value,
     },
   });
   await refresh();
 };
 
 const removeSh = async (sh: string) => {
-  await $apiFetch(`/api/sh/name/${sh}`, {
+  await $apiFetch(`/api/sh/name/${encodeURIComponent(sh)}`, {
     method: "DELETE",
   });
   await refresh();

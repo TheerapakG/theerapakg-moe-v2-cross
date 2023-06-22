@@ -19,7 +19,7 @@ import { loadNuxtConfig } from "nuxt/kit";
     `${process.getuid()}:${process.getgid()}`,
     "-d",
     "-p",
-    `127.0.0.1:${config.postgresPort ?? 5432}:${config.postgresPort ?? 5432}`,
+    `${config.postgresPort ?? 5432}:${config.postgresPort ?? 5432}`,
     "postgres",
   ]);
 

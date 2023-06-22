@@ -20,11 +20,9 @@ const toast = useToast();
 
 const changeTarget = async (target: string) => {
   try {
-    await $apiFetch(`/api/sh/name/${props.from}`, {
+    await $apiFetch(`/api/sh/name/${encodeURIComponent(props.from)}`, {
       method: "PUT",
-      params: {
-        target: encodeURIComponent(target),
-      },
+      params: { target },
     });
   } catch {
     toast.add({

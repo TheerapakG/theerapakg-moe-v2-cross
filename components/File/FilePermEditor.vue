@@ -40,6 +40,8 @@
 </template>
 
 <script setup lang="ts">
+import defu from "defu";
+
 type Props = {
   fileId: string;
   perm: string;
@@ -61,17 +63,19 @@ const size = ref(5);
 const userSearch = ref("");
 const userSearchDebounced = refDebounced(userSearch, 300);
 
+const params = computed(() => {
+  return defu(
+    userSearchDebounced.value ? { user: userSearchDebounced.value } : undefined,
+    { page: page.value, size: size.value }
+  );
+});
+
 const {
   pending,
   data: rawPermsData,
   refresh,
 } = await useApiFetch(`/api/file/${props.fileId}/perm/${props.perm}/list`, {
-  params: {
-    page: page.value,
-    size: size.value,
-    ...(userSearchDebounced.value && { user: userSearchDebounced.value }),
-  },
-  watch: [page, size, userSearchDebounced],
+  params,
 });
 
 const permQueryUserCount = computed(

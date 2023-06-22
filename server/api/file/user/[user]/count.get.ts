@@ -1,9 +1,8 @@
 import { type } from "arktype";
-import { and, eq, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const paramValidator = type({
-  id: "uuid",
-  perm: "'view'|'edit'",
+  user: "uuid",
 });
 
 export default defineEventHandler(
@@ -11,22 +10,20 @@ export default defineEventHandler(
     const user = await getUser(event);
 
     const {
-      param: { id, perm },
+      param: { user: target },
     } = await validateEvent({ param: paramValidator }, event);
 
-    await checkFileUserPerm(id, user);
+    if (user !== target) {
+      if (!(await checkUserPerm(user)).includes("file:list"))
+        throw createError({ statusMessage: "no permission" });
+    }
 
     const [{ count }] = await useDrizzle()
       .select({
         count: sql`count(*)`,
       })
-      .from(fileUserPermissionsTable)
-      .where(
-        and(
-          eq(fileUserPermissionsTable.file_id, id),
-          eq(fileUserPermissionsTable.permission, `file!:${perm}`)
-        )
-      );
+      .from(fileTable)
+      .where(eq(fileTable.owner, target));
 
     return { count: typeof count === "string" ? parseInt(count) : 0 };
   })

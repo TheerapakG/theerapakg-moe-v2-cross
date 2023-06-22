@@ -1,6 +1,9 @@
-import z from "zod";
+import { type } from "arktype";
 
-const Cmd = z.string().array();
+const queryValidator = type({
+  image: "string",
+  cmd: [type(["string", "|>", type("json")]), "|>", type("string[]")],
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -8,10 +11,9 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("container:manage"))
       throw createError({ statusMessage: "no permission" });
 
-    const query = getQuery(event);
-
-    const image = decodeURIComponent(query.image as string);
-    const cmd = Cmd.parse(JSON.parse(decodeURIComponent(query.cmd as string)));
+    const {
+      query: { image, cmd },
+    } = await validateEvent({ query: queryValidator }, event);
 
     const id = await createContainer(user, {
       Image: image,

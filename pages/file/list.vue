@@ -84,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import defu from "defu";
 import { LocationQueryValue } from "vue-router";
 import { formatPretty } from "~/utils/formatPretty";
 
@@ -109,38 +110,37 @@ const size = ref(isNaN(_size) ? 10 : _size);
 const fileSearch = ref((route.query.q as LocationQueryValue) ?? "");
 const fileSearchDebounced = refDebounced(fileSearch, 300);
 
-watch([page, size, fileSearchDebounced], async () => {
-  if (!isNaN(page.value) && !isNaN(size.value)) {
+const params = computed(() => {
+  return defu(
+    fileSearchDebounced.value ? { file: fileSearchDebounced.value } : undefined,
+    { page: page.value, size: size.value }
+  );
+});
+
+watch(params, async () => {
+  if (!isNaN(params.value.page) && !isNaN(params.value.size)) {
     await navigateTo({
       path: route.path,
-      query: {
-        page: page.value,
-        size: size.value,
-        ...(fileSearchDebounced.value && { q: fileSearchDebounced.value }),
-      },
+      query: defu(params.value.file ? { q: params.value.file } : undefined, {
+        page: params.value.page,
+        size: params.value.size,
+      }),
       replace: true,
     });
   }
 });
 
-const params = computed(() => {
-  return {
-    page: page.value,
-    size: size.value,
-    ...(fileSearchDebounced.value && { file: fileSearchDebounced.value }),
-  };
-});
 const {
   pending,
-  data: rawFileListData,
+  data: rawFileList,
   refresh,
 } = await useApiFetch("/api/file/list", {
   params,
 });
 
-const fileQueryCount = computed(() => rawFileListData.value?.count ?? 0);
+const fileQueryCount = computed(() => rawFileList.value?.count ?? 0);
 const fileList = computed(() => {
-  const files = rawFileListData.value?.files;
+  const files = rawFileList.value?.files;
 
   if (!files) return [];
   return (

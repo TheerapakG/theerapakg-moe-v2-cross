@@ -1,29 +1,40 @@
+import { type } from "arktype";
+
+const queryValidator = type({
+  target: "string",
+});
+
+const paramValidator = type({
+  name: [
+    type(["string", "|>", (s) => decodeURIComponent(s)]),
+    "|>",
+    type(/^\w+$/),
+  ],
+});
+
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
     if (!(await checkUserPerm(user)).includes("sh:edit"))
       throw createError({ statusMessage: "no permission" });
 
-    const query = getQuery(event);
-
-    if (!event.context.params) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid params",
-      });
-    }
-
-    const to = decodeURIComponent(query.target as string);
+    const {
+      query: { target },
+      param: { name },
+    } = await validateEvent(
+      { query: queryValidator, param: paramValidator },
+      event
+    );
 
     const [insert] = await useDrizzle()
       .insert(shTable)
       .values({
-        from: event.context.params.name,
-        to,
+        from: name,
+        to: target,
       })
       .onConflictDoUpdate({
         target: shTable.from,
-        set: { to },
+        set: { to: target },
       })
       .returning({
         name: shTable.from,

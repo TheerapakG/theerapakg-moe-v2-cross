@@ -1,21 +1,33 @@
+import { type } from "arktype";
 import { eq } from "drizzle-orm";
 import fs from "fs";
 import path from "path";
+
+const queryValidator = type({
+  name: "string",
+});
+
+const paramValidator = type({
+  id: "uuid",
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = event.context.params?.id;
-    if (!id) throw createError({ statusMessage: "invalid id" });
+    const {
+      query: { name },
+      param: { id },
+    } = await validateEvent(
+      { query: queryValidator, param: paramValidator },
+      event
+    );
 
     const {
       perms: { edit },
     } = await checkFileUserPerm(id, user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
-    const query = getQuery(event);
-    const name = decodeURIComponent(query.name as string);
     const { base, dir } = getFileName(user, name);
 
     const _oldDir = await useDrizzle()

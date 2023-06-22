@@ -19,9 +19,14 @@ const toast = useToast();
 
 const rename = async (name: string) => {
   try {
-    await $apiFetch(`/api/sh/name/${props.from}/rename/${name}`, {
-      method: "POST",
-    });
+    await $apiFetch(
+      `/api/sh/name/${encodeURIComponent(
+        props.from
+      )}/rename/${encodeURIComponent(name)}`,
+      {
+        method: "POST",
+      }
+    );
   } catch {
     toast.add({
       title: "Rename Error",

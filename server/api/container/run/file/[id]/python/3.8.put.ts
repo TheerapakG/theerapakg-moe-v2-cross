@@ -1,4 +1,9 @@
+import { type } from "arktype";
 import { eq } from "drizzle-orm";
+
+const paramValidator = type({
+  id: "uuid",
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -6,8 +11,9 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("container:manage"))
       throw createError({ statusMessage: "no permission" });
 
-    const fileId = event.context.params?.id;
-    if (!fileId) throw createError({ statusMessage: "invalid id" });
+    const {
+      param: { id: fileId },
+    } = await validateEvent({ param: paramValidator }, event);
 
     const {
       perms: { view },

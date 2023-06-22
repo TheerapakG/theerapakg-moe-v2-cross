@@ -1,4 +1,12 @@
-import { map as useMap, min as useMin, zipWith as useZipWith } from "lodash-es";
+import { type } from "arktype";
+import { defu } from "defu";
+import { map as useMap, zipWith as useZipWith } from "lodash-es";
+
+const queryValidator = type({
+  "sh?": "string",
+  "page?": ["parsedInteger", "|>", type("integer>0")],
+  "size?": ["parsedInteger", "|>", type("integer<=50")],
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -6,21 +14,15 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("sh:list"))
       throw createError({ statusMessage: "no permission" });
 
-    const query = getQuery(event);
-
-    const page = query.page ? parseInt(query.page as string) : 1;
-    const size = query.size
-      ? useMin([parseInt(query.size as string), 50]) ?? 10
-      : 10;
+    const { query } = await validateEvent({ query: queryValidator }, event);
+    const { page, size, sh: target } = defu(query, { page: 1, size: 10 });
     const start = (page - 1) * size;
-
-    const shSearch = query.sh ? decodeURIComponent(query.sh as string) : "";
 
     const { estimatedTotalHits: count, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey
     )
       .index<typeof shDocument>("shs")
-      .search<typeof shDocument>(shSearch, {
+      .search<typeof shDocument>(target, {
         offset: start,
         limit: size,
       });

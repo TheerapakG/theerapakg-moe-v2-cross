@@ -1,7 +1,13 @@
+import { type } from "arktype";
 import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
 import fetch from "node-fetch";
+
+const bodyValidator = type({
+  file: "string",
+  content: "string",
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -9,14 +15,15 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("file:edit"))
       throw createError({ statusMessage: "no permission" });
 
-    const body = await readBody(event);
-    if (!body.content) return;
+    const {
+      body: { file, content },
+    } = await validateEvent({ body: bodyValidator }, event);
 
-    const { base, dir } = getFileName(user, body.file);
+    const { base, dir } = getFileName(user, file);
 
     await fs.mkdir(base, { recursive: true });
 
-    const fileBody = (await fetch(body.content)).body;
+    const fileBody = (await fetch(content)).body;
 
     if (fileBody === null)
       throw createError({

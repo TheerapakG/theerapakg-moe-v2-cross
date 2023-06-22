@@ -1,13 +1,19 @@
+import { type } from "arktype";
 import { eq } from "drizzle-orm";
 import fs from "fs";
 import mime from "mime";
+
+const paramValidator = type({
+  id: "uuid",
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
     const user = await getUser(event);
 
-    const id = event.context.params?.id;
-    if (!id) throw createError({ statusMessage: "invalid id" });
+    const {
+      param: { id },
+    } = await validateEvent({ param: paramValidator }, event);
 
     const {
       perms: { view },
@@ -34,6 +40,7 @@ export default defineEventHandler(
       const range = getRequestHeader(event, "range");
 
       if (range) {
+        // TODO: use validator
         const [unit, ranges] = range.split("=");
         if (unit !== "bytes" || !ranges) {
           event.node.res.statusCode = 416;

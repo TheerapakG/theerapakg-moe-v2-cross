@@ -1,4 +1,18 @@
+import { type } from "arktype";
 import { eq } from "drizzle-orm";
+
+const paramValidator = type({
+  name: [
+    type(["string", "|>", (s) => decodeURIComponent(s)]),
+    "|>",
+    type(/^\w+$/),
+  ],
+  newname: [
+    type(["string", "|>", (s) => decodeURIComponent(s)]),
+    "|>",
+    type(/^\w+$/),
+  ],
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -6,19 +20,16 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("sh:edit"))
       throw createError({ statusMessage: "no permission" });
 
-    if (!event.context.params) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "invalid params",
-      });
-    }
+    const {
+      param: { name, newname },
+    } = await validateEvent({ param: paramValidator }, event);
 
     const [update] = await useDrizzle()
       .update(shTable)
       .set({
-        from: event.context.params.newname,
+        from: newname,
       })
-      .where(eq(shTable.from, event.context.params.name))
+      .where(eq(shTable.from, name))
       .returning({
         name: shTable.from,
         to: shTable.to,
@@ -29,7 +40,7 @@ export default defineEventHandler(
         typeof shDocument
       >("shs");
       index.addDocuments([update], { primaryKey: "name" });
-      index.deleteDocument(event.context.params.name);
+      index.deleteDocument(name);
     }
 
     return {};

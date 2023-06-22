@@ -1,5 +1,10 @@
+import { type } from "arktype";
 import { eq } from "drizzle-orm";
 import { Stream } from "stream";
+
+const paramValidator = type({
+  id: "uuid",
+});
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -7,8 +12,9 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("container:inspect"))
       throw createError({ statusMessage: "no permission" });
 
-    const id = event.context.params?.id;
-    if (!id) throw createError({ statusMessage: "invalid id" });
+    const {
+      param: { id },
+    } = await validateEvent({ param: paramValidator }, event);
 
     const _dockerId = await useDrizzle()
       .select({ dockerId: containerTable.dockerId })
