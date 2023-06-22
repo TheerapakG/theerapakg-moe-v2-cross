@@ -29,6 +29,14 @@
           />
         </div>
       </template>
+      <template #owner-data="{ row }">
+        <div
+          class="inline-flex h-8 w-28 place-content-center place-items-center"
+        >
+          <USkeleton v-if="!row.owner" class="h-4 w-full" />
+          <div v-else>{{ row.owner }}</div>
+        </div>
+      </template>
       <template #perms-data="{ row }">
         <FileButtonPermEditorGroup
           v-slot="{ perm, permUserCount }"
@@ -187,7 +195,7 @@ const tableData = computed(() =>
     return {
       id,
       name,
-      owner: owner.info?.name ?? "(loading ...)",
+      owner: owner.info?.name,
       size: formatPretty(size),
       mime,
     };

@@ -1,7 +1,12 @@
 <template>
   <div class="flex flex-col place-content-start place-items-center">
     <div class="mb-8 h-8 w-full px-8">
-      <div v-if="pending">loading...</div>
+      <div
+        v-if="pending"
+        class="inline-flex place-content-center place-items-center"
+      >
+        <USkeleton class="h-8 w-80" />
+      </div>
       <div v-else-if="!fileInfo"></div>
       <div v-else class="relative h-full w-full">
         <div

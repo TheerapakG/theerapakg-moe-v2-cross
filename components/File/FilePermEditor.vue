@@ -14,8 +14,16 @@
       </template>
     </UInput>
     <UTable class="w-full" :columns="tableColumns" :rows="tableData">
+      <template #name-data="{ row }">
+        <div
+          class="inline-flex h-8 w-28 place-content-center place-items-center"
+        >
+          <USkeleton v-if="!row.name" class="h-4 w-full" />
+          <div v-else>{{ row.name }}</div>
+        </div>
+      </template>
       <template #actions-data="{ row }">
-        <div class="flex h-8 place-content-center place-items-center">
+        <div class="inline-flex h-8 place-content-center place-items-center">
           <UButton
             v-if="row.perm"
             variant="ghost"
@@ -118,7 +126,7 @@ const tableData = computed(() =>
   useMap(permUserList.value, ({ user, perm }) => {
     return {
       id: user.id,
-      name: user.info?.name ?? "(loading...)",
+      name: user.info?.name,
       perm,
     };
   })
