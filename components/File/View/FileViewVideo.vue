@@ -74,10 +74,11 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { fileId } = toRefs(props);
 
 const video = ref<HTMLAudioElement>();
 const { playing, currentTime, duration, volume } = useMediaControls(video, {
-  src: `/api/file/${props.fileId}/download`,
+  src: computed(() => `/api/file/${fileId.value}/download`),
 });
 
 const formatDuration = (seconds: number) =>

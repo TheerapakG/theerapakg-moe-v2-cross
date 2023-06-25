@@ -62,11 +62,6 @@ export default defineEventHandler(
         { primaryKey: "id" }
       );
 
-    return {
-      id: insert.id,
-      name: path.basename(dir),
-      size: stat.size,
-      url: `/api/file/download/${insert.id}`,
-    };
+    return { id: insert.id };
   })
 );

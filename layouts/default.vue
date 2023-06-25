@@ -48,6 +48,7 @@
 <script setup lang="ts">
 import SideBar from "~/components/SideBar.vue";
 import { RouteInfo } from "~/stores/route";
+
 const routeStore = useRouteStore();
 
 useHead({
@@ -65,22 +66,27 @@ const sideBarPaths = [
 ];
 
 const routeInfos = computed(() =>
-  sideBarPaths.map((path: string) => routeStore.info(path).value)
+  sideBarPaths.map((path: string) => routeStore.info(path))
 );
-const filteredRouteInfos = computed(() => {
-  return useCompact(
-    routeInfos.value.map((routeInfo) =>
-      useRoutePerm(routeInfo).value.havePerm ? routeInfo : undefined
-    )
-  );
+
+const routePerms = await useAsyncMap(routeInfos, async (routeInfo) => {
+  const perm = await useRoutePerm(routeInfo);
+  return computed(() => {
+    return {
+      route: toValue(routeInfo),
+      perm: perm.value,
+    };
+  });
 });
-const fetchAllRoutePerms = async () => {
-  await Promise.all(
-    routeInfos.value.map(async (routeInfo) => await fetchRoutePerm(routeInfo))
-  );
-};
-watch(routeInfos, fetchAllRoutePerms);
-await fetchAllRoutePerms();
+
+const filteredRouteInfos = computed(() =>
+  useCompact(
+    routePerms.value.map((routePerm) => {
+      const { route, perm } = routePerm.value;
+      return perm.havePerm ? route : undefined;
+    })
+  )
+);
 
 const links = computed(() =>
   filteredRouteInfos.value.map((path: RouteInfo) => {

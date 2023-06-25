@@ -73,9 +73,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-
-const page = computed(() => props.modelValue);
-const pageCount = computed(() => props.pageCount);
+const { modelValue: page } = toRefs(props);
 
 type Emits = {
   "update:modelValue": [value: number];

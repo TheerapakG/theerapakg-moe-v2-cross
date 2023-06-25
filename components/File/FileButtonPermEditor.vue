@@ -6,12 +6,7 @@
       </slot>
 
       <template #panel>
-        <FilePermEditor
-          :file-id="fileId"
-          :perm="perm"
-          class="p-4"
-          @refresh="refresh"
-        />
+        <FilePermEditor :file-id="fileId" :perm="perm" class="p-4" />
       </template>
     </UPopover>
   </div>
@@ -20,19 +15,16 @@
 <script setup lang="ts">
 type Props = {
   fileId: string;
-  perm: string;
+  perm: "view" | "edit";
 };
 
 const props = defineProps<Props>();
+const { fileId, perm } = toRefs(props);
 
-const fetch = computed(() =>
-  useApiFetch(
-    `/api/file/${props.fileId}/perm/${encodeURIComponent(props.perm)}/count`
-  )
+const filePermStore = useFilePermStore();
+
+const permUserCount = await filePermStore.fetchFilePermCountComputed(
+  fileId,
+  perm
 );
-
-const data = computed(() => fetch.value.data.value);
-const refresh = computed(() => fetch.value.refresh);
-
-const permUserCount = computed(() => data.value?.count);
 </script>

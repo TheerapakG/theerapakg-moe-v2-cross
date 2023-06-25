@@ -25,8 +25,10 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { fileId } = toRefs(props);
 
-const data = await $apiFetch<string>(`/api/file/${props.fileId}/download`, {
+// TODO: reactive
+const data = await $apiFetch<string>(`/api/file/${fileId.value}/download`, {
   responseType: "text",
 });
 </script>

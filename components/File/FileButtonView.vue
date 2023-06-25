@@ -19,21 +19,28 @@ import type { RouteLocationRaw } from "vue-router";
 
 type Props = {
   fileId: string;
-  mime: string;
   ariaLabel?: string;
 };
 
 const props = defineProps<Props>();
+const { fileId } = toRefs(props);
+
+const fileStore = useFileStore();
+
+const fileInfo = await fileStore.fetchFileComputed(fileId);
+
+const defaultMime = {
+  type: "text",
+  subtype: "plain",
+  parameters: undefined,
+};
 
 const mimeType = computed(() => {
+  if (!fileInfo.value) return defaultMime;
   try {
-    return new MimeType(props.mime);
+    return new MimeType(fileInfo.value?.mime);
   } catch {
-    return {
-      type: "text",
-      subtype: "plain",
-      parameters: undefined,
-    };
+    return defaultMime;
   }
 });
 
@@ -41,7 +48,7 @@ const target = computed<RouteLocationRaw>(() => {
   const mime = mimeType.value;
 
   return {
-    path: `/file/view/mime/${mime.type}/${mime.subtype}/${props.fileId}`,
+    path: `/file/view/mime/${mime.type}/${mime.subtype}/${fileId.value}`,
     ...(mime.parameters && {
       query: Object.fromEntries(mime.parameters),
     }),

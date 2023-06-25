@@ -1,5 +1,5 @@
 <template>
-  <TextInputEditor :model-value="props.to" @update:model-value="changeTarget" />
+  <TextInputEditor :model-value="to" @update:model-value="changeTarget" />
 </template>
 
 <script setup lang="tsx">
@@ -9,6 +9,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { from } = toRefs(props);
 
 type Emits = {
   refresh: [];
@@ -20,7 +21,7 @@ const toast = useToast();
 
 const changeTarget = async (target: string) => {
   try {
-    await $apiFetch(`/api/sh/name/${encodeURIComponent(props.from)}`, {
+    await $apiFetch(`/api/sh/name/${encodeURIComponent(from.value)}`, {
       method: "PUT",
       params: { target },
     });

@@ -2,7 +2,7 @@
   <div
     class="flex w-full flex-col place-content-center place-items-center gap-y-2"
   >
-    <div>changing permission: {{ props.perm }}</div>
+    <div>changing permission: {{ perm }}</div>
     <UInput v-model="userSearch" class="w-full" size="md">
       <template #leading>
         <UIcon
@@ -52,18 +52,14 @@ import defu from "defu";
 
 type Props = {
   fileId: string;
-  perm: string;
+  perm: "view" | "edit";
 };
 
 const props = defineProps<Props>();
-
-type Emits = {
-  refresh: [];
-};
-
-const emit = defineEmits<Emits>();
+const { fileId, perm } = toRefs(props);
 
 const userStore = useUserStore();
+const filePermStore = useFilePermStore();
 
 const page = ref(1);
 const size = ref(5);
@@ -90,35 +86,35 @@ const permQueryUserCount = computed(
   () => rawPermsData.value?.count ?? Infinity
 );
 
-const permUserList = computed(() => {
-  const users = rawPermsData.value?.users;
+const getPermUserList = async () =>
+  await Promise.all(
+    rawPermsData.value?.users?.map(async ({ id, perm }) => {
+      return {
+        user: {
+          id,
+          info: await userStore.fetchUserComputed(id),
+        },
+        perm,
+      };
+    }) ?? []
+  );
 
-  if (!users) return [];
-  return users.map(({ id, perm }) => {
+const permUserListShallow = shallowRef(await getPermUserList());
+watch(rawPermsData, async () => {
+  permUserListShallow.value = await getPermUserList();
+});
+
+const permUserList = computed(() =>
+  permUserListShallow.value.map(({ user: { id, info }, perm }) => {
     return {
       user: {
         id,
-        info: userStore.user(id),
+        info: info.value,
       },
       perm,
     };
-  });
-});
-const missingUserIDs = computed(() => {
-  return useUniq(
-    permUserList.value
-      .map((permUser) => permUser.user)
-      .filter((user) => user.info === undefined)
-      .map((user) => user.id)
-  );
-});
-const fetchMissingUser = async () => {
-  await Promise.all(
-    missingUserIDs.value.map(async (id) => userStore.fetchUser(id))
-  );
-};
-watch(missingUserIDs, fetchMissingUser);
-await fetchMissingUser();
+  })
+);
 
 const tableColumns = [{ key: "name", label: "Name" }, { key: "actions" }];
 
@@ -139,10 +135,12 @@ const { pageCount } = useOffsetPagination({
 });
 
 const doUser = async (id: string, method: "PUT" | "DELETE") => {
-  await $apiFetch(`/api/file/${props.fileId}/perm/${props.perm}/user/${id}`, {
+  await $apiFetch(`/api/file/${fileId.value}/perm/${perm.value}/user/${id}`, {
     method,
   });
-  await refresh();
-  emit("refresh");
+  await Promise.all([
+    refresh(),
+    filePermStore.fetchFilePermCount(fileId.value, perm.value, true),
+  ]);
 };
 </script>

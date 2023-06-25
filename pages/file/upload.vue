@@ -23,6 +23,8 @@ definePageMeta({
 
 const file = shallowRef<File | null>(null);
 
+const fileStore = useFileStore();
+
 const toast = useToast();
 
 const checkDraggingData = (
@@ -66,28 +68,15 @@ const onDroppedData = (
 const upload = async () => {
   if (!file.value) return;
 
+  const name = file.value.name;
+
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
-    const upload = await (async () => {
-      try {
-        return await $apiFetch("/api/file/upload", {
-          method: "POST",
-          body: {
-            file: file.value?.name,
-            content: event.target?.result,
-          },
-        });
-      } catch {
-        toast.add({
-          title: "Upload Error",
-          description: "Cannot upload",
-          icon: "i-heroicons-exclaimation-circle",
-          color: "red",
-        });
-        return;
-      }
-    })();
-    if (upload) {
+    try {
+      const upload = await fileStore.uploadFile(
+        name,
+        event.target?.result as string
+      );
       toast.add({
         title: "Upload Success",
         description: "go to download page",
@@ -96,6 +85,14 @@ const upload = async () => {
         },
         icon: "i-heroicons-exclaimation-circle",
       });
+    } catch {
+      toast.add({
+        title: "Upload Error",
+        description: "Cannot upload",
+        icon: "i-heroicons-exclaimation-circle",
+        color: "red",
+      });
+      return;
     }
   });
 

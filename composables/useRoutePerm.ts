@@ -1,4 +1,4 @@
-import { MaybeRef } from "vue";
+import { MaybeRefOrGetter } from "vue";
 import { RouteLocationNormalized } from "vue-router";
 
 export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
@@ -8,32 +8,32 @@ export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
       havePerm: true,
     };
 
-  const permStore = usePermStore();
-  const perms = await permStore.fetchPerms();
+  const userPermStore = useUserPermStore();
+  const perm = await userPermStore.fetchPerms();
 
   return {
     requirePerm: true,
-    havePerm: route.meta.perms.every((perm) => perms.includes(perm)),
+    havePerm: route.meta.perms.every(perm),
   };
 };
 
-export const useRoutePerm = (route: MaybeRef<RouteLocationNormalized>) => {
+export const useRoutePerm = async (
+  route: MaybeRefOrGetter<RouteLocationNormalized>
+) => {
+  const userPermStore = useUserPermStore();
+  const perm = await userPermStore.fetchPermsComputed();
+
   return computed(() => {
-    const routeUnref = unref(route);
+    const routeUnref = toValue(route);
     if (!routeUnref.meta.perms)
       return {
         requirePerm: false,
         havePerm: true,
       };
 
-    const permStore = usePermStore();
-    const permValues = routeUnref.meta.perms.map((perm) =>
-      permStore.perm(perm)
-    );
-
     return {
       requirePerm: true,
-      havePerm: permValues.every((permValue) => permValue),
+      havePerm: routeUnref.meta.perms.every(perm.value),
     };
   });
 };

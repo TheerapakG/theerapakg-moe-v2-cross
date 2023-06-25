@@ -32,6 +32,8 @@ watch([width, height], () =>
   editor.value?.layout({ width: width.value, height: height.value })
 );
 
+defineExpose({ editor });
+
 onMounted(async () => {
   const monaco = await importStore.useMonaco();
 
@@ -48,6 +50,4 @@ onUnmounted(() => {
   editor.value?.dispose();
   editor.value = null;
 });
-
-defineExpose({ editor });
 </script>

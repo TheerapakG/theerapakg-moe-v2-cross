@@ -41,11 +41,9 @@
 
 <script setup lang="ts">
 import { FetchError } from "ofetch";
-import { storeToRefs } from "pinia";
 
 const userStore = useUserStore();
-const { current } = storeToRefs(userStore);
-await userStore.fetchCurrent();
+const current = await userStore.fetchCurrentComputed();
 
 const toast = useToast();
 

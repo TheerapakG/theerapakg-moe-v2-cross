@@ -2,12 +2,11 @@
   <div class="flex flex-col place-content-start place-items-center">
     <div class="mb-8 h-8 w-full px-8">
       <div
-        v-if="pending"
+        v-if="!fileInfo"
         class="inline-flex place-content-center place-items-center"
       >
         <USkeleton class="h-8 w-80" />
       </div>
-      <div v-else-if="!fileInfo"></div>
       <div v-else class="relative h-full w-full">
         <div
           class="absolute left-0 inline-flex h-full place-content-center place-items-center md:left-16"
@@ -22,7 +21,7 @@
             size="xl"
             icon="i-heroicons-arrow-down-tray"
             :ui="{ rounded: 'rounded-full' }"
-            :to="`/file/download/${route.params.file}`"
+            :to="`/file/download/${fileId}`"
           />
           <UPopover>
             <UButton
@@ -35,7 +34,7 @@
             <template #panel>
               <FileButtonPermEditorGroup
                 v-slot="{ perm, permUserCount }"
-                :file-id="(route.params.file as string)"
+                :file-id="fileId"
               >
                 <UButton
                   variant="ghost"
@@ -47,12 +46,12 @@
               </FileButtonPermEditorGroup>
             </template>
           </UPopover>
-          <FileButtonViewerMode :file-id="(route.params.file as string)" />
+          <FileButtonViewerMode :file-id="fileId" />
         </div>
         <div class="mx-32 flex h-full place-content-center place-items-center">
           <FileNameEditor
             class="list-move min-w-0 font-bold"
-            :file-id="(route.params.file as string)"
+            :file-id="fileId"
             :name="fileInfo.name"
             :download="false"
           />
@@ -77,10 +76,9 @@
 </template>
 
 <script setup lang="ts">
-import { useMountedState, useFileInfoState } from "./states";
+import { useMountedState } from "./states";
 
 const mountedState = useMountedState();
-const fileInfoState = useFileInfoState();
 
 const mounted = useMounted();
 watch(mounted, () => {
@@ -89,32 +87,17 @@ watch(mounted, () => {
 mountedState.value = mounted.value;
 
 const route = useRoute();
+const fileStore = useFileStore();
 const routeStore = useRouteStore();
+
+const fileId = route.params.file as string;
 
 const perms = {
   view: "i-heroicons-eye",
   edit: "i-heroicons-pencil",
 };
 
-const {
-  pending,
-  data: fileInfo,
-  //error: fileInfoError,
-} = await useApiFetch(`/api/file/${route.params.file}/info`);
+const fileInfo = await fileStore.fetchFile(fileId);
 
-const fileInfoComputed = computed(
-  () =>
-    (fileInfoState.value = fileInfo.value
-      ? { ...fileInfo.value, id: route.params.file as string }
-      : null)
-);
-
-watch(fileInfoComputed, () => {
-  fileInfoState.value = fileInfoComputed.value;
-});
-fileInfoState.value = fileInfoComputed.value;
-
-routeStore.setTitle(
-  computed(() => `theerapakg-moe-app: ${fileInfo.value?.name}`)
-);
+routeStore.setTitle(computed(() => `theerapakg-moe-app: ${fileInfo?.name}`));
 </script>

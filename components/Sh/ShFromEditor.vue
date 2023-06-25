@@ -1,5 +1,5 @@
 <template>
-  <TextInputEditor :model-value="props.from" @update:model-value="rename" />
+  <TextInputEditor :model-value="from" @update:model-value="rename" />
 </template>
 
 <script setup lang="tsx">
@@ -8,6 +8,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { from } = toRefs(props);
 
 type Emits = {
   refresh: [];
@@ -21,7 +22,7 @@ const rename = async (name: string) => {
   try {
     await $apiFetch(
       `/api/sh/name/${encodeURIComponent(
-        props.from
+        from.value
       )}/rename/${encodeURIComponent(name)}`,
       {
         method: "POST",

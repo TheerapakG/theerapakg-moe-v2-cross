@@ -1,13 +1,13 @@
 import {
   isClient,
-  MaybeRef,
+  MaybeRefOrGetter,
   Stoppable,
   UseTimeoutFnOptions,
 } from "@vueuse/shared";
 
 export const useTimeoutFnNoGuard = (
   cb: (...args: unknown[]) => unknown,
-  interval: MaybeRef<number>,
+  interval: MaybeRefOrGetter<number>,
   options: UseTimeoutFnOptions = {}
 ): Stoppable => {
   const { immediate = true } = options;
@@ -35,7 +35,7 @@ export const useTimeoutFnNoGuard = (
       isPending.value = false;
       timer = null;
       cb(...args);
-    }, unref(interval)) as unknown as number;
+    }, toValue(interval)) as unknown as number;
   };
 
   if (immediate) {

@@ -1,9 +1,5 @@
 import { type } from "arktype";
 import defu from "defu";
-import { inArray } from "drizzle-orm";
-import fs from "fs";
-import mime from "mime";
-import path from "path";
 
 const queryValidator = type({
   "file?": "string",
@@ -31,30 +27,11 @@ export default defineEventHandler(
         attributesToRetrieve: ["id"],
       });
 
-    const ids = hits.map((f) => f.id);
-
-    const files = await useDrizzle()
-      .select()
-      .from(fileTable)
-      .where(inArray(fileTable.id, ids))
-      .orderBy(fileTable.created);
+    const files = hits.map((f) => f.id);
 
     return {
       count: count ?? Infinity,
-      files: await Promise.all(
-        files.map(async ({ id, dir, owner, created, modified }) => {
-          return {
-            id,
-            name: path.basename(dir),
-            owner,
-            size: (await fs.promises.stat(dir)).size,
-            created,
-            modified,
-            mime: mime.getType(dir) ?? "",
-            url: `/api/file/download/${id}`,
-          };
-        })
-      ),
+      files,
     };
   })
 );

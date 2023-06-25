@@ -54,13 +54,16 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { fileId } = toRefs(props);
 
-const data = await $apiFetch<string>(`/api/file/${props.fileId}/download`, {
+// TODO: reactive
+const data = await $apiFetch<string>(`/api/file/${fileId.value}/download`, {
   responseType: "text",
 });
 
 const status = ref(new Set<string>());
 
+const fileStore = useFileStore();
 const importStore = useImportStore();
 const toast = useToast();
 
@@ -99,12 +102,7 @@ const save = async () => {
 
   fileReader.addEventListener("load", async (event) => {
     try {
-      await $apiFetch(`/api/file/${props.fileId}/edit`, {
-        method: "PUT",
-        body: {
-          content: event.target?.result,
-        },
-      });
+      await fileStore.editFile(fileId.value, event.target?.result as string);
     } catch {
       toast.add({
         title: "Save Error",

@@ -51,6 +51,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { fileId } = toRefs(props);
 
 const toast = useToast();
 
@@ -87,7 +88,7 @@ const run = async () => {
     pending.value = true;
     try {
       const { container } = await $apiFetch(
-        `/api/container/run/file/${props.fileId}/${subrouteSelection.value}`,
+        `/api/container/run/file/${fileId.value}/${subrouteSelection.value}`,
         {
           method: "PUT",
         }

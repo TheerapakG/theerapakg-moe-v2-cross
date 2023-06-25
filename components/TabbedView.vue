@@ -117,7 +117,7 @@ const currentViewId = computed({
   },
 });
 
-watch(props.views, () => {
+watch(views, () => {
   if (!currentViewId.value || !views.value[currentViewId.value]) {
     currentViewId.value = useFirst(useKeys(views.value)) ?? "";
   }

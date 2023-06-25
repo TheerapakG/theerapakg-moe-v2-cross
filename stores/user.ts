@@ -1,6 +1,6 @@
-import { defu } from "defu";
 import { FetchResult } from "nuxt/app";
 import { defineStore } from "pinia";
+import { MaybeRefOrGetter } from "vue";
 
 type User = FetchResult<`/api/user/${string}/info`, "get">;
 
@@ -8,10 +8,15 @@ export const useUserStore = defineStore("user", () => {
   const userStates = ref<
     Record<string, { pending?: Promise<User>; data?: User }>
   >({});
-  const currentState = ref<{ pending?: Promise<string>; id?: string }>({});
+  const currentState = ref<{
+    pending?: Promise<string>;
+    id?: string;
+  }>({});
 
   const user = computed(() => {
-    return (id: string) => userStates.value[id]?.data;
+    const state = userStates.value;
+    return (id: MaybeRefOrGetter<string>) =>
+      computed(() => state[toValue(id)]?.data);
   });
 
   const currentID = computed(() => currentState.value.id);
@@ -20,7 +25,7 @@ export const useUserStore = defineStore("user", () => {
     if (!id) return undefined;
     return {
       id,
-      data: user.value(id),
+      data: user.value(id).value,
     };
   });
 
@@ -31,8 +36,10 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const _fetchUserSetPending = async (id: string) => {
-    const pending = _fetchUser(id);
-    userStates.value[id] = defu({ pending }, userStates.value[id]);
+    const pending = markRaw(_fetchUser(id));
+    const value = userStates.value[id];
+    if (value) value.pending = pending;
+    else userStates.value[id] = { pending };
     return await pending;
   };
 
@@ -45,6 +52,18 @@ export const useUserStore = defineStore("user", () => {
     return await _fetchUserSetPending(id);
   };
 
+  const fetchUserComputed = async (
+    id: MaybeRefOrGetter<string>,
+    force?: boolean
+  ) => {
+    const fetcher = async () => {
+      await fetchUser(toValue(id), force);
+    };
+    if (isRef(id)) watch(id, fetcher);
+    await fetcher();
+    return computed(() => user.value(id).value);
+  };
+
   const _fetchCurrent = async () => {
     const { id } = await $apiFetch(`/api/user/current`);
     currentState.value = { id };
@@ -52,32 +71,35 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const _fetchCurrentSetPending = async () => {
-    const pending = _fetchCurrent();
-    currentState.value = defu({ pending }, currentState.value);
+    const pending = markRaw(_fetchCurrent());
+    currentState.value.pending = pending;
     return await pending;
   };
 
   const fetchCurrent = async (force?: boolean) => {
-    if (currentState.value) {
-      if (currentState.value.pending) {
-        const id = await currentState.value.pending;
-        return {
-          id,
-          data: await fetchUser(id),
-        };
-      }
-      if (currentState.value.id && !force) {
-        return {
-          id: currentState.value.id,
-          data: await fetchUser(currentState.value.id),
-        };
-      }
+    if (currentState.value.pending) {
+      const id = await currentState.value.pending;
+      return {
+        id,
+        data: await fetchUser(id),
+      };
+    }
+    if (currentState.value.id && !force) {
+      return {
+        id: currentState.value.id,
+        data: await fetchUser(currentState.value.id),
+      };
     }
     const id = await _fetchCurrentSetPending();
     return {
       id,
       data: await fetchUser(id, force),
     };
+  };
+
+  const fetchCurrentComputed = async (force?: boolean) => {
+    await fetchCurrent(force);
+    return current;
   };
 
   return {
@@ -87,6 +109,8 @@ export const useUserStore = defineStore("user", () => {
     currentID,
     current,
     fetchUser,
+    fetchUserComputed,
     fetchCurrent,
+    fetchCurrentComputed,
   };
 });

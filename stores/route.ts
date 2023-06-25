@@ -1,6 +1,5 @@
-import { MaybeRef, get } from "@vueuse/shared";
 import { defineStore } from "pinia";
-import { Ref } from "vue";
+import { MaybeRefOrGetter } from "vue";
 import { RouteLocation } from "vue-router";
 
 export interface RouteInfo extends RouteLocation {
@@ -10,13 +9,15 @@ export interface RouteInfo extends RouteLocation {
 export const useRouteStore = defineStore("route", () => {
   let currentPath: string | undefined = undefined;
   const navigating = ref(true);
-  const currentTitle: Ref<MaybeRef<string> | undefined> = ref(undefined);
-
-  const title = computed(() =>
-    currentTitle.value ? get(currentTitle.value) : undefined
+  const currentTitle = shallowRef<MaybeRefOrGetter<string> | undefined>(
+    undefined
   );
 
-  const setTitle = (newTitle: MaybeRef<string> | undefined) => {
+  const title = computed(() =>
+    currentTitle.value ? toValue(currentTitle.value) : undefined
+  );
+
+  const setTitle = (newTitle: MaybeRefOrGetter<string> | undefined) => {
     currentTitle.value = newTitle;
     currentPath = useRoute().path;
   };
@@ -27,10 +28,9 @@ export const useRouteStore = defineStore("route", () => {
     setTitle(newRoute.meta.title);
   });
 
-  const info = (path: string | Ref<string>) => {
+  const info = (path: MaybeRefOrGetter<string>) => {
     return computed((): RouteInfo => {
-      const unrefPath = unref(path);
-      const route = useRouter().resolve(unrefPath);
+      const route = useRouter().resolve(toValue(path));
       if (typeof route.meta.name === "string") {
         return useAssign(
           {

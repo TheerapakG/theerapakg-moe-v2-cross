@@ -30,20 +30,20 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const { fileId } = toRefs(props);
 
 type Emits = {
-  refresh: [];
+  delete: [];
 };
 
 const emit = defineEmits<Emits>();
 
+const fileStore = useFileStore();
 const toast = useToast();
 
 const deleteFile = async () => {
   try {
-    await $apiFetch(`/api/file/${props.fileId}`, {
-      method: "DELETE",
-    });
+    await fileStore.deleteFile(fileId.value);
   } catch {
     toast.add({
       title: "Delete Error",
@@ -51,7 +51,6 @@ const deleteFile = async () => {
       icon: "i-heroicons-exclaimation-circle",
       color: "red",
     });
-    emit("refresh");
     return;
   }
   toast.add({
@@ -59,6 +58,6 @@ const deleteFile = async () => {
     description: "Successfully deleted",
     icon: "i-heroicons-exclaimation-circle",
   });
-  emit("refresh");
+  emit("delete");
 };
 </script>

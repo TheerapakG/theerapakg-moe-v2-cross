@@ -21,12 +21,19 @@
         <div
           class="flex min-w-[16rem] max-w-[32rem] place-content-center place-items-center"
         >
+          <USkeleton v-if="!row.name" class="h-4 w-full" />
           <FileNameEditor
+            v-else
             class="w-full"
             :file-id="row.id"
             :name="row.name"
-            @refresh="refresh"
           />
+        </div>
+      </template>
+      <template #size-data="{ row }">
+        <div class="inline-flex w-16 place-content-center place-items-center">
+          <USkeleton v-if="!row.size" class="h-4 w-full" />
+          <div v-else class="w-full">{{ row.size }}</div>
         </div>
       </template>
       <template #owner-data="{ row }">
@@ -56,20 +63,11 @@
         <div
           class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
         >
-          <FileButtonView
-            :file-id="row.id"
-            :mime="row.mime"
-            :aria-label="`view ${row.name}`"
-          />
-          <FileButtonEdit
-            :file-id="row.id"
-            :mime="row.mime"
-            :aria-label="`edit ${row.name}`"
-          />
+          <FileButtonView :file-id="row.id" :aria-label="`view ${row.name}`" />
+          <FileButtonEdit :file-id="row.id" :aria-label="`edit ${row.name}`" />
           <FileButtonUpload
             :file-id="row.id"
             :aria-label="`upload ${row.name}`"
-            @refresh="refresh"
           />
           <UButton
             variant="ghost"
@@ -82,7 +80,7 @@
           <FileButtonDelete
             :file-id="row.id"
             :aria-label="`delete ${row.name}`"
-            @refresh="refresh"
+            @delete="refresh"
           />
         </div>
       </template>
@@ -104,6 +102,7 @@ definePageMeta({
 
 const route = useRoute();
 const userStore = useUserStore();
+const fileStore = useFileStore();
 
 const perms = {
   view: "i-heroicons-eye",
@@ -147,40 +146,41 @@ const {
 });
 
 const fileQueryCount = computed(() => rawFileList.value?.count ?? 0);
-const fileList = computed(() => {
-  const files = rawFileList.value?.files;
 
-  if (!files) return [];
-  return (
-    files?.map(({ id, name, owner, size, mime }) => {
+const infoFileList = await useAsyncMap(
+  computed(() => rawFileList.value?.files),
+  async (id) => {
+    const info = await fileStore.fetchFileComputed(id);
+    return computed(() => {
       return {
-        id,
-        name,
-        owner: {
-          id: owner,
-          info: userStore.user(owner),
-        },
-        size,
-        mime,
+        id: toValue(id),
+        info: info.value,
       };
-    }) ?? []
-  );
+    });
+  }
+);
+
+const ownerFileList = await useAsyncMap(infoFileList, async (file) => {
+  const { id, info } = toValue(file);
+  const ownerInfo = info
+    ? await userStore.fetchUserComputed(info.owner)
+    : undefined;
+  return computed(() => {
+    return {
+      id,
+      info: info
+        ? {
+            name: info.name,
+            owner: {
+              id: info.owner,
+              info: ownerInfo?.value,
+            },
+            size: info.size,
+          }
+        : info,
+    };
+  });
 });
-const missingOwnerIDs = computed(() => {
-  return useUniq(
-    fileList.value
-      .map((file) => file.owner)
-      .filter((owner) => owner.info === undefined)
-      .map((owner) => owner.id)
-  );
-});
-const fetchMissingOwner = async () => {
-  await Promise.all(
-    missingOwnerIDs.value.map(async (id) => userStore.fetchUser(id))
-  );
-};
-watch(missingOwnerIDs, fetchMissingOwner);
-await fetchMissingOwner();
 
 const tableColumns = [
   { key: "name", label: "Name" },
@@ -191,13 +191,13 @@ const tableColumns = [
 ];
 
 const tableData = computed(() =>
-  useMap(fileList.value, ({ id, name, owner, size, mime }) => {
+  useMap(ownerFileList.value, (file) => {
+    const { id, info } = toValue(file);
     return {
       id,
-      name,
-      owner: owner.info?.name,
-      size: formatPretty(size),
-      mime,
+      name: info?.name,
+      owner: info?.owner?.info?.name,
+      size: info ? formatPretty(info?.size) : undefined,
     };
   })
 );

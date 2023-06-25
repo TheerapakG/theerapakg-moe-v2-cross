@@ -32,12 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-
 const userStore = useUserStore();
-const { current } = storeToRefs(userStore);
-
-onMounted(async () => {
-  await userStore.fetchCurrent();
-});
+const current = await userStore.fetchCurrentComputed();
 </script>

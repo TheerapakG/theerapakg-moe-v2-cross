@@ -1,12 +1,12 @@
 <template>
-  <TextInputEditor :model-value="props.name" @update:model-value="rename">
-    <NuxtLink v-if="download" :to="`/file/download/${props.fileId}`">
+  <TextInputEditor :model-value="name" @update:model-value="rename">
+    <NuxtLink v-if="download" :to="`/file/download/${fileId}`">
       <div class="overflow-hidden text-ellipsis whitespace-nowrap">
-        {{ props.name }}
+        {{ name }}
       </div>
     </NuxtLink>
     <div v-else class="overflow-hidden text-ellipsis whitespace-nowrap">
-      {{ props.name }}
+      {{ name }}
     </div>
   </TextInputEditor>
 </template>
@@ -19,23 +19,14 @@ type Props = {
 };
 
 const props = withDefaults(defineProps<Props>(), { download: true });
+const { fileId } = toRefs(props);
 
-type Emits = {
-  refresh: [];
-};
-
-const emit = defineEmits<Emits>();
-
+const fileStore = useFileStore();
 const toast = useToast();
 
-const rename = async (newname: string) => {
+const rename = async (name: string) => {
   try {
-    await $apiFetch(`/api/file/${props.fileId}/rename`, {
-      method: "PUT",
-      params: {
-        name: newname,
-      },
-    });
+    await fileStore.renameFile(fileId.value, name);
   } catch {
     toast.add({
       title: "Rename Error",
@@ -43,7 +34,6 @@ const rename = async (newname: string) => {
       icon: "i-heroicons-exclaimation-circle",
       color: "red",
     });
-    emit("refresh");
     return;
   }
   toast.add({
@@ -51,6 +41,5 @@ const rename = async (newname: string) => {
     description: "Successfully renamed",
     icon: "i-heroicons-exclaimation-circle",
   });
-  emit("refresh");
 };
 </script>
