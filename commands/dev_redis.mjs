@@ -9,19 +9,16 @@ import { loadNuxtConfig } from "nuxt/kit";
   const proc = spawn("docker", [
     "run",
     "--name",
-    "theerapakg-moe-postgres",
-    "-e",
-    `POSTGRES_USER=${config.postgresUsername}`,
-    "-e",
-    `POSTGRES_PASSWORD=${config.postgresPassword}`,
+    "theerapakg-moe-redis",
     "-v",
-    "./.postgres:/var/lib/postgresql/data",
+    "./.redis:/data",
     "-u",
     `${process.getuid()}:${process.getgid()}`,
     "-d",
     "-p",
-    `${type("parsedInteger")(config.postgresPort)?.data ?? 5432}:5432`,
-    "postgres",
+    `${type("parsedInteger")(config.redisPort)?.data ?? 6379}:6379`,
+    "redis",
+    "redis-server",
   ]);
 
   proc.stdout.on("data", (data) => {

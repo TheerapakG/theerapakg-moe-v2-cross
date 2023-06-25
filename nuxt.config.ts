@@ -14,8 +14,10 @@ export default defineNuxtConfig({
     },
     downloadPath: process.env.NUXT_DOWNLOAD_PATH ?? "",
     dockerSocketPath: process.env.NUXT_DOCKER_SOCKET_PATH ?? "",
+    redisPort: process.env.NUXT_REDIS_PORT ?? "",
     dockerHost: process.env.NUXT_DOCKER_HOST ?? "",
     dockerPort: process.env.NUXT_DOCKER_PORT ?? "",
+    meiliPort: process.env.NUXT_MEILI_PORT ?? "",
     meiliSearchKey: process.env.NUXT_MEILI_SEARCH_KEY ?? "",
     meiliApiKey: process.env.NUXT_MEILI_API_KEY ?? "",
     postgresHost: process.env.NUXT_POSTGRES_HOST ?? "",
@@ -23,20 +25,6 @@ export default defineNuxtConfig({
     postgresUsername: process.env.NUXT_POSTGRES_USERNAME ?? "",
     postgresPassword: process.env.NUXT_POSTGRES_PASSWORD ?? "",
     postgresDatabase: process.env.NUXT_POSTGRES_DATABASE ?? "",
-  },
-
-  nitro: {
-    storage: {
-      redis: {
-        driver: "redis",
-        /* redis connector options */
-        port: 6379, // Redis port
-        host: "127.0.0.1", // Redis host
-        username: "", // needs Redis >= 6
-        password: "",
-        db: 0, // Defaults to 0
-      },
-    },
   },
 
   typescript: {

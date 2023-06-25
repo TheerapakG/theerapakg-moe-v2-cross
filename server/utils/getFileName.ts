@@ -1,8 +1,9 @@
 import path from "path";
 
 export const getFileName = (user: string, name: string) => {
+  const config = useRuntimeConfig();
   const base = path.resolve(
-    useRuntimeConfig().downloadPath ?? "./.dist/files",
+    config.downloadPath ? config.downloadPath : "./.dist/files",
     `./${user}`
   );
   const dir = path.resolve(base, name);

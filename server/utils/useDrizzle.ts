@@ -1,3 +1,4 @@
+import { type } from "arktype";
 import { PostgresJsDatabase, drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
@@ -8,7 +9,7 @@ export const useDrizzle = () => {
     const config = useRuntimeConfig();
     const sql = postgres({
       host: config.postgresHost,
-      port: parseInt(config.postgressPort) ?? 5432,
+      port: type("parsedInteger")(config.postgresPort)?.data ?? 5432,
       username: config.postgresUsername,
       password: config.postgresPassword,
       database: config.postgresDatabase,

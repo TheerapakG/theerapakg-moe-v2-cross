@@ -45,7 +45,7 @@ const _apiFetch = <
   return $fetch.create<T, R>(
     defu(defaults, {
       headers: useRequestHeaders(["cookie"]),
-      baseURL: config.public?.apiBaseURL ?? "/",
+      baseURL: config.public?.apiBaseURL ? config.public.apiBaseURL : "/",
       onResponseError: tryHandleCommonResponseError,
     })
   );

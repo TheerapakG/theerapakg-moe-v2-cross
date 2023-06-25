@@ -1,3 +1,4 @@
+import { type } from "arktype";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { loadNuxtConfig } from "nuxt/kit";
@@ -8,7 +9,7 @@ import postgres from "postgres";
   const config = nuxtOptions.runtimeConfig;
   const sql = postgres({
     host: config.postgresHost,
-    port: parseInt(config.postgressPort) ?? 5432,
+    port: type("parsedInteger")(config.postgresPort)?.data ?? 5432,
     username: config.postgresUsername,
     password: config.postgresPassword,
     database: config.postgresDatabase,
