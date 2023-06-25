@@ -5,7 +5,7 @@
 install the dependencies
 
 ```bash
-yarn install
+pnpm install
 ```
 
 ## Development
@@ -13,16 +13,15 @@ yarn install
 start the development servers
 
 ```bash
-yarn dev:redis
-yarn dev:meili
-yarn dev:site
-yarn dev:app
+pnpm dev:db
+pnpm dev:site
+pnpm dev:app
 ```
 
 or to start all development servers
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 ## Production
@@ -30,6 +29,6 @@ yarn dev
 build the application for production
 
 ```bash
-yarn build:site
-yarn build:app
+pnpm build:site
+pnpm build:app
 ```

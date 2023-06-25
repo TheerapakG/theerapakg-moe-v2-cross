@@ -12,4 +12,5 @@ nuxt.d.ts
 
 src-tauri
 
+pnpm-lock.yaml
 drizzle

@@ -15,14 +15,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup node.js/yarn
+      - name: Setup node.js/pnpm
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install Dependencies
-        run: yarn install
+        run: pnpm install
 
   format:
     needs: [cache-dependencies]
@@ -32,17 +32,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup node.js/yarn
+      - name: Setup node.js/pnpm
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install Dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Run Format
-        run: yarn prettier -c .
+        run: pnpm prettier -c .
 
   lint:
     needs: [cache-dependencies]
@@ -52,17 +52,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup node.js/yarn
+      - name: Setup node.js/pnpm
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install Dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Run Lint
-        run: yarn eslint .
+        run: pnpm eslint .
 
   typecheck:
     needs: [cache-dependencies]
@@ -72,17 +72,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup node.js/yarn
+      - name: Setup node.js/pnpm
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install Dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Run Typecheck
-        run: yarn nuxi typecheck
+        run: pnpm nuxi typecheck
 
   build:
     needs: [cache-dependencies, format, lint, typecheck]
@@ -92,17 +92,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup node.js/yarn
+      - name: Setup node.js/pnpm
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install Dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Run Build
-        run: yarn nuxi build
+        run: pnpm nuxi build
 
       - name: Tar Build
         run: tar -czvf build.tar.gz .output
