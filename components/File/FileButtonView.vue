@@ -36,9 +36,9 @@ const defaultMime = {
 };
 
 const mimeType = computed(() => {
-  if (!fileInfo.value.data) return defaultMime;
+  if (!fileInfo.value.mime) return defaultMime;
   try {
-    return new MimeType(fileInfo.value.data?.mime);
+    return new MimeType(fileInfo.value.mime);
   } catch {
     return defaultMime;
   }

@@ -76,50 +76,40 @@ const params = computed(() => {
 
 const {
   pending,
-  data: rawPermsData,
+  data: rawPermList,
   refresh,
 } = await useApiFetch(`/api/file/${props.fileId}/perm/${props.perm}/list`, {
   params,
 });
 
-const permQueryUserCount = computed(
-  () => rawPermsData.value?.count ?? Infinity
-);
+const permQueryUserCount = computed(() => rawPermList.value?.count ?? Infinity);
+const permList = computed(() => rawPermList.value?.users ?? []);
 
-const getPermUserList = async () =>
-  await Promise.all(
-    rawPermsData.value?.users?.map(async ({ id, perm }) => {
-      return {
-        user: {
-          id,
-          info: await userStore.fetchUserComputed(id),
-        },
-        perm,
-      };
-    }) ?? []
-  );
-
-const permUserListShallow = shallowRef(await getPermUserList());
-watch(rawPermsData, async () => {
-  permUserListShallow.value = await getPermUserList();
-});
+const users = computed(() => permList.value.map((perm) => perm.id));
+const userInfos = await userStore.fetchUsersComputed(users);
 
 const permUserList = computed(() =>
-  permUserListShallow.value.map(({ user: { id, info }, perm }) => {
-    return {
-      user: {
-        id,
-        info: info.value,
-      },
-      perm,
-    };
-  })
+  permList.value.length == userInfos.value.length
+    ? useZipWith(permList.value, userInfos.value, (rawPermUser, userInfo) =>
+        computed(() => {
+          const { id, perm } = toValue(rawPermUser);
+          return {
+            user: {
+              id,
+              info: userInfo?.value,
+            },
+            perm,
+          };
+        })
+      )
+    : []
 );
 
 const tableColumns = [{ key: "name", label: "Name" }, { key: "actions" }];
 
 const tableData = computed(() =>
-  useMap(permUserList.value, ({ user, perm }) => {
+  useMap(permUserList.value, (permUser) => {
+    const { user, perm } = toValue(permUser);
     return {
       id: user.id,
       name: user.info?.name,

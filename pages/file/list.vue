@@ -150,27 +150,32 @@ const fileList = computed(() => rawFileList.value?.files ?? []);
 
 const infoFileList = await fileStore.fetchFilesComputed(fileList);
 
-const ownerFileList = await useAsyncRefMap(infoFileList, async (file) => {
-  const { id, data } = toValue(file);
-  const ownerInfo = data
-    ? await userStore.fetchUserComputed(data.owner)
-    : undefined;
-  return computed(() => {
-    return {
-      id,
-      info: data
-        ? {
-            name: data.name,
-            owner: {
-              id: data.owner,
-              info: ownerInfo?.value,
+const owners = computed(() =>
+  infoFileList.value.map((file) => file.value.owner)
+);
+const ownerInfos = await userStore.fetchUsersComputed(owners);
+
+const ownerFileList = computed(() =>
+  infoFileList.value.length == ownerInfos.value.length
+    ? useZipWith(infoFileList.value, ownerInfos.value, (file, ownerInfo) =>
+        computed(() => {
+          const _file = toValue(file);
+          console.log(_file);
+          return {
+            id: _file.id,
+            info: {
+              name: _file.name,
+              owner: {
+                id: _file.owner,
+                info: ownerInfo?.value,
+              },
+              size: _file.size,
             },
-            size: data.size,
-          }
-        : undefined,
-    };
-  });
-});
+          };
+        })
+      )
+    : []
+);
 
 const tableColumns = [
   { key: "name", label: "Name" },
@@ -182,12 +187,12 @@ const tableColumns = [
 
 const tableData = computed(() =>
   useMap(ownerFileList.value, (file) => {
-    const { id, info } = toValue(file);
+    const _file = toValue(file);
     return {
-      id,
-      name: info?.name,
-      owner: info?.owner?.info?.name,
-      size: info ? formatPretty(info?.size) : undefined,
+      id: _file.id,
+      name: _file.info.name,
+      owner: _file.info.owner?.info?.name,
+      size: _file.info.size ? formatPretty(_file.info.size) : undefined,
     };
   })
 );

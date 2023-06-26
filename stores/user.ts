@@ -1,8 +1,13 @@
+import defu from "defu";
 import { FetchResult } from "nuxt/app";
 import { defineStore } from "pinia";
 import { MaybeRefOrGetter } from "vue";
 
-type User = FetchResult<`/api/user/${string}/info`, "get">;
+export type User = FetchResult<`/api/user/info`, "get">[number];
+
+const getPartialUser = (id?: string, data?: User) => {
+  return defu({ id }, data) as Partial<User>;
+};
 
 export const useUserStore = defineStore("user", () => {
   const userStates = ref<
@@ -15,8 +20,11 @@ export const useUserStore = defineStore("user", () => {
 
   const user = computed(() => {
     const state = userStates.value;
-    return (id: MaybeRefOrGetter<string>) =>
-      computed(() => state[toValue(id)]?.data);
+    return (id: MaybeRefOrGetter<string | undefined>) =>
+      computed(() => {
+        const _id = toValue(id);
+        return _id ? state[_id]?.data : undefined;
+      });
   });
 
   const currentID = computed(() => currentState.value.id);
@@ -29,39 +37,91 @@ export const useUserStore = defineStore("user", () => {
     };
   });
 
-  const _fetchUser = async (id: string) => {
-    const data = await $apiFetch(`/api/user/${id}/info`);
-    userStates.value[id] = { data };
-    return data;
+  const _fetchUsers = async (ids: string[]) => {
+    if (ids.length === 0) return [];
+    try {
+      const datas = await $apiFetch(`/api/user/info`, {
+        params: {
+          ids: ids.join(","),
+        },
+      });
+      datas.map((data) => {
+        userStates.value[data.id] = { data };
+      });
+      return datas;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const _fetchUserSetPending = async (id: string) => {
-    const pending = markRaw(_fetchUser(id));
-    const value = userStates.value[id];
-    if (value) value.pending = pending;
-    else userStates.value[id] = { pending };
-    return await pending;
+  const _fetchUsersSetPending = async (ids: string[]) => {
+    const allPending = _fetchUsers(ids);
+    ids.map((id, i) => {
+      const pending = markRaw(allPending.then((data) => data[i]));
+      const value = userStates.value[id];
+      if (value) value.pending = pending;
+      else userStates.value[id] = { pending };
+    });
+    return await allPending;
   };
+
+  async function fetchUsers(ids: string[], force?: boolean) {
+    const states = ids.map((id) => {
+      const state = userStates.value[id];
+      if (state?.pending)
+        return {
+          id,
+          promise: state.pending,
+        };
+      if (state?.data && !force)
+        return { id, promise: Promise.resolve(state.data) };
+      return { id };
+    });
+
+    const fetchs = states
+      .filter(({ promise }) => !promise)
+      .map(({ id }, i) => {
+        return { id, index: i };
+      });
+    const indicesMap = useKeyBy(fetchs, "id");
+    const pending = _fetchUsersSetPending(fetchs.map(({ id }) => id));
+
+    return await Promise.all(
+      states.map(({ id, promise }) => {
+        if (promise) return promise;
+        const index = indicesMap[id];
+        return pending.then((data) => data[index.index]);
+      })
+    );
+  }
 
   const fetchUser = async (id: string, force?: boolean) => {
-    const state = userStates.value[id];
-    if (state) {
-      if (state.pending) return await state.pending;
-      if (state.data && !force) return state.data;
-    }
-    return await _fetchUserSetPending(id);
+    return (await fetchUsers([id], force))?.[0];
+  };
+
+  const fetchUsersComputed = async (
+    ids: MaybeRefOrGetter<MaybeRefOrGetter<string | undefined>[]>,
+    force?: boolean
+  ) => {
+    const flatIds = computed(() => useCompact(toValue(ids).map(toValue)));
+    const fetcher = async () => {
+      await fetchUsers(flatIds.value, force);
+    };
+    watch(flatIds, fetcher);
+    await fetcher();
+    return useRefMap(ids, (id) =>
+      computed(() => {
+        const data = user.value(id).value;
+        return getPartialUser(toValue(id), data);
+      })
+    );
   };
 
   const fetchUserComputed = async (
-    id: MaybeRefOrGetter<string>,
+    id: MaybeRefOrGetter<string | undefined>,
     force?: boolean
   ) => {
-    const fetcher = async () => {
-      await fetchUser(toValue(id), force);
-    };
-    if (isRef(id)) watch(id, fetcher);
-    await fetcher();
-    return computed(() => user.value(id).value);
+    return (await fetchUsersComputed([id], force)).value[0];
   };
 
   const _fetchCurrent = async () => {
@@ -108,7 +168,9 @@ export const useUserStore = defineStore("user", () => {
     user,
     currentID,
     current,
+    fetchUsers,
     fetchUser,
+    fetchUsersComputed,
     fetchUserComputed,
     fetchCurrent,
     fetchCurrentComputed,

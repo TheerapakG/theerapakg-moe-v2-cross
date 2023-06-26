@@ -1,8 +1,13 @@
+import defu from "defu";
 import { FetchResult } from "nuxt/app";
 import { defineStore } from "pinia";
 import { MaybeRefOrGetter } from "vue";
 
-type File = FetchResult<`/api/file/info`, "get">[number];
+export type File = FetchResult<`/api/file/info`, "get">[number];
+
+const getPartialFile = (id?: string, data?: File) => {
+  return defu({ id }, data) as Partial<File>;
+};
 
 export const useFileStore = defineStore("file", () => {
   const fileStates = ref<
@@ -11,8 +16,11 @@ export const useFileStore = defineStore("file", () => {
 
   const file = computed(() => {
     const state = fileStates.value;
-    return (id: MaybeRefOrGetter<string>) =>
-      computed(() => state[toValue(id)]?.data);
+    return (id: MaybeRefOrGetter<string | undefined>) =>
+      computed(() => {
+        const _id = toValue(id);
+        return _id ? state[_id]?.data : undefined;
+      });
   });
 
   const _fetchFiles = async (ids: string[]) => {
@@ -23,8 +31,8 @@ export const useFileStore = defineStore("file", () => {
           ids: ids.join(","),
         },
       });
-      ids.map((id, i) => {
-        if (id) fileStates.value[id] = { data: datas[i] };
+      datas.map((data) => {
+        fileStates.value[data.id] = { data };
       });
       return datas;
     } catch (error) {
@@ -106,11 +114,11 @@ export const useFileStore = defineStore("file", () => {
   };
 
   const fetchFilesComputed = async (
-    ids: MaybeRefOrGetter<MaybeRefOrGetter<string>[]>,
+    ids: MaybeRefOrGetter<MaybeRefOrGetter<string | undefined>[]>,
     force?: boolean,
     ignoreError?: boolean
   ) => {
-    const flatIds = computed(() => toValue(ids).map(toValue));
+    const flatIds = computed(() => useCompact(toValue(ids).map(toValue)));
     const fetcher = async () => {
       await fetchFiles(flatIds.value, force, ignoreError);
     };
@@ -118,16 +126,14 @@ export const useFileStore = defineStore("file", () => {
     await fetcher();
     return useRefMap(ids, (id) =>
       computed(() => {
-        return {
-          id,
-          data: file.value(id).value,
-        };
+        const data = file.value(id).value;
+        return getPartialFile(toValue(id), data);
       })
     );
   };
 
   const fetchFileComputed = async (
-    id: MaybeRefOrGetter<string>,
+    id: MaybeRefOrGetter<string | undefined>,
     force?: boolean,
     ignoreError?: boolean
   ) => {

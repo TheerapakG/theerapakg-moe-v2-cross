@@ -34,6 +34,7 @@ export default defineEventHandler(
         const file = fileMap[id];
 
         return {
+          id,
           name: path.basename(file.dir),
           owner: filePerms[i].owner,
           size: (await fs.promises.stat(file.dir)).size,
