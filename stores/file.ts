@@ -15,67 +15,123 @@ export const useFileStore = defineStore("file", () => {
       computed(() => state[toValue(id)]?.data);
   });
 
-  const _fetchFile = async (id: string) => {
+  const _fetchFiles = async (ids: string[]) => {
+    if (ids.length === 0) return [];
     try {
-      const data = await $apiFetch(`/api/file/${id}/info`);
-      fileStates.value[id] = { data };
-      return data;
+      const datas = await $apiFetch(`/api/file/info`, {
+        params: {
+          ids: ids.join(","),
+        },
+      });
+      ids.map((id, i) => {
+        if (id) fileStates.value[id] = { data: datas[i] };
+      });
+      return datas;
     } catch (error) {
-      delete fileStates.value[id];
       throw error;
     }
   };
 
-  const _fetchFileSetPending = async (id: string) => {
-    const pending = markRaw(_fetchFile(id));
-    const value = fileStates.value[id];
-    if (value) value.pending = pending;
-    else fileStates.value[id] = { pending };
-    return await pending;
+  const _fetchFilesSetPending = async (ids: string[]) => {
+    const allPending = _fetchFiles(ids);
+    ids.map((id, i) => {
+      const pending = markRaw(allPending.then((data) => data[i]));
+      const value = fileStates.value[id];
+      if (value) value.pending = pending;
+      else fileStates.value[id] = { pending };
+    });
+    return await allPending;
   };
 
-  async function fetchFile(
-    id: string,
+  async function fetchFiles(
+    ids: string[],
     force?: boolean,
     ignoreError?: false
-  ): Promise<File>;
+  ): Promise<File[]>;
 
-  async function fetchFile(
+  async function fetchFiles(
+    ids: string[],
+    force?: boolean,
+    ignoreError?: boolean
+  ): Promise<(File | undefined)[]>;
+
+  async function fetchFiles(
+    ids: string[],
+    force?: boolean,
+    ignoreError?: boolean
+  ) {
+    const states = ids.map((id) => {
+      const state = fileStates.value[id];
+      if (state?.pending)
+        return {
+          id,
+          promise: state.pending.catch((error) => {
+            if (ignoreError) return undefined;
+            throw error;
+          }),
+        };
+      if (state?.data && !force)
+        return { id, promise: Promise.resolve(state.data) };
+      return { id };
+    });
+
+    const fetchs = states
+      .filter(({ promise }) => !promise)
+      .map(({ id }, i) => {
+        return { id, index: i };
+      });
+    const indicesMap = useKeyBy(fetchs, "id");
+    const pending = _fetchFilesSetPending(fetchs.map(({ id }) => id));
+
+    return await Promise.all(
+      states.map(({ id, promise }) => {
+        if (promise) return promise;
+        const index = indicesMap[id];
+        return pending
+          .then((data) => data[index.index])
+          .catch((error) => {
+            if (ignoreError) return undefined;
+            throw error;
+          });
+      })
+    );
+  }
+
+  const fetchFile = async (
     id: string,
     force?: boolean,
     ignoreError?: boolean
-  ): Promise<File | undefined>;
+  ) => {
+    return (await fetchFiles([id], force, ignoreError))?.[0];
+  };
 
-  async function fetchFile(id: string, force?: boolean, ignoreError?: boolean) {
-    const state = fileStates.value[id];
-    if (state) {
-      if (state.pending) {
-        try {
-          return await state.pending;
-        } catch (error) {
-          if (!ignoreError) throw error;
-        }
-      }
-      if (state.data && !force) return state.data;
-    }
-    try {
-      return await _fetchFileSetPending(id);
-    } catch (error) {
-      if (!ignoreError) throw error;
-    }
-  }
+  const fetchFilesComputed = async (
+    ids: MaybeRefOrGetter<MaybeRefOrGetter<string>[]>,
+    force?: boolean,
+    ignoreError?: boolean
+  ) => {
+    const flatIds = computed(() => toValue(ids).map(toValue));
+    const fetcher = async () => {
+      await fetchFiles(flatIds.value, force, ignoreError);
+    };
+    watch(flatIds, fetcher);
+    await fetcher();
+    return useRefMap(ids, (id) =>
+      computed(() => {
+        return {
+          id,
+          data: file.value(id).value,
+        };
+      })
+    );
+  };
 
   const fetchFileComputed = async (
     id: MaybeRefOrGetter<string>,
     force?: boolean,
     ignoreError?: boolean
   ) => {
-    const fetcher = async () => {
-      await fetchFile(toValue(id), force, ignoreError);
-    };
-    if (isRef(id)) watch(id, fetcher);
-    await fetcher();
-    return computed(() => file.value(id).value);
+    return (await fetchFilesComputed([id], force, ignoreError)).value[0];
   };
 
   const uploadFile = async (name: string, content: string) => {
@@ -118,7 +174,9 @@ export const useFileStore = defineStore("file", () => {
   return {
     fileStates,
     file,
+    fetchFiles,
     fetchFile,
+    fetchFilesComputed,
     fetchFileComputed,
     uploadFile,
     renameFile,

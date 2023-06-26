@@ -15,9 +15,11 @@ export default defineEventHandler(
       param: { id, perm, user: target },
     } = await validateEvent({ param: paramValidator }, event);
 
-    const {
-      perms: { edit },
-    } = await checkFileUserPerm(id, user);
+    const [
+      {
+        perms: { edit },
+      },
+    ] = await checkFilesUserPerm([id], user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
     await useDrizzle()

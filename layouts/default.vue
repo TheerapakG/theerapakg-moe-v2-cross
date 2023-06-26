@@ -69,7 +69,7 @@ const routeInfos = computed(() =>
   sideBarPaths.map((path: string) => routeStore.info(path))
 );
 
-const routePerms = await useAsyncMap(routeInfos, async (routeInfo) => {
+const routePerms = await useAsyncRefMap(routeInfos, async (routeInfo) => {
   const perm = await useRoutePerm(routeInfo);
   return computed(() => {
     return {

@@ -17,7 +17,7 @@ export default defineEventHandler(
 
     const {
       perms: { view },
-    } = await checkFileUserPerm(fileId, user);
+    } = await checkFilesUserPerm(fileId, user);
     if (!view) throw createError({ statusMessage: "no permission" });
 
     const _dir = await useDrizzle()

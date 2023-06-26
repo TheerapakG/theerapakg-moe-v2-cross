@@ -1,15 +1,16 @@
 import { and, eq, inArray } from "drizzle-orm";
+import { keyBy as useKeyBy, groupBy as useGroupBy } from "lodash-es";
 
-export const checkFileUserPerm = async (file: string, user: string) => {
-  const { _fileOwner, userPerms, filePerms } = await useDrizzle().transaction(
+export const checkFilesUserPerm = async (files: string[], user: string) => {
+  const { fileOwner, userPerms, filePerms } = await useDrizzle().transaction(
     async (tx) => {
-      const _fileOwner = await tx
+      const fileOwner = await tx
         .select({
+          id: fileTable.id,
           owner: fileTable.owner,
         })
         .from(fileTable)
-        .where(eq(fileTable.id, file))
-        .limit(1);
+        .where(inArray(fileTable.id, files));
 
       const userPerms = await tx
         .select({
@@ -25,41 +26,53 @@ export const checkFileUserPerm = async (file: string, user: string) => {
 
       const filePerms = await tx
         .select({
+          id: fileUserPermissionsTable.file_id,
           permission: fileUserPermissionsTable.permission,
         })
         .from(fileUserPermissionsTable)
         .where(
           and(
             eq(fileUserPermissionsTable.user_id, user),
-            eq(fileUserPermissionsTable.file_id, file)
+            inArray(fileUserPermissionsTable.file_id, files)
           )
         );
 
-      return { _fileOwner, userPerms, filePerms };
+      return { fileOwner, userPerms, filePerms };
     }
   );
 
-  const owner: string | undefined = _fileOwner[0]?.owner;
+  const fileOwnerMap = useKeyBy(fileOwner, "id");
+  const filePermsMap = useGroupBy(filePerms, "id");
   const userPermsArr = userPerms.map((perm) => perm.permission);
-  const filePermsArr = filePerms.map((perm) => perm.permission);
 
-  if (owner === undefined)
-    throw createError({ statusCode: 404, statusMessage: "file not found" });
+  return files.map((file) => {
+    const owner: string | undefined = fileOwnerMap[file]?.owner;
+    const filePermsArr = filePermsMap[file]?.map((perm) => perm.permission);
 
-  const edit =
-    user === owner ||
-    userPermsArr.includes("file:edit") ||
-    filePermsArr.includes("file!:edit");
+    if (owner === undefined)
+      throw createError({
+        statusCode: 404,
+        statusMessage: `file ${file} not found`,
+      });
 
-  const view =
-    edit ||
-    userPermsArr.includes("file:view") ||
-    filePermsArr.includes("file!:view");
+    const edit =
+      user === owner ||
+      userPermsArr.includes("file:edit") ||
+      filePermsArr.includes("file!:edit");
 
-  const visible = view || userPermsArr.includes("file:list");
+    const view =
+      edit ||
+      userPermsArr.includes("file:view") ||
+      filePermsArr.includes("file!:view");
 
-  if (!visible)
-    throw createError({ statusCode: 404, statusMessage: "file not found" });
+    const visible = view || userPermsArr.includes("file:list");
 
-  return { owner, perms: { view, edit } };
+    if (!visible)
+      throw createError({
+        statusCode: 404,
+        statusMessage: `file ${file} not found`,
+      });
+
+    return { owner, perms: { view, edit } };
+  });
 };

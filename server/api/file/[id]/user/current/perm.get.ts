@@ -12,7 +12,7 @@ export default defineEventHandler(
       param: { id },
     } = await validateEvent({ param: paramValidator }, event);
 
-    const { perms } = await checkFileUserPerm(id, user);
+    const [{ perms }] = await checkFilesUserPerm([id], user);
 
     return perms;
   })

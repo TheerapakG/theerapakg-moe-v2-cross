@@ -28,7 +28,7 @@ export default defineEventHandler(
     const { page, size, user: target } = defu(query, { page: 1, size: 10 });
     const start = (page - 1) * size;
 
-    await checkFileUserPerm(id, user);
+    await checkFilesUserPerm([id], user);
 
     const { estimatedTotalHits: count, hits } = await useMeili(
       useRuntimeConfig().meiliSearchKey

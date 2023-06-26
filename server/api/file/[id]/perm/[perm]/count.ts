@@ -14,7 +14,7 @@ export default defineEventHandler(
       param: { id, perm },
     } = await validateEvent({ param: paramValidator }, event);
 
-    await checkFileUserPerm(id, user);
+    await checkFilesUserPerm([id], user);
 
     const [{ count }] = await useDrizzle()
       .select({

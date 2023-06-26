@@ -146,38 +146,28 @@ const {
 });
 
 const fileQueryCount = computed(() => rawFileList.value?.count ?? 0);
+const fileList = computed(() => rawFileList.value?.files ?? []);
 
-const infoFileList = await useAsyncMap(
-  computed(() => rawFileList.value?.files),
-  async (id) => {
-    const info = await fileStore.fetchFileComputed(id);
-    return computed(() => {
-      return {
-        id: toValue(id),
-        info: info.value,
-      };
-    });
-  }
-);
+const infoFileList = await fileStore.fetchFilesComputed(fileList);
 
-const ownerFileList = await useAsyncMap(infoFileList, async (file) => {
-  const { id, info } = toValue(file);
-  const ownerInfo = info
-    ? await userStore.fetchUserComputed(info.owner)
+const ownerFileList = await useAsyncRefMap(infoFileList, async (file) => {
+  const { id, data } = toValue(file);
+  const ownerInfo = data
+    ? await userStore.fetchUserComputed(data.owner)
     : undefined;
   return computed(() => {
     return {
       id,
-      info: info
+      info: data
         ? {
-            name: info.name,
+            name: data.name,
             owner: {
-              id: info.owner,
+              id: data.owner,
               info: ownerInfo?.value,
             },
-            size: info.size,
+            size: data.size,
           }
-        : info,
+        : undefined,
     };
   });
 });
