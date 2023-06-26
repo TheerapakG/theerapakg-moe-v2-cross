@@ -2,7 +2,7 @@ import { FetchResult } from "nuxt/app";
 import { defineStore } from "pinia";
 import { MaybeRefOrGetter } from "vue";
 
-type File = FetchResult<`/api/file/${string}/info`, "get">;
+type File = FetchResult<`/api/file/info`, "get">[number];
 
 export const useFileStore = defineStore("file", () => {
   const fileStates = ref<
