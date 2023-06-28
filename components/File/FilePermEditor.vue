@@ -30,7 +30,7 @@
             size="xl"
             icon="i-heroicons-minus"
             :ui="{ rounded: 'rounded-full' }"
-            @click="doUser(row.id, 'DELETE')"
+            @click="removeFilePermUser(row.id)"
           />
           <UButton
             v-else
@@ -38,7 +38,7 @@
             size="xl"
             icon="i-heroicons-plus"
             :ui="{ rounded: 'rounded-full' }"
-            @click="doUser(row.id, 'PUT')"
+            @click="addFilePermUser(row.id)"
           />
         </div>
       </template>
@@ -140,13 +140,13 @@ const { pageCount } = useOffsetPagination({
   pageSize: size,
 });
 
-const doUser = async (id: string, method: "PUT" | "DELETE") => {
-  await $apiFetch(`/api/file/${fileId.value}/perm/${perm.value}/user/${id}`, {
-    method,
-  });
-  await Promise.all([
-    refresh(),
-    filePermStore.fetchFilePermCount(fileId.value, perm.value, true),
-  ]);
+const addFilePermUser = async (user: string) => {
+  await filePermStore.addFilePermUser(fileId.value, perm.value, user);
+  await refresh();
+};
+
+const removeFilePermUser = async (user: string) => {
+  await filePermStore.removeFilePermUser(fileId.value, perm.value, user);
+  await refresh();
 };
 </script>

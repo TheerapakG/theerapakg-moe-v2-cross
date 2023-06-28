@@ -1,8 +1,10 @@
 <template>
-  <div class="relative">
-    <UPopover>
-      <slot :perm-user-count="permUserCount">
-        <UButton :label="`${permUserCount} users`" />
+  <div
+    class="relative inline-flex w-min place-content-center place-items-center gap-x-1"
+  >
+    <UPopover v-for="perm in perms" :key="perm">
+      <slot :perm="perm">
+        <UButton :label="`change permission ${perm}`" />
       </slot>
 
       <template #panel>
@@ -15,16 +17,10 @@
 <script setup lang="ts">
 type Props = {
   fileId: string;
-  perm: "view" | "edit";
 };
 
 const props = defineProps<Props>();
-const { fileId, perm } = toRefs(props);
+const { fileId } = toRefs(props);
 
-const filePermStore = useFilePermStore();
-
-const permUserCount = await filePermStore.fetchFilePermCountComputed(
-  fileId,
-  perm
-);
+const perms = ["view", "edit"] as const;
 </script>

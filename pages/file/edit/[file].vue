@@ -32,18 +32,15 @@
             />
 
             <template #panel>
-              <FileButtonPermEditorGroup
-                v-slot="{ perm, permUserCount }"
-                :file-id="fileId"
-              >
+              <FileButtonPermEditor v-slot="{ perm }" :file-id="fileId">
                 <UButton
                   variant="ghost"
                   size="xl"
                   :trailing-icon="perms[perm]"
-                  :label="`${permUserCount}`"
+                  :label="`${filePermUserCount?.count?.[perm] ?? '...'}`"
                   :ui="{ rounded: 'rounded-full' }"
                 />
-              </FileButtonPermEditorGroup>
+              </FileButtonPermEditor>
             </template>
           </UPopover>
           <FileButtonViewerMode :file-id="fileId" />
@@ -88,6 +85,7 @@ mountedState.value = mounted.value;
 
 const route = useRoute();
 const fileStore = useFileStore();
+const filePermStore = useFilePermStore();
 const routeStore = useRouteStore();
 
 const fileId = route.params.file as string;
@@ -98,6 +96,7 @@ const perms = {
 };
 
 const fileInfo = await fileStore.fetchFile(fileId);
+const filePermUserCount = await filePermStore.fetchFilePermCount(fileId);
 
 routeStore.setTitle(computed(() => `theerapakg-moe-app: ${fileInfo?.name}`));
 </script>

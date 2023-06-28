@@ -45,19 +45,19 @@
         </div>
       </template>
       <template #perms-data="{ row }">
-        <FileButtonPermEditorGroup
-          v-slot="{ perm, permUserCount }"
-          class="h-8"
-          :file-id="row.id"
-        >
+        <FileButtonPermEditor v-slot="{ perm }" class="h-8" :file-id="row.id">
           <UButton
             variant="ghost"
             size="xl"
             :trailing-icon="perms[perm]"
-            :label="`${permUserCount === undefined ? '...' : permUserCount}`"
+            :label="`${
+              row.perm?.count?.[perm] === undefined
+                ? '...'
+                : row.perm.count[perm]
+            }`"
             :ui="{ rounded: 'rounded-full' }"
           />
-        </FileButtonPermEditorGroup>
+        </FileButtonPermEditor>
       </template>
       <template #actions-data="{ row }">
         <div
@@ -103,6 +103,7 @@ definePageMeta({
 const route = useRoute();
 const userStore = useUserStore();
 const fileStore = useFileStore();
+const filePermStore = useFilePermStore();
 
 const perms = {
   view: "i-heroicons-eye",
@@ -148,31 +149,40 @@ const {
 const fileQueryCount = computed(() => rawFileList.value?.count ?? 0);
 const fileList = computed(() => rawFileList.value?.files ?? []);
 
-const infoFileList = await fileStore.fetchFilesComputed(fileList);
-
-const owners = computed(() =>
-  infoFileList.value.map((file) => file.value.owner)
+const fileInfos = await fileStore.fetchFilesComputed(fileList);
+const permUserCountInfos = await filePermStore.fetchFilePermCountsComputed(
+  fileList
 );
+
+const owners = computed(() => fileInfos.value.map((file) => file.value.owner));
 const ownerInfos = await userStore.fetchUsersComputed(owners);
 
 const ownerFileList = computed(() =>
-  infoFileList.value.length == ownerInfos.value.length
-    ? useZipWith(infoFileList.value, ownerInfos.value, (file, ownerInfo) =>
-        computed(() => {
-          const _file = toValue(file);
-          console.log(_file);
-          return {
-            id: _file.id,
-            info: {
-              name: _file.name,
-              owner: {
-                id: _file.owner,
-                info: ownerInfo?.value,
+  [permUserCountInfos.value.length, ownerInfos.value.length].every(
+    (len) => len === fileInfos.value.length
+  )
+    ? useZipWith(
+        fileInfos.value,
+        permUserCountInfos.value,
+        ownerInfos.value,
+        (fileInfo, permUserCountInfo, ownerInfo) =>
+          computed(() => {
+            const _fileInfo = toValue(fileInfo);
+            return {
+              id: _fileInfo.id,
+              info: {
+                name: _fileInfo.name,
+                owner: {
+                  id: _fileInfo.owner,
+                  info: ownerInfo.value,
+                },
+                perm: {
+                  count: permUserCountInfo.value.count,
+                },
+                size: _fileInfo.size,
               },
-              size: _file.size,
-            },
-          };
-        })
+            };
+          })
       )
     : []
 );
@@ -192,6 +202,7 @@ const tableData = computed(() =>
       id: _file.id,
       name: _file.info.name,
       owner: _file.info.owner?.info?.name,
+      perm: _file.info.perm,
       size: _file.info.size ? formatPretty(_file.info.size) : undefined,
     };
   })

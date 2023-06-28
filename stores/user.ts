@@ -23,7 +23,7 @@ export const useUserStore = defineStore("user", () => {
     return (id: MaybeRefOrGetter<string | undefined>) =>
       computed(() => {
         const _id = toValue(id);
-        return _id ? state[_id]?.data : undefined;
+        return getPartialUser(_id, _id ? state[_id]?.data : undefined);
       });
   });
 
@@ -109,12 +109,7 @@ export const useUserStore = defineStore("user", () => {
     };
     watch(flatIds, fetcher);
     await fetcher();
-    return useRefMap(ids, (id) =>
-      computed(() => {
-        const data = user.value(id).value;
-        return getPartialUser(toValue(id), data);
-      })
-    );
+    return useRefMap(ids, (id) => user.value(id));
   };
 
   const fetchUserComputed = async (

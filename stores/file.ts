@@ -19,7 +19,7 @@ export const useFileStore = defineStore("file", () => {
     return (id: MaybeRefOrGetter<string | undefined>) =>
       computed(() => {
         const _id = toValue(id);
-        return _id ? state[_id]?.data : undefined;
+        return getPartialFile(_id, _id ? state[_id]?.data : undefined);
       });
   });
 
@@ -124,12 +124,7 @@ export const useFileStore = defineStore("file", () => {
     };
     watch(flatIds, fetcher);
     await fetcher();
-    return useRefMap(ids, (id) =>
-      computed(() => {
-        const data = file.value(id).value;
-        return getPartialFile(toValue(id), data);
-      })
-    );
+    return useRefMap(ids, (id) => file.value(id));
   };
 
   const fetchFileComputed = async (
