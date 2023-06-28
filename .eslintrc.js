@@ -16,6 +16,9 @@ module.exports = {
     "prettier",
   ],
   plugins: ["@typescript-eslint", "vue", "nuxt"],
+  rules: {
+    "vue/no-v-model-argument": "off",
+  },
   overrides: [
     {
       files: ["layouts/**/*.vue", "pages/**/*.vue"],
