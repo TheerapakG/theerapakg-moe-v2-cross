@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { spawn } from "child_process";
-import { loadNuxtConfig } from "nuxt/kit";
+import { loadNuxtConfig } from "@nuxt/kit";
 
 (async () => {
   const nuxtOptions = await loadNuxtConfig({});
@@ -9,19 +9,16 @@ import { loadNuxtConfig } from "nuxt/kit";
   const proc = spawn("docker", [
     "run",
     "--name",
-    "theerapakg-moe-postgres",
-    "-e",
-    `POSTGRES_USER=${config.postgresUsername}`,
-    "-e",
-    `POSTGRES_PASSWORD=${config.postgresPassword}`,
+    "theerapakg-moe-meili",
     "-v",
-    "./.postgres:/var/lib/postgresql/data",
-    "-u",
-    `${process.getuid()}:${process.getgid()}`,
+    "./.meili:/meili_data",
+    ...(process.getuid && process.getgid
+      ? ["-u", `${process.getuid()}:${process.getgid()}`]
+      : []),
     "-d",
     "-p",
-    `${type("parsedInteger")(config.postgresPort)?.data ?? 5432}:5432`,
-    "postgres",
+    `${type("parsedInteger")(config.meiliPort)?.data ?? 7700}:7700`,
+    "getmeili/meilisearch:v0.29",
   ]);
 
   proc.stdout.on("data", (data) => {

@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { spawn } from "child_process";
-import { loadNuxtConfig } from "nuxt/kit";
+import { loadNuxtConfig } from "@nuxt/kit";
 
 (async () => {
   const nuxtOptions = await loadNuxtConfig({});
@@ -9,16 +9,20 @@ import { loadNuxtConfig } from "nuxt/kit";
   const proc = spawn("docker", [
     "run",
     "--name",
-    "theerapakg-moe-redis",
+    "theerapakg-moe-postgres",
+    "-e",
+    `POSTGRES_USER=${config.postgresUsername}`,
+    "-e",
+    `POSTGRES_PASSWORD=${config.postgresPassword}`,
     "-v",
-    "./.redis:/data",
-    "-u",
-    `${process.getuid()}:${process.getgid()}`,
+    "./.postgres:/var/lib/postgresql/data",
+    ...(process.getuid && process.getgid
+      ? ["-u", `${process.getuid()}:${process.getgid()}`]
+      : []),
     "-d",
     "-p",
-    `${type("parsedInteger")(config.redisPort)?.data ?? 6379}:6379`,
-    "redis",
-    "redis-server",
+    `${type("parsedInteger")(config.postgresPort)?.data ?? 5432}:5432`,
+    "postgres",
   ]);
 
   proc.stdout.on("data", (data) => {

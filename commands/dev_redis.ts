@@ -1,6 +1,6 @@
 import { type } from "arktype";
 import { spawn } from "child_process";
-import { loadNuxtConfig } from "nuxt/kit";
+import { loadNuxtConfig } from "@nuxt/kit";
 
 (async () => {
   const nuxtOptions = await loadNuxtConfig({});
@@ -9,15 +9,17 @@ import { loadNuxtConfig } from "nuxt/kit";
   const proc = spawn("docker", [
     "run",
     "--name",
-    "theerapakg-moe-meili",
+    "theerapakg-moe-redis",
     "-v",
-    "./.meili:/meili_data",
-    "-u",
-    `${process.getuid()}:${process.getgid()}`,
+    "./.redis:/data",
+    ...(process.getuid && process.getgid
+      ? ["-u", `${process.getuid()}:${process.getgid()}`]
+      : []),
     "-d",
     "-p",
-    `${type("parsedInteger")(config.meiliPort)?.data ?? 7700}:7700`,
-    "getmeili/meilisearch:v0.29",
+    `${type("parsedInteger")(config.redisPort)?.data ?? 6379}:6379`,
+    "redis",
+    "redis-server",
   ]);
 
   proc.stdout.on("data", (data) => {
