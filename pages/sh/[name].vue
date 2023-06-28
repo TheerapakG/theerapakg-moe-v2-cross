@@ -26,42 +26,17 @@ onMounted(async () => {
       icon: "i-heroicons-exclaimation-circle",
     });
   } else {
-    try {
-      const { host, pathname, searchParams, hash } = new URL(targetValue);
-
-      if (host === new URL(window.location.href).host) {
-        await navigateTo({
-          path: pathname,
-          query: {
-            ...searchParams[Symbol.iterator],
-          },
-          hash,
-        });
-      } else {
-        await navigateTo(
-          {
-            path: "/ext_redirect",
-            query: {
-              path: encodeURIComponent(targetValue),
-            },
-          },
-          {
-            replace: true,
-          }
-        );
+    await navigateTo(
+      {
+        path: "/ext_redirect",
+        query: {
+          path: encodeURIComponent(targetValue),
+        },
+      },
+      {
+        replace: true,
       }
-    } catch (e) {
-      if (e instanceof TypeError) {
-        const toast = useToast();
-
-        toast.add({
-          title: "Redirection Error",
-          description: "Malformed URL! Maybe try going back?",
-          icon: "i-heroicons-exclaimation-circle",
-          color: "red",
-        });
-      }
-    }
+    );
   }
 });
 </script>

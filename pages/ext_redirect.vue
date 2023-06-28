@@ -30,22 +30,30 @@ onMounted(async () => {
           description: `redirecting to ${target}`,
         });
 
-        if (host === new URL(window.location.href).host) {
-          await navigateTo(
-            {
-              path: pathname,
-              query: {
-                ...searchParams[Symbol.iterator],
-              },
-              hash,
-            },
-            {
-              replace: true,
-            }
-          );
-        } else {
-          window.location.replace(target);
-        }
+        const external = host !== useRequestURL().host;
+
+        await navigateTo(
+          {
+            path: external ? target : pathname,
+            query: external
+              ? useFromPairs(
+                  useToPairs(useGroupBy([...searchParams.entries()], 0)).map(
+                    ([key, values]) => [
+                      key,
+                      values.length > 1
+                        ? values.map((value) => value[1])
+                        : values[0][1],
+                    ]
+                  )
+                )
+              : {},
+            hash,
+          },
+          {
+            replace: true,
+            external,
+          }
+        );
       } catch (e) {
         if (e instanceof TypeError) {
           toast.add({
