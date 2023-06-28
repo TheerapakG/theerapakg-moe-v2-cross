@@ -4,13 +4,12 @@
     <div
       class="flex w-80 flex-grow flex-col place-content-center place-items-center gap-y-2"
     >
-      <input
+      <URange
         v-model="currentTime"
-        class="input-range-default w-full"
-        type="range"
-        min="0"
+        class="block"
+        :min="0"
         :max="duration"
-        step="0.01"
+        :step="0.01"
       />
       <div class="flex w-80 place-content-center place-items-center gap-x-2">
         <div class="w-8">
@@ -32,15 +31,15 @@
               'rounded-full bg-black pl-4 dark:bg-white': showVolumeControl,
             }"
           >
-            <input
-              v-if="showVolumeControl"
-              v-model="volume"
-              class="input-range-default"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-            />
+            <div v-if="showVolumeControl" class="w-24">
+              <URange
+                v-model="volume"
+                class="block"
+                :min="0"
+                :max="1"
+                :step="0.01"
+              />
+            </div>
             <div class="w-8">
               <UButton
                 class="h-8"

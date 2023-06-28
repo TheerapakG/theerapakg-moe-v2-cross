@@ -42,32 +42,6 @@ body {
   }
 }
 
-.input-range-default {
-  -webkit-appearance: none;
-  @apply bg-transparent;
-
-  &::-webkit-slider-runnable-track {
-    @apply h-1 rounded-full bg-gray-500;
-  }
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    @apply h-4 w-4 -translate-y-1.5 rounded-full bg-black;
-  }
-}
-
-.dark .input-range-default {
-  -webkit-appearance: none;
-  @apply bg-transparent;
-
-  &::-webkit-slider-runnable-track {
-    @apply h-1 rounded-full bg-gray-400;
-  }
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    @apply h-4 w-4 -translate-y-1.5 rounded-full bg-white;
-  }
-}
-
 .fade-enter-from,
 .fade-leave-to {
   @apply opacity-0;
