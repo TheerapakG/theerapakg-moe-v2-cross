@@ -67,22 +67,38 @@ const size = ref(5);
 const userSearch = ref("");
 const userSearchDebounced = refDebounced(userSearch, 300);
 
-const params = computed(() => {
+const userParams = computed(() => {
   return defu(
     userSearchDebounced.value ? { user: userSearchDebounced.value } : undefined,
     { page: page.value, size: size.value }
   );
 });
 
+const { pending: userPending, data: userList } = await useApiFetch(
+  `/api/user/list`,
+  {
+    params: userParams,
+  }
+);
+
+const queryUserCount = computed(() => userList.value?.count ?? Infinity);
+
+const permParams = computed(() => {
+  return {
+    users: userList.value?.users?.join(",") ?? [],
+  };
+});
+
 const {
-  pending,
+  pending: permPending,
   data: rawPermList,
   refresh,
 } = await useApiFetch(`/api/file/${props.fileId}/perm/${props.perm}/list`, {
-  params,
+  params: permParams,
 });
 
-const permQueryUserCount = computed(() => rawPermList.value?.count ?? Infinity);
+const pending = computed(() => userPending.value && permPending.value);
+
 const permList = computed(() => rawPermList.value?.users ?? []);
 
 const users = computed(() => permList.value.map((perm) => perm.id));
@@ -119,7 +135,7 @@ const tableData = computed(() =>
 );
 
 const { pageCount } = useOffsetPagination({
-  total: permQueryUserCount,
+  total: queryUserCount,
   page,
   pageSize: size,
 });

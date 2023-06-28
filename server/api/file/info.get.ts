@@ -9,7 +9,7 @@ const queryValidator = type({
   ids: [
     type(["string", "|>", (s) => s.split(",")]),
     "|>",
-    type("0 < uuid[] <= 50"),
+    type("0 <= uuid[] <= 50"),
   ],
 });
 
