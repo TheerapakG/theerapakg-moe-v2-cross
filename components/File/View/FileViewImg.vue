@@ -1,6 +1,6 @@
 <template>
   <div
-    v-hover="hoverHandler"
+    ref="wrapper"
     class="relative flex flex-col place-content-start place-items-center"
   >
     <div
@@ -19,6 +19,7 @@
     <Transition name="fade">
       <div
         v-if="controlVisible"
+        ref="control"
         class="absolute bottom-4 flex place-content-center place-items-center gap-2 rounded-lg border-2 border-gray-500 bg-white px-4 py-2 dark:border-gray-400 dark:bg-black"
       >
         <div class="min-w-[4rem] font-bold">{{ factor }}%</div>
@@ -54,6 +55,9 @@ type Props = {
 
 defineProps<Props>();
 
+const wrapper = ref<HTMLElement>();
+const control = ref<HTMLElement>();
+
 const factor = ref(100);
 const factorStr = computed(() => `${factor.value}%`);
 
@@ -76,21 +80,7 @@ const dragHandler: Handler<"drag"> = ({ movement, dragging }) => {
   }
 };
 
-const lastHover = ref(Date.now());
-const controlVisible = ref(false);
-
-const hoverHandler: Handler<"hover"> = ({ hovering }) => {
-  if (hovering) {
-    lastHover.value = Date.now();
-    controlVisible.value = true;
-    return;
-  }
-  setTimeout(() => {
-    if (lastHover.value + 1000 < Date.now()) {
-      controlVisible.value = false;
-    }
-  }, 1000);
-};
+const controlVisible = useAutoHideVisible(wrapper, control);
 </script>
 
 <style scoped>

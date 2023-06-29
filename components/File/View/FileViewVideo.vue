@@ -8,17 +8,21 @@
     }"
   >
     <video ref="video" :class="{ 'w-full h-full': fullscreen }" />
-    <MediaControls
-      v-model:playing="playing"
-      v-model:current-time="currentTime"
-      v-model:volume="volume"
-      v-model:loop="loop"
-      class="w-full"
-      :class="{ 'absolute bottom-4 left-4 right-4': fullscreen }"
-      :duration="duration"
-      :fullscreen="fullscreen"
-      @update:fullscreen="updateFullscreen"
-    />
+    <Transition name="fade">
+      <MediaControls
+        v-if="!fullscreen || controlVisible"
+        ref="control"
+        v-model:playing="playing"
+        v-model:current-time="currentTime"
+        v-model:volume="volume"
+        v-model:loop="loop"
+        class="w-full"
+        :class="{ 'absolute bottom-4 px-4': fullscreen }"
+        :duration="duration"
+        :fullscreen="fullscreen"
+        @update:fullscreen="updateFullscreen"
+      />
+    </Transition>
   </div>
 </template>
 
@@ -32,6 +36,8 @@ const { fileId } = toRefs(props);
 
 const wrapper = ref<HTMLElement>();
 const video = ref<HTMLAudioElement>();
+const control = ref<HTMLElement>();
+
 const { playing, currentTime, duration, volume } = useMediaControls(video, {
   src: computed(() => `/api/file/${fileId.value}/download`),
 });
@@ -55,4 +61,6 @@ const updateFullscreen = (value: boolean) => {
   if (value) enter();
   else exit();
 };
+
+const controlVisible = useAutoHideVisible(wrapper, control);
 </script>
