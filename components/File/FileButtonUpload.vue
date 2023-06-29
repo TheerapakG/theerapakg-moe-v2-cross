@@ -18,13 +18,13 @@
           <div
             class="mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
           >
-            <DropZone
-              :check-dragging-data="checkDraggingData"
-              effect="copy"
-              @dropped-data="onDroppedData"
-            />
+            <DropZone @files="onFilesDropped" />
           </div>
-          <UButton label="upload" @click="uploadFile()" />
+          <UButton
+            label="upload"
+            :disabled="files.length !== 1"
+            @click="uploadFile()"
+          />
         </div>
       </template>
     </UPopover>
@@ -43,48 +43,30 @@ const { fileId } = toRefs(props);
 const fileStore = useFileStore();
 const toast = useToast();
 
-const file = shallowRef<File | null>(null);
-
-const checkDraggingData = (
-  data:
-    | (
-        | {
-            kind: "string";
-            type: string;
-            cb: (cb: (s: string) => void) => void;
-          }
-        | {
-            kind: "file";
-            type: string;
-            file: File;
-          }
-      )[]
-    | null
-) => {
-  return data?.length === 1 && data[0].kind === "file";
-};
-
-const onDroppedData = (
-  data:
-    | (
-        | {
-            kind: "string";
-            type: string;
-            string: string;
-          }
-        | {
-            kind: "file";
-            type: string;
-            file: File;
-          }
-      )[]
-    | undefined
-) => {
-  file.value = data?.[0]?.kind === "file" ? data[0].file : null;
+const files = ref<File[]>([]);
+const onFilesDropped = (droppedFiles: File[]) => {
+  files.value = markRaw(droppedFiles);
 };
 
 const uploadFile = async () => {
-  if (!file.value) return;
+  const _files = files.value;
+  if (_files.length > 1) {
+    toast.add({
+      title: "Upload Error",
+      description: "Cannot upload more than one file",
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
+    });
+    return;
+  } else if (_files.length === 0) {
+    toast.add({
+      title: "Upload Error",
+      description: "No file to upload",
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
+    });
+    return;
+  }
 
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
@@ -106,6 +88,6 @@ const uploadFile = async () => {
     });
   });
 
-  fileReader.readAsDataURL(file.value);
+  fileReader.readAsDataURL(_files[0]);
 };
 </script>

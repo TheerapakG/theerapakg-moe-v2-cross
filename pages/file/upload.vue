@@ -4,13 +4,15 @@
     <div
       class="m-8 mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
     >
-      <DropZone
-        :check-dragging-data="checkDraggingData"
-        effect="copy"
-        @dropped-data="onDroppedData"
-      />
+      <DropZone @files="onFilesDropped" />
     </div>
-    <UButton color="black" size="xl" label="upload" @click="upload()" />
+    <UButton
+      color="black"
+      size="xl"
+      label="upload"
+      :disabled="files.length === 0"
+      @click="upload()"
+    />
   </div>
 </template>
 
@@ -21,81 +23,56 @@ definePageMeta({
   perms: ["file:edit"],
 });
 
-const file = shallowRef<File | null>(null);
-
 const fileStore = useFileStore();
 
 const toast = useToast();
 
-const checkDraggingData = (
-  data:
-    | (
-        | {
-            kind: "string";
-            type: string;
-            cb: (cb: (s: string) => void) => void;
-          }
-        | {
-            kind: "file";
-            type: string;
-            file: File;
-          }
-      )[]
-    | null
-) => {
-  return data?.length === 1 && data[0].kind === "file";
-};
-
-const onDroppedData = (
-  data:
-    | (
-        | {
-            kind: "string";
-            type: string;
-            string: string;
-          }
-        | {
-            kind: "file";
-            type: string;
-            file: File;
-          }
-      )[]
-    | undefined
-) => {
-  file.value = data?.[0]?.kind === "file" ? data[0].file : null;
+const files = ref<File[]>([]);
+const onFilesDropped = (droppedFiles: File[]) => {
+  files.value = markRaw(droppedFiles);
 };
 
 const upload = async () => {
-  if (!file.value) return;
+  const _files = files.value;
+  if (_files.length === 0) {
+    toast.add({
+      title: "Upload Error",
+      description: "No file to upload",
+      icon: "i-heroicons-exclaimation-circle",
+      color: "red",
+    });
+    return;
+  }
 
-  const name = file.value.name;
+  _files.map((file) => {
+    const name = file.name;
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", async (event) => {
+      try {
+        const upload = await fileStore.uploadFile(
+          name,
+          event.target?.result as string
+        );
+        toast.add({
+          title: "Upload Success",
+          description: "go to download page",
+          click: async () => {
+            await navigateTo(`/file/download/${upload.id}`);
+          },
+          icon: "i-heroicons-exclaimation-circle",
+        });
+      } catch {
+        toast.add({
+          title: "Upload Error",
+          description: "Cannot upload",
+          icon: "i-heroicons-exclaimation-circle",
+          color: "red",
+        });
+        return;
+      }
+    });
 
-  const fileReader = new FileReader();
-  fileReader.addEventListener("load", async (event) => {
-    try {
-      const upload = await fileStore.uploadFile(
-        name,
-        event.target?.result as string
-      );
-      toast.add({
-        title: "Upload Success",
-        description: "go to download page",
-        click: async () => {
-          await navigateTo(`/file/download/${upload.id}`);
-        },
-        icon: "i-heroicons-exclaimation-circle",
-      });
-    } catch {
-      toast.add({
-        title: "Upload Error",
-        description: "Cannot upload",
-        icon: "i-heroicons-exclaimation-circle",
-        color: "red",
-      });
-      return;
-    }
+    fileReader.readAsDataURL(file);
   });
-
-  fileReader.readAsDataURL(file.value);
 };
 </script>
