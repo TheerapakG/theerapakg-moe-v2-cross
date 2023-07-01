@@ -19,18 +19,34 @@ const perms = {
   edit: "i-heroicons-pencil",
 };
 
+const _users = route.query.users
+  ? (route.query.users as string)
+      .split(",")
+      .map((e) => e.trim())
+      .filter((e) => e.length > 0)
+  : [];
+const users = ref(_users);
 const _page = route.query.page ? parseInt(route.query.page as string) : 1;
 const page = ref(isNaN(_page) ? 1 : _page);
 const _size = route.query.size ? parseInt(route.query.size as string) : 10;
 const size = ref(isNaN(_size) ? 10 : _size);
+
+const addUser = (id: string) => {
+  users.value.push(id);
+};
+
+const removeUser = (id: string) => {
+  users.value = users.value.filter((e) => e !== id);
+};
 
 const fileSearch = ref((route.query.q as LocationQueryValue) ?? "");
 const fileSearchDebounced = refDebounced(fileSearch, 300);
 
 const params = computed(() => {
   return defu(
-    fileSearchDebounced.value ? { file: fileSearchDebounced.value } : undefined,
-    { page: page.value, size: size.value }
+    { page: page.value, size: size.value },
+    fileSearchDebounced.value ? { file: fileSearchDebounced.value } : {},
+    !isEmpty(users.value) ? { users: users.value.join(",") } : {}
   );
 });
 
@@ -38,10 +54,14 @@ watch(params, async () => {
   if (!isNaN(params.value.page) && !isNaN(params.value.size)) {
     await navigateTo({
       path: route.path,
-      query: defu(params.value.file ? { q: params.value.file } : undefined, {
-        page: params.value.page,
-        size: params.value.size,
-      }),
+      query: defu(
+        {
+          page: params.value.page,
+          size: params.value.size,
+        },
+        params.value.file ? { q: params.value.file } : {},
+        params.value.users ? { users: params.value.users } : {}
+      ),
       replace: true,
     });
   }
@@ -160,6 +180,20 @@ const { pageCount } = useOffsetPagination({
         <div class="inline-flex w-16 place-content-center place-items-center">
           <USkeleton v-if="!row.size" class="h-4 w-full" />
           <div v-else class="w-full">{{ row.size }}</div>
+        </div>
+      </template>
+      <template #owner-header>
+        <div class="inline-flex w-28 place-content-center place-items-center">
+          <div class="flex-1"></div>
+          <span class="justify-self-center">Owner</span>
+          <div class="flex-1">
+            <UserButtonList
+              class="ml-auto"
+              :selected="users"
+              @add="addUser"
+              @remove="removeUser"
+            />
+          </div>
         </div>
       </template>
       <template #owner-data="{ row }">
