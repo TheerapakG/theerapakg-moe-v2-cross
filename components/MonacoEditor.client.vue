@@ -1,7 +1,3 @@
-<template>
-  <div ref="editerElement" class="text-left"></div>
-</template>
-
 <script setup lang="ts">
 import type * as _monaco from "monaco-editor";
 
@@ -51,3 +47,7 @@ onUnmounted(() => {
   editor.value = null;
 });
 </script>
+
+<template>
+  <div ref="editerElement" class="text-left"></div>
+</template>

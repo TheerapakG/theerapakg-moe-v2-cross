@@ -1,3 +1,25 @@
+<script setup lang="ts">
+const pageStore = usePageStore();
+
+const colorModeChange = ref(false);
+const pageContainer = ref<HTMLDivElement | null>(null);
+
+watch(useColorMode(), () => {
+  colorModeChange.value = true;
+  setTimeout(() => {
+    colorModeChange.value = false;
+  }, 300);
+});
+
+onMounted(() => {
+  const updatePageContainer = () => {
+    pageStore.pageContainerDom = pageContainer.value;
+  };
+  updatePageContainer();
+  watch(pageContainer, updatePageContainer);
+});
+</script>
+
 <template>
   <div
     id="app"
@@ -23,28 +45,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const pageStore = usePageStore();
-
-const colorModeChange = ref(false);
-const pageContainer = ref<HTMLDivElement | null>(null);
-
-watch(useColorMode(), () => {
-  colorModeChange.value = true;
-  setTimeout(() => {
-    colorModeChange.value = false;
-  }, 300);
-});
-
-onMounted(() => {
-  const updatePageContainer = () => {
-    pageStore.pageContainerDom = pageContainer.value;
-  };
-  updatePageContainer();
-  watch(pageContainer, updatePageContainer);
-});
-</script>
 
 <style>
 #app.color-mode-change * {

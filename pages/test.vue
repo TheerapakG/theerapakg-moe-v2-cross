@@ -1,12 +1,3 @@
-<template>
-  <div>
-    <ClientOnly>
-      <div>tauri: {{ tauri }}</div>
-    </ClientOnly>
-    <TabbedView class="w-[32rem]" :views="views" @remove-view="removeView" />
-  </div>
-</template>
-
 <script setup lang="tsx">
 import { UInput } from "#components";
 import VNodeTemplate from "~/components/VNodeTemplate.vue";
@@ -73,3 +64,12 @@ onMounted(async () => {
   };
 });
 </script>
+
+<template>
+  <div>
+    <ClientOnly>
+      <div>tauri: {{ tauri }}</div>
+    </ClientOnly>
+    <TabbedView class="w-[32rem]" :views="views" @remove-view="removeView" />
+  </div>
+</template>

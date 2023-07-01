@@ -1,36 +1,3 @@
-<template>
-  <div class="relative">
-    <UPopover>
-      <slot>
-        <UButton
-          variant="ghost"
-          size="xl"
-          icon="i-heroicons-cloud-arrow-up"
-          :aria-label="ariaLabel"
-          :ui="{ rounded: 'rounded-full' }"
-        />
-      </slot>
-
-      <template #panel>
-        <div
-          class="flex flex-col place-content-center place-items-center gap-y-4 p-4"
-        >
-          <div
-            class="mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
-          >
-            <DropZone @files="onFilesDropped" />
-          </div>
-          <UButton
-            label="upload"
-            :disabled="files.length !== 1"
-            @click="uploadFile()"
-          />
-        </div>
-      </template>
-    </UPopover>
-  </div>
-</template>
-
 <script setup lang="tsx">
 type Props = {
   fileId: string;
@@ -91,3 +58,36 @@ const uploadFile = async () => {
   fileReader.readAsDataURL(_files[0]);
 };
 </script>
+
+<template>
+  <div class="relative">
+    <UPopover>
+      <slot>
+        <UButton
+          variant="ghost"
+          size="xl"
+          icon="i-heroicons-cloud-arrow-up"
+          :aria-label="ariaLabel"
+          :ui="{ rounded: 'rounded-full' }"
+        />
+      </slot>
+
+      <template #panel>
+        <div
+          class="flex flex-col place-content-center place-items-center gap-y-4 p-4"
+        >
+          <div
+            class="mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
+          >
+            <DropZone @files="onFilesDropped" />
+          </div>
+          <UButton
+            label="upload"
+            :disabled="files.length !== 1"
+            @click="uploadFile()"
+          />
+        </div>
+      </template>
+    </UPopover>
+  </div>
+</template>

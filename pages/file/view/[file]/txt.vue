@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { useMountedState } from "../states";
+
+const mountedState = useMountedState();
+
+const route = useRoute();
+</script>
+
 <template>
   <div class="flex flex-col place-content-start place-items-center">
     <FileViewTxt
@@ -8,11 +16,3 @@
     />
   </div>
 </template>
-
-<script setup lang="ts">
-import { useMountedState } from "../states";
-
-const mountedState = useMountedState();
-
-const route = useRoute();
-</script>

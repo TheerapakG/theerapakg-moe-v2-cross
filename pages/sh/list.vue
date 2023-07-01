@@ -1,68 +1,3 @@
-<template>
-  <UContainer
-    class="thin-scrollbars relative flex flex-col gap-y-2 overflow-x-auto pt-0 md:pt-16 2xl:pt-0"
-  >
-    <UInput v-model="shSearch" class="w-full" size="md">
-      <template #leading>
-        <UIcon
-          :name="
-            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
-          "
-          :class="{ 'animate-spin': pending }"
-        />
-      </template>
-    </UInput>
-    <UTable
-      class="thin-scrollbars overflow-x-auto"
-      :columns="tableColumns"
-      :rows="tableData"
-    >
-      <template #from-data="{ row }">
-        <ShFromEditor
-          v-if="row.data"
-          class="w-64"
-          :from="row.from"
-          @refresh="refresh"
-        />
-        <UInput v-else v-model="newSh" />
-      </template>
-      <template #to-data="{ row }">
-        <ShToEditor
-          v-if="row.data"
-          class="w-[40rem]"
-          :from="row.from"
-          :to="row.to"
-          @refresh="refresh"
-        />
-        <UInput v-else v-model="newTarget" />
-      </template>
-      <template #actions-data="{ row }">
-        <div
-          class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
-        >
-          <UButton
-            v-if="row.data"
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-minus"
-            :ui="{ rounded: 'rounded-full' }"
-            @click="removeSh(row.from)"
-          />
-          <UButton
-            v-else
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-plus"
-            :ui="{ rounded: 'rounded-full' }"
-            @click="addSh"
-          />
-        </div>
-      </template>
-    </UTable>
-    <PaginateNavigation v-model="page" :page-count="pageCount" />
-  </UContainer>
-</template>
-
 <script setup lang="ts">
 import defu from "defu";
 import { LocationQueryValue } from "vue-router";
@@ -157,3 +92,68 @@ const removeSh = async (sh: string) => {
   await refresh();
 };
 </script>
+
+<template>
+  <UContainer
+    class="thin-scrollbars relative flex flex-col gap-y-2 overflow-x-auto pt-0 md:pt-16 2xl:pt-0"
+  >
+    <UInput v-model="shSearch" class="w-full" size="md">
+      <template #leading>
+        <UIcon
+          :name="
+            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
+          "
+          :class="{ 'animate-spin': pending }"
+        />
+      </template>
+    </UInput>
+    <UTable
+      class="thin-scrollbars overflow-x-auto"
+      :columns="tableColumns"
+      :rows="tableData"
+    >
+      <template #from-data="{ row }">
+        <ShFromEditor
+          v-if="row.data"
+          class="w-64"
+          :from="row.from"
+          @refresh="refresh"
+        />
+        <UInput v-else v-model="newSh" />
+      </template>
+      <template #to-data="{ row }">
+        <ShToEditor
+          v-if="row.data"
+          class="w-[40rem]"
+          :from="row.from"
+          :to="row.to"
+          @refresh="refresh"
+        />
+        <UInput v-else v-model="newTarget" />
+      </template>
+      <template #actions-data="{ row }">
+        <div
+          class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
+        >
+          <UButton
+            v-if="row.data"
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-minus"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="removeSh(row.from)"
+          />
+          <UButton
+            v-else
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-plus"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="addSh"
+          />
+        </div>
+      </template>
+    </UTable>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
+  </UContainer>
+</template>

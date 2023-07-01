@@ -1,21 +1,3 @@
-<template>
-  <div>
-    <div class="m-8 text-4xl">UPLOAD</div>
-    <div
-      class="m-8 mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
-    >
-      <DropZone @files="onFilesDropped" />
-    </div>
-    <UButton
-      color="black"
-      size="xl"
-      label="upload"
-      :disabled="files.length === 0"
-      @click="upload()"
-    />
-  </div>
-</template>
-
 <script setup lang="tsx">
 definePageMeta({
   title: "theerapakg-moe-app: upload",
@@ -76,3 +58,21 @@ const upload = async () => {
   });
 };
 </script>
+
+<template>
+  <div>
+    <div class="m-8 text-4xl">UPLOAD</div>
+    <div
+      class="m-8 mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
+    >
+      <DropZone @files="onFilesDropped" />
+    </div>
+    <UButton
+      color="black"
+      size="xl"
+      label="upload"
+      :disabled="files.length === 0"
+      @click="upload()"
+    />
+  </div>
+</template>

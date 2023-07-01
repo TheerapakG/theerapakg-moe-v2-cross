@@ -1,52 +1,3 @@
-<template>
-  <div
-    class="flex w-full flex-col place-content-center place-items-center gap-y-2"
-  >
-    <div>changing permission: {{ perm }}</div>
-    <UInput v-model="userSearch" class="w-full" size="md">
-      <template #leading>
-        <UIcon
-          :name="
-            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
-          "
-          :class="{ 'animate-spin': pending }"
-        />
-      </template>
-    </UInput>
-    <UTable class="w-full" :columns="tableColumns" :rows="tableData">
-      <template #name-data="{ row }">
-        <div
-          class="inline-flex h-8 w-28 place-content-center place-items-center"
-        >
-          <USkeleton v-if="!row.name" class="h-4 w-full" />
-          <div v-else>{{ row.name }}</div>
-        </div>
-      </template>
-      <template #actions-data="{ row }">
-        <div class="inline-flex h-8 place-content-center place-items-center">
-          <UButton
-            v-if="row.perm"
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-minus"
-            :ui="{ rounded: 'rounded-full' }"
-            @click="removeFilePermUser(row.id)"
-          />
-          <UButton
-            v-else
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-plus"
-            :ui="{ rounded: 'rounded-full' }"
-            @click="addFilePermUser(row.id)"
-          />
-        </div>
-      </template>
-    </UTable>
-    <PaginateNavigation v-model="page" :page-count="pageCount" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import defu from "defu";
 
@@ -150,3 +101,52 @@ const removeFilePermUser = async (user: string) => {
   await refresh();
 };
 </script>
+
+<template>
+  <div
+    class="flex w-full flex-col place-content-center place-items-center gap-y-2"
+  >
+    <div>changing permission: {{ perm }}</div>
+    <UInput v-model="userSearch" class="w-full" size="md">
+      <template #leading>
+        <UIcon
+          :name="
+            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
+          "
+          :class="{ 'animate-spin': pending }"
+        />
+      </template>
+    </UInput>
+    <UTable class="w-full" :columns="tableColumns" :rows="tableData">
+      <template #name-data="{ row }">
+        <div
+          class="inline-flex h-8 w-28 place-content-center place-items-center"
+        >
+          <USkeleton v-if="!row.name" class="h-4 w-full" />
+          <div v-else>{{ row.name }}</div>
+        </div>
+      </template>
+      <template #actions-data="{ row }">
+        <div class="inline-flex h-8 place-content-center place-items-center">
+          <UButton
+            v-if="row.perm"
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-minus"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="removeFilePermUser(row.id)"
+          />
+          <UButton
+            v-else
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-plus"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="addFilePermUser(row.id)"
+          />
+        </div>
+      </template>
+    </UTable>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
+  </div>
+</template>

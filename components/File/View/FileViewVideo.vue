@@ -1,31 +1,3 @@
-<template>
-  <div
-    ref="wrapper"
-    class="relative"
-    :class="{
-      'flex flex-col place-content-center place-items-center gap-y-2':
-        !fullscreen,
-    }"
-  >
-    <video ref="video" :class="{ 'w-full h-full': fullscreen }" />
-    <Transition name="fade">
-      <MediaControls
-        v-if="!fullscreen || controlVisible"
-        ref="control"
-        v-model:playing="playing"
-        v-model:current-time="currentTime"
-        v-model:volume="volume"
-        v-model:loop="loop"
-        class="w-full"
-        :class="{ 'absolute bottom-4 px-4': fullscreen }"
-        :duration="duration"
-        :fullscreen="fullscreen"
-        @update:fullscreen="updateFullscreen"
-      />
-    </Transition>
-  </div>
-</template>
-
 <script setup lang="ts">
 type Props = {
   fileId: string;
@@ -64,3 +36,31 @@ const updateFullscreen = (value: boolean) => {
 
 const controlVisible = useAutoHideVisible(wrapper, control);
 </script>
+
+<template>
+  <div
+    ref="wrapper"
+    class="relative"
+    :class="{
+      'flex flex-col place-content-center place-items-center gap-y-2':
+        !fullscreen,
+    }"
+  >
+    <video ref="video" :class="{ 'w-full h-full': fullscreen }" />
+    <Transition name="fade">
+      <MediaControls
+        v-if="!fullscreen || controlVisible"
+        ref="control"
+        v-model:playing="playing"
+        v-model:current-time="currentTime"
+        v-model:volume="volume"
+        v-model:loop="loop"
+        class="w-full"
+        :class="{ 'absolute bottom-4 px-4': fullscreen }"
+        :duration="duration"
+        :fullscreen="fullscreen"
+        @update:fullscreen="updateFullscreen"
+      />
+    </Transition>
+  </div>
+</template>

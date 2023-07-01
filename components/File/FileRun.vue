@@ -1,50 +1,3 @@
-<template>
-  <div class="flex place-content-center place-items-center gap-x-2">
-    <UButton
-      variant="ghost"
-      size="xl"
-      icon="i-heroicons-play"
-      :ui="{ rounded: 'rounded-full' }"
-      @click="open = true"
-    />
-
-    <UModal
-      v-model="open"
-      :ui="{
-        base: 'relative text-left overflow-y-visible sm:my-8 w-full flex flex-col',
-      }"
-    >
-      <UCard :ui="{ base: 'overflow-y-visible' }">
-        <template #header>
-          <div class="text-center text-4xl">RUN</div>
-        </template>
-
-        <div class="flex flex-col place-content-center gap-y-4">
-          <UFormGroup label="Runner">
-            <USelectMenu
-              v-model="templateSelection"
-              :options="templateKeys"
-              searchable
-            />
-          </UFormGroup>
-        </div>
-
-        <template #footer>
-          <div class="flex place-content-center place-items-center">
-            <UButton
-              color="black"
-              size="xl"
-              :loading="pending"
-              label="run"
-              @click="run"
-            />
-          </div>
-        </template>
-      </UCard>
-    </UModal>
-  </div>
-</template>
-
 <script setup lang="tsx">
 type Props = {
   fileId: string;
@@ -121,3 +74,50 @@ const run = async () => {
   }
 };
 </script>
+
+<template>
+  <div class="flex place-content-center place-items-center gap-x-2">
+    <UButton
+      variant="ghost"
+      size="xl"
+      icon="i-heroicons-play"
+      :ui="{ rounded: 'rounded-full' }"
+      @click="open = true"
+    />
+
+    <UModal
+      v-model="open"
+      :ui="{
+        base: 'relative text-left overflow-y-visible sm:my-8 w-full flex flex-col',
+      }"
+    >
+      <UCard :ui="{ base: 'overflow-y-visible' }">
+        <template #header>
+          <div class="text-center text-4xl">RUN</div>
+        </template>
+
+        <div class="flex flex-col place-content-center gap-y-4">
+          <UFormGroup label="Runner">
+            <USelectMenu
+              v-model="templateSelection"
+              :options="templateKeys"
+              searchable
+            />
+          </UFormGroup>
+        </div>
+
+        <template #footer>
+          <div class="flex place-content-center place-items-center">
+            <UButton
+              color="black"
+              size="xl"
+              :loading="pending"
+              label="run"
+              @click="run"
+            />
+          </div>
+        </template>
+      </UCard>
+    </UModal>
+  </div>
+</template>

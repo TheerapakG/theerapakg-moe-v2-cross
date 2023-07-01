@@ -1,94 +1,3 @@
-<template>
-  <UContainer
-    class="thin-scrollbars relative flex flex-col gap-y-2 overflow-x-auto pt-0 md:pt-16 2xl:pt-0"
-  >
-    <UInput v-model="fileSearch" class="w-full" size="md">
-      <template #leading>
-        <UIcon
-          :name="
-            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
-          "
-          :class="{ 'animate-spin': pending }"
-        />
-      </template>
-    </UInput>
-    <UTable
-      class="thin-scrollbars overflow-x-auto"
-      :columns="tableColumns"
-      :rows="tableData"
-    >
-      <template #name-data="{ row }">
-        <div
-          class="flex min-w-[16rem] max-w-[32rem] place-content-center place-items-center"
-        >
-          <USkeleton v-if="!row.name" class="h-4 w-full" />
-          <FileNameEditor
-            v-else
-            class="w-full"
-            :file-id="row.id"
-            :name="row.name"
-          />
-        </div>
-      </template>
-      <template #size-data="{ row }">
-        <div class="inline-flex w-16 place-content-center place-items-center">
-          <USkeleton v-if="!row.size" class="h-4 w-full" />
-          <div v-else class="w-full">{{ row.size }}</div>
-        </div>
-      </template>
-      <template #owner-data="{ row }">
-        <div
-          class="inline-flex h-8 w-28 place-content-center place-items-center"
-        >
-          <USkeleton v-if="!row.owner" class="h-4 w-full" />
-          <div v-else>{{ row.owner }}</div>
-        </div>
-      </template>
-      <template #perms-data="{ row }">
-        <FileButtonPermEditor v-slot="{ perm }" class="h-8" :file-id="row.id">
-          <UButton
-            variant="ghost"
-            size="xl"
-            :trailing-icon="perms[perm]"
-            :label="`${
-              row.perm?.count?.[perm] === undefined
-                ? '...'
-                : row.perm.count[perm]
-            }`"
-            :ui="{ rounded: 'rounded-full' }"
-          />
-        </FileButtonPermEditor>
-      </template>
-      <template #actions-data="{ row }">
-        <div
-          class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
-        >
-          <FileButtonView :file-id="row.id" :aria-label="`view ${row.name}`" />
-          <FileButtonEdit :file-id="row.id" :aria-label="`edit ${row.name}`" />
-          <FileButtonUpload
-            :file-id="row.id"
-            :aria-label="`upload ${row.name}`"
-          />
-          <UButton
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-arrow-down-tray"
-            :aria-label="`download ${row.name}`"
-            :ui="{ rounded: 'rounded-full' }"
-            :to="`/file/download/${row.id}`"
-          />
-          <FileButtonDelete
-            :file-id="row.id"
-            :aria-label="`delete ${row.name}`"
-            @delete="refresh"
-          />
-        </div>
-      </template>
-    </UTable>
-    <PaginateNavigation v-model="page" :page-count="pageCount" />
-  </UContainer>
-</template>
-
 <script setup lang="ts">
 import defu from "defu";
 import { LocationQueryValue } from "vue-router";
@@ -214,3 +123,94 @@ const { pageCount } = useOffsetPagination({
   pageSize: size,
 });
 </script>
+
+<template>
+  <UContainer
+    class="thin-scrollbars relative flex flex-col gap-y-2 overflow-x-auto pt-0 md:pt-16 2xl:pt-0"
+  >
+    <UInput v-model="fileSearch" class="w-full" size="md">
+      <template #leading>
+        <UIcon
+          :name="
+            pending ? 'i-heroicons-arrow-path' : 'i-heroicons-magnifying-glass'
+          "
+          :class="{ 'animate-spin': pending }"
+        />
+      </template>
+    </UInput>
+    <UTable
+      class="thin-scrollbars overflow-x-auto"
+      :columns="tableColumns"
+      :rows="tableData"
+    >
+      <template #name-data="{ row }">
+        <div
+          class="flex min-w-[16rem] max-w-[32rem] place-content-center place-items-center"
+        >
+          <USkeleton v-if="!row.name" class="h-4 w-full" />
+          <FileNameEditor
+            v-else
+            class="w-full"
+            :file-id="row.id"
+            :name="row.name"
+          />
+        </div>
+      </template>
+      <template #size-data="{ row }">
+        <div class="inline-flex w-16 place-content-center place-items-center">
+          <USkeleton v-if="!row.size" class="h-4 w-full" />
+          <div v-else class="w-full">{{ row.size }}</div>
+        </div>
+      </template>
+      <template #owner-data="{ row }">
+        <div
+          class="inline-flex h-8 w-28 place-content-center place-items-center"
+        >
+          <USkeleton v-if="!row.owner" class="h-4 w-full" />
+          <div v-else>{{ row.owner }}</div>
+        </div>
+      </template>
+      <template #perms-data="{ row }">
+        <FileButtonPermEditor v-slot="{ perm }" class="h-8" :file-id="row.id">
+          <UButton
+            variant="ghost"
+            size="xl"
+            :trailing-icon="perms[perm]"
+            :label="`${
+              row.perm?.count?.[perm] === undefined
+                ? '...'
+                : row.perm.count[perm]
+            }`"
+            :ui="{ rounded: 'rounded-full' }"
+          />
+        </FileButtonPermEditor>
+      </template>
+      <template #actions-data="{ row }">
+        <div
+          class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
+        >
+          <FileButtonView :file-id="row.id" :aria-label="`view ${row.name}`" />
+          <FileButtonEdit :file-id="row.id" :aria-label="`edit ${row.name}`" />
+          <FileButtonUpload
+            :file-id="row.id"
+            :aria-label="`upload ${row.name}`"
+          />
+          <UButton
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-arrow-down-tray"
+            :aria-label="`download ${row.name}`"
+            :ui="{ rounded: 'rounded-full' }"
+            :to="`/file/download/${row.id}`"
+          />
+          <FileButtonDelete
+            :file-id="row.id"
+            :aria-label="`delete ${row.name}`"
+            @delete="refresh"
+          />
+        </div>
+      </template>
+    </UTable>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
+  </UContainer>
+</template>

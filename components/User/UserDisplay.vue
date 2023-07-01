@@ -1,3 +1,8 @@
+<script setup lang="ts">
+const userStore = useUserStore();
+const current = await userStore.fetchCurrentComputed();
+</script>
+
 <template>
   <div>
     <div class="flex place-content-center place-items-center gap-x-2">
@@ -30,8 +35,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const userStore = useUserStore();
-const current = await userStore.fetchCurrentComputed();
-</script>

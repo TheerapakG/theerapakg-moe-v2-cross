@@ -1,3 +1,35 @@
+<script setup lang="ts">
+type Props = {
+  modelValue: string;
+};
+
+const props = defineProps<Props>();
+const { modelValue: text } = toRefs(props);
+
+type Emits = {
+  "update:modelValue": [value: string];
+};
+
+const emit = defineEmits<Emits>();
+
+const edit = ref(false);
+const inputValue = ref("");
+
+const startEdit = () => {
+  inputValue.value = text.value;
+  edit.value = true;
+};
+
+const stopEdit = () => {
+  edit.value = false;
+};
+
+const submitEdit = () => {
+  stopEdit();
+  emit("update:modelValue", inputValue.value);
+};
+</script>
+
 <template>
   <div class="h-8">
     <div
@@ -47,35 +79,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-type Props = {
-  modelValue: string;
-};
-
-const props = defineProps<Props>();
-const { modelValue: text } = toRefs(props);
-
-type Emits = {
-  "update:modelValue": [value: string];
-};
-
-const emit = defineEmits<Emits>();
-
-const edit = ref(false);
-const inputValue = ref("");
-
-const startEdit = () => {
-  inputValue.value = text.value;
-  edit.value = true;
-};
-
-const stopEdit = () => {
-  edit.value = false;
-};
-
-const submitEdit = () => {
-  stopEdit();
-  emit("update:modelValue", inputValue.value);
-};
-</script>

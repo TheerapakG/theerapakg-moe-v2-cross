@@ -1,57 +1,3 @@
-<template>
-  <div class="relative">
-    <Transition name="fade">
-      <LoadingCircleOverlay v-if="pending" />
-      <UContainer v-else class="thin-scrollbars overflow-x-auto">
-        <UTable :columns="tableColumns" :rows="tableData">
-          <template #actions-data="{ row }">
-            <div
-              class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
-            >
-              <UButton
-                variant="ghost"
-                size="xl"
-                icon="i-heroicons-document-text"
-                :ui="{ rounded: 'rounded-full' }"
-                :to="`/container/${row.id}/logs`"
-              />
-              <UButton
-                variant="ghost"
-                size="xl"
-                icon="i-heroicons-pause"
-                :ui="{ rounded: 'rounded-full' }"
-                @click="pauseContainer(row.id)"
-              />
-              <UButton
-                variant="ghost"
-                size="xl"
-                icon="i-heroicons-play"
-                :ui="{ rounded: 'rounded-full' }"
-                @click="unpauseContainer(row.id)"
-              />
-              <UButton
-                variant="ghost"
-                size="xl"
-                icon="i-heroicons-stop"
-                :ui="{ rounded: 'rounded-full' }"
-                @click="killContainer(row.id)"
-              />
-              <UButton
-                variant="ghost"
-                size="xl"
-                icon="i-heroicons-minus"
-                :ui="{ rounded: 'rounded-full' }"
-                @click="removeContainer(row.id)"
-              />
-            </div>
-          </template>
-        </UTable>
-      </UContainer>
-    </Transition>
-    <PaginateNavigation v-model="page" :page-count="pageCount" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { Notification } from "@nuxthq/ui/dist/runtime/types";
 
@@ -223,3 +169,57 @@ const removeContainer = wrapToast(
   }
 );
 </script>
+
+<template>
+  <div class="relative">
+    <Transition name="fade">
+      <LoadingCircleOverlay v-if="pending" />
+      <UContainer v-else class="thin-scrollbars overflow-x-auto">
+        <UTable :columns="tableColumns" :rows="tableData">
+          <template #actions-data="{ row }">
+            <div
+              class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
+            >
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-document-text"
+                :ui="{ rounded: 'rounded-full' }"
+                :to="`/container/${row.id}/logs`"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-pause"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="pauseContainer(row.id)"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-play"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="unpauseContainer(row.id)"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-stop"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="killContainer(row.id)"
+              />
+              <UButton
+                variant="ghost"
+                size="xl"
+                icon="i-heroicons-minus"
+                :ui="{ rounded: 'rounded-full' }"
+                @click="removeContainer(row.id)"
+              />
+            </div>
+          </template>
+        </UTable>
+      </UContainer>
+    </Transition>
+    <PaginateNavigation v-model="page" :page-count="pageCount" />
+  </div>
+</template>

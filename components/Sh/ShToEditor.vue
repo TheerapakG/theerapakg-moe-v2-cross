@@ -1,7 +1,3 @@
-<template>
-  <TextInputEditor :model-value="to" @update:model-value="changeTarget" />
-</template>
-
 <script setup lang="tsx">
 type Props = {
   from: string;
@@ -43,3 +39,7 @@ const changeTarget = async (target: string) => {
   emit("refresh");
 };
 </script>
+
+<template>
+  <TextInputEditor :model-value="to" @update:model-value="changeTarget" />
+</template>

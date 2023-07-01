@@ -1,3 +1,14 @@
+<script setup lang="ts">
+type Props = {
+  fileId: string;
+};
+
+const props = defineProps<Props>();
+const { fileId } = toRefs(props);
+
+const perms = ["view", "edit"] as const;
+</script>
+
 <template>
   <div
     class="relative inline-flex w-min place-content-center place-items-center gap-x-1"
@@ -13,14 +24,3 @@
     </UPopover>
   </div>
 </template>
-
-<script setup lang="ts">
-type Props = {
-  fileId: string;
-};
-
-const props = defineProps<Props>();
-const { fileId } = toRefs(props);
-
-const perms = ["view", "edit"] as const;
-</script>

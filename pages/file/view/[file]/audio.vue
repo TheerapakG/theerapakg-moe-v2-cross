@@ -1,9 +1,3 @@
-<template>
-  <div class="flex flex-col place-content-start place-items-center">
-    <FileViewAudio :file-id="fileId" class="w-full flex-grow" />
-  </div>
-</template>
-
 <script setup lang="ts">
 const route = useRoute();
 const fileStore = useFileStore();
@@ -21,3 +15,9 @@ useSeoMeta({
   ogAudio: url.origin + `/api/file/${fileId}/download`,
 });
 </script>
+
+<template>
+  <div class="flex flex-col place-content-start place-items-center">
+    <FileViewAudio :file-id="fileId" class="w-full flex-grow" />
+  </div>
+</template>

@@ -1,3 +1,31 @@
+<script setup lang="ts">
+type Props = {
+  playing: boolean;
+  currentTime: number;
+  duration: number;
+  volume: number;
+  loop: boolean;
+  fullscreen?: boolean;
+};
+
+defineProps<Props>();
+
+type Emits = {
+  "update:playing": [boolean];
+  "update:currentTime": [number];
+  "update:volume": [number];
+  "update:loop": [boolean];
+  "update:fullscreen": [boolean];
+};
+
+const emit = defineEmits<Emits>();
+
+const formatDuration = (seconds: number) =>
+  new Date(1000 * seconds).toISOString().slice(11, 19);
+
+const showVolumeControl = ref(false);
+</script>
+
 <template>
   <div class="flex flex-col place-content-center place-items-center gap-y-2">
     <URange
@@ -76,31 +104,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-type Props = {
-  playing: boolean;
-  currentTime: number;
-  duration: number;
-  volume: number;
-  loop: boolean;
-  fullscreen?: boolean;
-};
-
-defineProps<Props>();
-
-type Emits = {
-  "update:playing": [boolean];
-  "update:currentTime": [number];
-  "update:volume": [number];
-  "update:loop": [boolean];
-  "update:fullscreen": [boolean];
-};
-
-const emit = defineEmits<Emits>();
-
-const formatDuration = (seconds: number) =>
-  new Date(1000 * seconds).toISOString().slice(11, 19);
-
-const showVolumeControl = ref(false);
-</script>

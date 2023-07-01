@@ -1,28 +1,3 @@
-<template>
-  <div class="relative">
-    <UPopover>
-      <slot>
-        <UButton
-          variant="ghost"
-          size="xl"
-          icon="i-heroicons-minus"
-          :aria-label="ariaLabel"
-          :ui="{ rounded: 'rounded-full' }"
-        />
-      </slot>
-
-      <template #panel>
-        <div
-          class="flex flex-col place-content-center place-items-center gap-y-2 p-4"
-        >
-          <div>confirm</div>
-          <UButton label="delete" @click="deleteFile" />
-        </div>
-      </template>
-    </UPopover>
-  </div>
-</template>
-
 <script setup lang="tsx">
 type Props = {
   fileId: string;
@@ -61,3 +36,28 @@ const deleteFile = async () => {
   emit("delete");
 };
 </script>
+
+<template>
+  <div class="relative">
+    <UPopover>
+      <slot>
+        <UButton
+          variant="ghost"
+          size="xl"
+          icon="i-heroicons-minus"
+          :aria-label="ariaLabel"
+          :ui="{ rounded: 'rounded-full' }"
+        />
+      </slot>
+
+      <template #panel>
+        <div
+          class="flex flex-col place-content-center place-items-center gap-y-2 p-4"
+        >
+          <div>confirm</div>
+          <UButton label="delete" @click="deleteFile" />
+        </div>
+      </template>
+    </UPopover>
+  </div>
+</template>

@@ -1,17 +1,3 @@
-<template>
-  <div v-if="utf8Logs" class="text-left font-mono">
-    <table
-      v-for="log in utf8Logs"
-      :key="log.msg"
-      class="grid grid-cols-[18rem_minmax(0,1fr)]"
-      :class="{ 'text-red-600 dark:text-red-400': log.type === 'stderr' }"
-    >
-      <td>{{ log.time }}</td>
-      <td>{{ log.msg }}</td>
-    </table>
-  </div>
-</template>
-
 <script setup lang="ts">
 type Props = {
   containerId: string;
@@ -39,3 +25,17 @@ const utf8Logs = computedAsync(() =>
   )
 );
 </script>
+
+<template>
+  <div v-if="utf8Logs" class="text-left font-mono">
+    <table
+      v-for="log in utf8Logs"
+      :key="log.msg"
+      class="grid grid-cols-[18rem_minmax(0,1fr)]"
+      :class="{ 'text-red-600 dark:text-red-400': log.type === 'stderr' }"
+    >
+      <td>{{ log.time }}</td>
+      <td>{{ log.msg }}</td>
+    </table>
+  </div>
+</template>

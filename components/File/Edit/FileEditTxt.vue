@@ -1,49 +1,3 @@
-<template>
-  <div class="relative">
-    <ClientOnly>
-      <MonacoEditor
-        ref="monacoEditor"
-        class="absolute inset-0"
-        :options="{
-          fontLigatures: true,
-          value: data,
-          ...(lang && { language: lang as string }),
-        }"
-        :commands="commands"
-      />
-      <portal v-if="activatePortal" to="file-menu-left">
-        <div class="flex place-content-center place-items-center gap-2">
-          <UButton
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-cloud-arrow-up"
-            :disabled="!status.has('edited')"
-            :ui="{ rounded: 'rounded-full' }"
-            @click="save"
-          />
-          <FileRun :file-id="fileId" />
-        </div>
-      </portal>
-      <portal v-if="activatePortal" to="file-status">
-        <Transition name="pop" mode="out-in">
-          <div
-            v-if="status.has('edited')"
-            class="text-amber-600 dark:text-amber-300"
-          >
-            &nbsp;- modified
-          </div>
-          <div
-            v-else-if="status.has('saved')"
-            class="text-emerald-600 dark:text-emerald-300"
-          >
-            &nbsp;- saved
-          </div>
-        </Transition>
-      </portal>
-    </ClientOnly>
-  </div>
-</template>
-
 <script setup lang="tsx">
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 
@@ -131,3 +85,49 @@ if (process.client) {
   ];
 }
 </script>
+
+<template>
+  <div class="relative">
+    <ClientOnly>
+      <MonacoEditor
+        ref="monacoEditor"
+        class="absolute inset-0"
+        :options="{
+          fontLigatures: true,
+          value: data,
+          ...(lang && { language: lang as string }),
+        }"
+        :commands="commands"
+      />
+      <portal v-if="activatePortal" to="file-menu-left">
+        <div class="flex place-content-center place-items-center gap-2">
+          <UButton
+            variant="ghost"
+            size="xl"
+            icon="i-heroicons-cloud-arrow-up"
+            :disabled="!status.has('edited')"
+            :ui="{ rounded: 'rounded-full' }"
+            @click="save"
+          />
+          <FileRun :file-id="fileId" />
+        </div>
+      </portal>
+      <portal v-if="activatePortal" to="file-status">
+        <Transition name="pop" mode="out-in">
+          <div
+            v-if="status.has('edited')"
+            class="text-amber-600 dark:text-amber-300"
+          >
+            &nbsp;- modified
+          </div>
+          <div
+            v-else-if="status.has('saved')"
+            class="text-emerald-600 dark:text-emerald-300"
+          >
+            &nbsp;- saved
+          </div>
+        </Transition>
+      </portal>
+    </ClientOnly>
+  </div>
+</template>

@@ -1,3 +1,32 @@
+<script setup lang="ts">
+import { useMountedState } from "./states";
+
+const mountedState = useMountedState();
+
+const mounted = useMounted();
+watch(mounted, () => {
+  mountedState.value = mounted.value;
+});
+mountedState.value = mounted.value;
+
+const route = useRoute();
+const fileStore = useFileStore();
+const filePermStore = useFilePermStore();
+const routeStore = useRouteStore();
+
+const fileId = route.params.file as string;
+
+const perms = {
+  view: "i-heroicons-eye",
+  edit: "i-heroicons-pencil",
+};
+
+const fileInfo = await fileStore.fetchFile(fileId);
+const filePermUserCount = await filePermStore.fetchFilePermCount(fileId);
+
+routeStore.setTitle(computed(() => `theerapakg-moe-app: ${fileInfo?.name}`));
+</script>
+
 <template>
   <div class="flex flex-col place-content-start place-items-center">
     <div class="mb-8 h-8 w-full px-8">
@@ -71,32 +100,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useMountedState } from "./states";
-
-const mountedState = useMountedState();
-
-const mounted = useMounted();
-watch(mounted, () => {
-  mountedState.value = mounted.value;
-});
-mountedState.value = mounted.value;
-
-const route = useRoute();
-const fileStore = useFileStore();
-const filePermStore = useFilePermStore();
-const routeStore = useRouteStore();
-
-const fileId = route.params.file as string;
-
-const perms = {
-  view: "i-heroicons-eye",
-  edit: "i-heroicons-pencil",
-};
-
-const fileInfo = await fileStore.fetchFile(fileId);
-const filePermUserCount = await filePermStore.fetchFilePermCount(fileId);
-
-routeStore.setTitle(computed(() => `theerapakg-moe-app: ${fileInfo?.name}`));
-</script>

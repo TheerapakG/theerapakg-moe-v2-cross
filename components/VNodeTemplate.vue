@@ -1,7 +1,3 @@
-<template>
-  <renderVNode />
-</template>
-
 <script setup lang="tsx">
 import { cloneVNode, VNode } from "vue";
 
@@ -26,3 +22,7 @@ const renderVNode = () =>
     )
   );
 </script>
+
+<template>
+  <renderVNode />
+</template>

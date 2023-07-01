@@ -1,7 +1,3 @@
-<template>
-  <div></div>
-</template>
-
 <script setup lang="tsx">
 definePageMeta({
   title: "redirecting...",
@@ -75,3 +71,7 @@ onMounted(async () => {
   }
 });
 </script>
+
+<template>
+  <div></div>
+</template>

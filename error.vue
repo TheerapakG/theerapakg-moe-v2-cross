@@ -1,8 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
-<template>
-  <div></div>
-</template>
-
 <script setup lang="ts">
 const error = useError();
 
@@ -33,3 +28,7 @@ onMounted(() => {
   }
 });
 </script>
+
+<template>
+  <div></div>
+</template>

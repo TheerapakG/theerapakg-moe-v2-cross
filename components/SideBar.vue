@@ -1,3 +1,43 @@
+<script setup lang="ts">
+import { Ref } from "vue";
+
+type Emits = {
+  "update:modelValue": [value: boolean];
+};
+
+const emit = defineEmits<Emits>();
+
+type Props = {
+  modelValue?: boolean | undefined;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: undefined,
+});
+
+const appConfig = useAppConfig();
+
+const { open, toggle } =
+  props.modelValue !== undefined
+    ? {
+        open: computed(() => props.modelValue),
+        toggle: () => {
+          emit("update:modelValue", !open.value);
+        },
+      }
+    : {
+        open: ref(false),
+        toggle: () => {
+          (open as Ref<boolean>).value = !open.value;
+        },
+      };
+
+defineExpose({
+  open,
+  toggle,
+});
+</script>
+
 <template>
   <div class="pointer-events-none">
     <Transition name="slide-right">
@@ -43,43 +83,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { Ref } from "vue";
-
-type Emits = {
-  "update:modelValue": [value: boolean];
-};
-
-const emit = defineEmits<Emits>();
-
-type Props = {
-  modelValue?: boolean | undefined;
-};
-
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: undefined,
-});
-
-const appConfig = useAppConfig();
-
-const { open, toggle } =
-  props.modelValue !== undefined
-    ? {
-        open: computed(() => props.modelValue),
-        toggle: () => {
-          emit("update:modelValue", !open.value);
-        },
-      }
-    : {
-        open: ref(false),
-        toggle: () => {
-          (open as Ref<boolean>).value = !open.value;
-        },
-      };
-
-defineExpose({
-  open,
-  toggle,
-});
-</script>

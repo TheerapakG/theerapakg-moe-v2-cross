@@ -1,16 +1,3 @@
-<template>
-  <TextInputEditor :model-value="name" @update:model-value="rename">
-    <NuxtLink v-if="download" :to="`/file/download/${fileId}`">
-      <div class="overflow-hidden text-ellipsis whitespace-nowrap">
-        {{ name }}
-      </div>
-    </NuxtLink>
-    <div v-else class="overflow-hidden text-ellipsis whitespace-nowrap">
-      {{ name }}
-    </div>
-  </TextInputEditor>
-</template>
-
 <script setup lang="tsx">
 type Props = {
   fileId: string;
@@ -43,3 +30,16 @@ const rename = async (name: string) => {
   });
 };
 </script>
+
+<template>
+  <TextInputEditor :model-value="name" @update:model-value="rename">
+    <NuxtLink v-if="download" :to="`/file/download/${fileId}`">
+      <div class="overflow-hidden text-ellipsis whitespace-nowrap">
+        {{ name }}
+      </div>
+    </NuxtLink>
+    <div v-else class="overflow-hidden text-ellipsis whitespace-nowrap">
+      {{ name }}
+    </div>
+  </TextInputEditor>
+</template>

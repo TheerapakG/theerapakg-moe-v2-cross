@@ -1,3 +1,25 @@
+<script setup lang="ts">
+import { useMountedState } from "./states";
+
+const mountedState = useMountedState();
+
+const mounted = useMounted();
+watch(mounted, () => {
+  mountedState.value = mounted.value;
+});
+mountedState.value = mounted.value;
+
+const route = useRoute();
+const fileStore = useFileStore();
+const routeStore = useRouteStore();
+
+const fileId = route.params.file as string;
+
+const fileInfo = await fileStore.fetchFile(fileId);
+
+routeStore.setTitle(computed(() => `theerapakg-moe-app: ${fileInfo?.name}`));
+</script>
+
 <template>
   <div class="flex flex-col place-content-start place-items-center">
     <div class="mb-8 h-8 w-full px-8">
@@ -45,25 +67,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useMountedState } from "./states";
-
-const mountedState = useMountedState();
-
-const mounted = useMounted();
-watch(mounted, () => {
-  mountedState.value = mounted.value;
-});
-mountedState.value = mounted.value;
-
-const route = useRoute();
-const fileStore = useFileStore();
-const routeStore = useRouteStore();
-
-const fileId = route.params.file as string;
-
-const fileInfo = await fileStore.fetchFile(fileId);
-
-routeStore.setTitle(computed(() => `theerapakg-moe-app: ${fileInfo?.name}`));
-</script>

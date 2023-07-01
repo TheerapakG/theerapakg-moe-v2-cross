@@ -1,33 +1,3 @@
-<template>
-  <div>
-    <UButton
-      label="logout"
-      :disabled="
-        !current || current.id === '00000000-0000-0000-0000-000000000000'
-      "
-      @click="open = true"
-    />
-
-    <UModal v-model="open">
-      <UCard>
-        <template #header>
-          <div class="text-center text-4xl">LOGOUT</div>
-        </template>
-
-        <div class="flex place-content-center place-items-center">
-          <UButton
-            color="black"
-            size="xl"
-            :loading="pending"
-            label="logout"
-            @click="logout"
-          />
-        </div>
-      </UCard>
-    </UModal>
-  </div>
-</template>
-
 <script setup lang="ts">
 const userStore = useUserStore();
 const current = await userStore.fetchCurrentComputed();
@@ -73,3 +43,33 @@ const logout = async () => {
   });
 };
 </script>
+
+<template>
+  <div>
+    <UButton
+      label="logout"
+      :disabled="
+        !current || current.id === '00000000-0000-0000-0000-000000000000'
+      "
+      @click="open = true"
+    />
+
+    <UModal v-model="open">
+      <UCard>
+        <template #header>
+          <div class="text-center text-4xl">LOGOUT</div>
+        </template>
+
+        <div class="flex place-content-center place-items-center">
+          <UButton
+            color="black"
+            size="xl"
+            :loading="pending"
+            label="logout"
+            @click="logout"
+          />
+        </div>
+      </UCard>
+    </UModal>
+  </div>
+</template>

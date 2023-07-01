@@ -1,3 +1,58 @@
+<script setup lang="ts">
+import { VNode } from "vue";
+
+interface View {
+  name: string;
+  node: VNode;
+  closable?: boolean;
+}
+
+type Props = {
+  views: { [id: string]: View };
+};
+
+type Emits = {
+  removeView: [id: string];
+};
+
+const emit = defineEmits<Emits>();
+
+const props = defineProps<Props>();
+
+const { views } = toRefs(props);
+
+const tabBarElement = ref<HTMLDivElement | null>(null);
+
+const onTabBarScroll = (event: WheelEvent) => {
+  if (!event.deltaX && event.deltaY)
+    tabBarElement.value?.scrollBy({
+      left: event.deltaY,
+      behavior: "smooth",
+    });
+};
+
+const currentViewIdRaw = ref(useFirst(useKeys(views.value)) ?? "");
+
+const currentViewId = computed({
+  get: () => {
+    return currentViewIdRaw.value;
+  },
+  set: (newCurrentViewId: string) => {
+    if (!newCurrentViewId || !views.value[newCurrentViewId]) {
+      currentViewIdRaw.value = "";
+    } else {
+      currentViewIdRaw.value = newCurrentViewId;
+    }
+  },
+});
+
+watch(views, () => {
+  if (!currentViewId.value || !views.value[currentViewId.value]) {
+    currentViewId.value = useFirst(useKeys(views.value)) ?? "";
+  }
+});
+</script>
+
 <template>
   <div class="flex flex-col place-content-center place-items-center">
     <ClientOnly>
@@ -68,61 +123,6 @@
     </ClientOnly>
   </div>
 </template>
-
-<script setup lang="ts">
-import { VNode } from "vue";
-
-interface View {
-  name: string;
-  node: VNode;
-  closable?: boolean;
-}
-
-type Props = {
-  views: { [id: string]: View };
-};
-
-type Emits = {
-  removeView: [id: string];
-};
-
-const emit = defineEmits<Emits>();
-
-const props = defineProps<Props>();
-
-const { views } = toRefs(props);
-
-const tabBarElement = ref<HTMLDivElement | null>(null);
-
-const onTabBarScroll = (event: WheelEvent) => {
-  if (!event.deltaX && event.deltaY)
-    tabBarElement.value?.scrollBy({
-      left: event.deltaY,
-      behavior: "smooth",
-    });
-};
-
-const currentViewIdRaw = ref(useFirst(useKeys(views.value)) ?? "");
-
-const currentViewId = computed({
-  get: () => {
-    return currentViewIdRaw.value;
-  },
-  set: (newCurrentViewId: string) => {
-    if (!newCurrentViewId || !views.value[newCurrentViewId]) {
-      currentViewIdRaw.value = "";
-    } else {
-      currentViewIdRaw.value = newCurrentViewId;
-    }
-  },
-});
-
-watch(views, () => {
-  if (!currentViewId.value || !views.value[currentViewId.value]) {
-    currentViewId.value = useFirst(useKeys(views.value)) ?? "";
-  }
-});
-</script>
 
 <style scoped>
 .tab-bar-move {

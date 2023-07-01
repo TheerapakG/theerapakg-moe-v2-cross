@@ -1,3 +1,22 @@
+<script setup lang="ts">
+type Props = {
+  modelValue: number;
+  pageCount: number;
+};
+
+const props = defineProps<Props>();
+const { modelValue: page } = toRefs(props);
+
+type Emits = {
+  "update:modelValue": [value: number];
+};
+
+const emits = defineEmits<Emits>();
+
+const onChange = (event: { target: HTMLInputElement }) =>
+  emits("update:modelValue", parseInt(event.target.value));
+</script>
+
 <template>
   <div
     class="mx-auto grid h-8 w-80 grid-cols-[repeat(4,2rem)_3rem_repeat(4,2rem)] place-content-center place-items-center gap-x-0.5"
@@ -65,22 +84,3 @@
     />
   </div>
 </template>
-
-<script setup lang="ts">
-type Props = {
-  modelValue: number;
-  pageCount: number;
-};
-
-const props = defineProps<Props>();
-const { modelValue: page } = toRefs(props);
-
-type Emits = {
-  "update:modelValue": [value: number];
-};
-
-const emits = defineEmits<Emits>();
-
-const onChange = (event: { target: HTMLInputElement }) =>
-  emits("update:modelValue", parseInt(event.target.value));
-</script>

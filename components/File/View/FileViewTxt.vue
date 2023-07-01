@@ -1,3 +1,19 @@
+<script setup lang="ts">
+type Props = {
+  fileId: string;
+  lang?: string;
+  activatePortal?: boolean;
+};
+
+const props = defineProps<Props>();
+const { fileId } = toRefs(props);
+
+// TODO: reactive
+const data = await $apiFetch<string>(`/api/file/${fileId.value}/download`, {
+  responseType: "text",
+});
+</script>
+
 <template>
   <div class="relative">
     <ClientOnly>
@@ -16,19 +32,3 @@
     </ClientOnly>
   </div>
 </template>
-
-<script setup lang="ts">
-type Props = {
-  fileId: string;
-  lang?: string;
-  activatePortal?: boolean;
-};
-
-const props = defineProps<Props>();
-const { fileId } = toRefs(props);
-
-// TODO: reactive
-const data = await $apiFetch<string>(`/api/file/${fileId.value}/download`, {
-  responseType: "text",
-});
-</script>

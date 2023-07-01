@@ -1,3 +1,40 @@
+<script setup lang="ts">
+import { Handler, addV } from "@vueuse/gesture";
+
+type Props = {
+  fileId: string;
+};
+
+defineProps<Props>();
+
+const wrapper = ref<HTMLElement>();
+const control = ref<HTMLElement>();
+
+const factor = ref(100);
+const factorStr = computed(() => `${factor.value}%`);
+
+const offset = ref([0, 0]);
+const displayOffset = ref([0, 0]);
+const displayOffsetStr = computed(() =>
+  displayOffset.value.map((i) => `${i}px`).join(", ")
+);
+
+const drag = ref(false);
+
+const dragHandler: Handler<"drag"> = ({ movement, dragging }) => {
+  drag.value = dragging;
+  displayOffset.value = addV(
+    offset.value,
+    movement.map((i) => (i * 100) / factor.value)
+  );
+  if (!dragging) {
+    offset.value = displayOffset.value;
+  }
+};
+
+const controlVisible = useAutoHideVisible(wrapper, control);
+</script>
+
 <template>
   <div
     ref="wrapper"
@@ -45,43 +82,6 @@
     </Transition>
   </div>
 </template>
-
-<script setup lang="ts">
-import { Handler, addV } from "@vueuse/gesture";
-
-type Props = {
-  fileId: string;
-};
-
-defineProps<Props>();
-
-const wrapper = ref<HTMLElement>();
-const control = ref<HTMLElement>();
-
-const factor = ref(100);
-const factorStr = computed(() => `${factor.value}%`);
-
-const offset = ref([0, 0]);
-const displayOffset = ref([0, 0]);
-const displayOffsetStr = computed(() =>
-  displayOffset.value.map((i) => `${i}px`).join(", ")
-);
-
-const drag = ref(false);
-
-const dragHandler: Handler<"drag"> = ({ movement, dragging }) => {
-  drag.value = dragging;
-  displayOffset.value = addV(
-    offset.value,
-    movement.map((i) => (i * 100) / factor.value)
-  );
-  if (!dragging) {
-    offset.value = displayOffset.value;
-  }
-};
-
-const controlVisible = useAutoHideVisible(wrapper, control);
-</script>
 
 <style scoped>
 .image {

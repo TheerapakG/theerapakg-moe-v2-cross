@@ -1,3 +1,19 @@
+<script setup lang="ts">
+type Emits = {
+  files: [payload: File[]];
+};
+
+const emit = defineEmits<Emits>();
+
+const dropZone = ref<HTMLElement>();
+const files = ref<File[]>([]);
+
+const { isOverDropZone } = useDropZone(dropZone, (dropFiles) => {
+  files.value = markRaw(dropFiles ?? []);
+  emit("files", dropFiles ?? []);
+});
+</script>
+
 <template>
   <div
     class="relative flex h-full w-full flex-col place-content-center place-items-center"
@@ -37,19 +53,3 @@
     <div ref="dropZone" class="absolute h-full w-full"></div>
   </div>
 </template>
-
-<script setup lang="ts">
-type Emits = {
-  files: [payload: File[]];
-};
-
-const emit = defineEmits<Emits>();
-
-const dropZone = ref<HTMLElement>();
-const files = ref<File[]>([]);
-
-const { isOverDropZone } = useDropZone(dropZone, (dropFiles) => {
-  files.value = markRaw(dropFiles ?? []);
-  emit("files", dropFiles ?? []);
-});
-</script>

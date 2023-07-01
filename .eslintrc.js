@@ -18,13 +18,6 @@ module.exports = {
   plugins: ["@typescript-eslint", "vue", "nuxt"],
   rules: {
     "vue/no-v-model-argument": "off",
+    "vue/multi-word-component-names": "off",
   },
-  overrides: [
-    {
-      files: ["layouts/**/*.vue", "pages/**/*.vue"],
-      rules: {
-        "vue/multi-word-component-names": "off",
-      },
-    },
-  ],
 };

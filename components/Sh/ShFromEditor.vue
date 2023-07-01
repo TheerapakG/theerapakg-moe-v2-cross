@@ -1,7 +1,3 @@
-<template>
-  <TextInputEditor :model-value="from" @update:model-value="rename" />
-</template>
-
 <script setup lang="tsx">
 type Props = {
   from: string;
@@ -46,3 +42,7 @@ const rename = async (name: string) => {
   emit("refresh");
 };
 </script>
+
+<template>
+  <TextInputEditor :model-value="from" @update:model-value="rename" />
+</template>

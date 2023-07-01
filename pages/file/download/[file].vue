@@ -1,25 +1,3 @@
-<template>
-  <div v-if="!fileInfo">Getting file information...</div>
-  <div v-else>
-    <div>
-      <div>File Info:</div>
-      <div>name: {{ fileInfo.name }}</div>
-      <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
-    </div>
-    <div class="flex place-content-center place-items-center gap-2">
-      <FileButtonView v-slot="{ to }" :file-id="fileId">
-        <UButton size="xl" label="view online" :to="to" />
-      </FileButtonView>
-      <UButton
-        color="black"
-        size="xl"
-        label="download"
-        @click="startDownload"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { formatPretty } from "~/utils/formatPretty";
 
@@ -55,3 +33,25 @@ const startDownload = () => {
   });
 };
 </script>
+
+<template>
+  <div v-if="!fileInfo">Getting file information...</div>
+  <div v-else>
+    <div>
+      <div>File Info:</div>
+      <div>name: {{ fileInfo.name }}</div>
+      <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
+    </div>
+    <div class="flex place-content-center place-items-center gap-2">
+      <FileButtonView v-slot="{ to }" :file-id="fileId">
+        <UButton size="xl" label="view online" :to="to" />
+      </FileButtonView>
+      <UButton
+        color="black"
+        size="xl"
+        label="download"
+        @click="startDownload"
+      />
+    </div>
+  </div>
+</template>

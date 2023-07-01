@@ -1,18 +1,3 @@
-<template>
-  <div>
-    <slot :to="target">
-      <UButton
-        variant="ghost"
-        size="xl"
-        icon="i-heroicons-pencil"
-        :aria-label="ariaLabel"
-        :ui="{ rounded: 'rounded-full' }"
-        :to="target"
-      />
-    </slot>
-  </div>
-</template>
-
 <script setup lang="ts">
 import MimeType from "whatwg-mimetype";
 import type { RouteLocationRaw } from "vue-router";
@@ -55,3 +40,18 @@ const target = computed<RouteLocationRaw>(() => {
   };
 });
 </script>
+
+<template>
+  <div>
+    <slot :to="target">
+      <UButton
+        variant="ghost"
+        size="xl"
+        icon="i-heroicons-pencil"
+        :aria-label="ariaLabel"
+        :ui="{ rounded: 'rounded-full' }"
+        :to="target"
+      />
+    </slot>
+  </div>
+</template>

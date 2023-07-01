@@ -1,9 +1,3 @@
-<template>
-  <UDropdown :items="dropdownItems" :popper="{ placement: 'bottom-start' }">
-    <UButton label="mode" />
-  </UDropdown>
-</template>
-
 <script setup lang="ts">
 type Props = {
   fileId: string;
@@ -37,3 +31,9 @@ const dropdownItems = computed(() => [
   ],
 ]);
 </script>
+
+<template>
+  <UDropdown :items="dropdownItems" :popper="{ placement: 'bottom-start' }">
+    <UButton label="mode" />
+  </UDropdown>
+</template>

@@ -13,7 +13,7 @@ import type {
 } from "nuxt/dist/app/composables/asyncData";
 import type { FetchContext, FetchError, FetchOptions } from "ofetch";
 
-const _apiFetch = <
+const $apiFetchCreate = (<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest
 >(
@@ -49,10 +49,8 @@ const _apiFetch = <
       onResponseError: tryHandleCommonResponseError,
     })
   );
-};
+}) as $Fetch["create"];
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export const $apiFetch = (<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
@@ -60,22 +58,20 @@ export const $apiFetch = (<
 >(
   request: R,
   options?: O
-) => _apiFetch({})<T, R, O>(request, options)) as $Fetch;
+) => $apiFetchCreate({})<T, R, O>(request, options)) as $Fetch;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-$apiFetch.raw = <
+const $apiFetchRaw = (<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
   O extends NitroFetchOptions<R> = NitroFetchOptions<R>
 >(
   request: R,
   options?: O
-) => _apiFetch({}).raw<T, R, O>(request, options);
-$apiFetch.create = _apiFetch;
+) => $apiFetchCreate({}).raw<T, R, O>(request, options)) as $Fetch["raw"];
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+$apiFetch.raw = $apiFetchRaw;
+$apiFetch.create = $apiFetchCreate;
+
 export const useApiFetch = <
   ResT = void,
   ErrorT = FetchError,
