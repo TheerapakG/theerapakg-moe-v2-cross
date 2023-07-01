@@ -20,7 +20,7 @@ export const userPermissions = pgTable(
   "user_permissions",
   {
     user_id: uuid("user_id")
-      .references(() => user.id)
+      .references(() => user.id, { onDelete: "cascade" })
       .notNull(),
     permission: UserPermission("permission").notNull(),
   },

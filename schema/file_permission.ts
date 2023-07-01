@@ -12,10 +12,10 @@ export const fileUserPermissions = pgTable(
   "file_user_permissions",
   {
     file_id: uuid("file_id")
-      .references(() => file.id)
+      .references(() => file.id, { onDelete: "cascade" })
       .notNull(),
     user_id: uuid("user_id")
-      .references(() => user.id)
+      .references(() => user.id, { onDelete: "cascade" })
       .notNull(),
     permission: FilePermission("permission").notNull(),
   },

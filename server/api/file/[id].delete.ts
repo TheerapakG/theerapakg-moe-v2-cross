@@ -25,21 +25,12 @@ export default defineEventHandler(
       .index<typeof fileDocument>("files")
       .deleteDocument(id);
 
-    const _fileDir = await useDrizzle().transaction(async (tx) => {
-      await tx
-        .delete(fileUserPermissionsTable)
-        .where(eq(fileUserPermissionsTable.file_id, id));
-      const _fileDir = await tx
-        .delete(fileTable)
-        .where(eq(fileTable.id, id))
-        .returning({ dir: fileTable.dir });
+    const [{ dir }] = await useDrizzle()
+      .delete(fileTable)
+      .where(eq(fileTable.id, id))
+      .returning({ dir: fileTable.dir });
 
-      return _fileDir;
-    });
-
-    const fileDir: string | undefined = _fileDir[0]?.dir;
-
-    await fs.unlink(fileDir);
+    await fs.unlink(dir);
 
     return {};
   })
