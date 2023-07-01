@@ -1,12 +1,20 @@
 import { type } from "arktype";
 import { sql, inArray } from "drizzle-orm";
-import { isEqual } from "lodash-es";
+import { isEqual, isEmpty } from "lodash-es";
 
 const paramValidator = type({
   "users?": [
-    type(["string", "|>", (s) => s.split(",")]),
+    type([
+      "string",
+      "|>",
+      (s) =>
+        s
+          .split(",")
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0),
+    ]),
     "|>",
-    type("1 <= uuid[] <= 50"),
+    type("0 <= uuid[] <= 50"),
   ],
 });
 
@@ -29,6 +37,8 @@ export default defineEventHandler(
         .from(fileTable);
 
       return { count };
+    } else if (isEmpty(targets)) {
+      return { count: 0 };
     } else {
       const [{ count: _count }] = await useDrizzle()
         .select({

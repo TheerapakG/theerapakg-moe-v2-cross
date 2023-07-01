@@ -1,12 +1,20 @@
 import { type } from "arktype";
 import { and, eq, inArray } from "drizzle-orm";
-import { keyBy as useKeyBy } from "lodash-es";
+import { keyBy as useKeyBy, isEmpty } from "lodash-es";
 
 const queryValidator = type({
   users: [
-    type(["string", "|>", (s) => s.split(",")]),
+    type([
+      "string",
+      "|>",
+      (s) =>
+        s
+          .split(",")
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0),
+    ]),
     "|>",
-    type("1 <= uuid[] <= 50"),
+    type("0 <= uuid[] <= 50"),
   ],
 });
 
@@ -29,6 +37,8 @@ export default defineEventHandler(
 
     await checkFilesUserPerm([id], user);
 
+    if (isEmpty(users)) return [];
+
     const perms = await useDrizzle()
       .select()
       .from(fileUserPermissionsTable)
@@ -42,13 +52,11 @@ export default defineEventHandler(
 
     const permsMap = useKeyBy(perms, "user_id");
 
-    return {
-      users: users.map((id) => {
-        return {
-          id,
-          perm: permsMap[id] ? true : false,
-        };
-      }),
-    };
+    return users.map((id) => {
+      return {
+        id,
+        perm: permsMap[id] ? true : false,
+      };
+    });
   })
 );

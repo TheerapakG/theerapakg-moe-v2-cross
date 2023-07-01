@@ -1,7 +1,8 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { keyBy as useKeyBy, groupBy as useGroupBy } from "lodash-es";
+import { keyBy as useKeyBy, groupBy as useGroupBy, isEmpty } from "lodash-es";
 
 export const checkFilesUserPerm = async (files: string[], user: string) => {
+  if (isEmpty(files)) return [];
   const { fileOwner, userPerms, filePerms } = await useDrizzle().transaction(
     async (tx) => {
       const fileOwner = await tx

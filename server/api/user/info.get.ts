@@ -1,12 +1,20 @@
 import { type } from "arktype";
 import { inArray } from "drizzle-orm";
-import { keyBy as useKeyBy } from "lodash-es";
+import { keyBy as useKeyBy, isEmpty } from "lodash-es";
 
 const queryValidator = type({
   ids: [
-    type(["string", "|>", (s) => s.split(",")]),
+    type([
+      "string",
+      "|>",
+      (s) =>
+        s
+          .split(",")
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0),
+    ]),
     "|>",
-    type("1 <= uuid[] <= 50"),
+    type("0 <= uuid[] <= 50"),
   ],
 });
 export default defineEventHandler(
@@ -14,6 +22,8 @@ export default defineEventHandler(
     const {
       query: { ids },
     } = await validateEvent({ query: queryValidator }, event);
+
+    if (isEmpty(ids)) return [];
 
     const users = await useDrizzle()
       .select({

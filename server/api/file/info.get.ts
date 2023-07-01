@@ -1,15 +1,23 @@
 import { type } from "arktype";
 import { inArray } from "drizzle-orm";
 import fs from "fs";
-import { keyBy as useKeyBy } from "lodash-es";
+import { keyBy as useKeyBy, isEmpty } from "lodash-es";
 import mime from "mime";
 import path from "path";
 
 const queryValidator = type({
   ids: [
-    type(["string", "|>", (s) => s.split(",")]),
+    type([
+      "string",
+      "|>",
+      (s) =>
+        s
+          .split(",")
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0),
+    ]),
     "|>",
-    type("1 <= uuid[] <= 50"),
+    type("0 <= uuid[] <= 50"),
   ],
 });
 
@@ -22,6 +30,8 @@ export default defineEventHandler(
     } = await validateEvent({ query: queryValidator }, event);
 
     const filePerms = await checkFilesUserPerm(ids, user);
+
+    if (isEmpty(ids)) return [];
 
     const files = await useDrizzle()
       .select()

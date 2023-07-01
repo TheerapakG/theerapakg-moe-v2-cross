@@ -5,9 +5,17 @@ import { isEqual } from "lodash-es";
 const queryValidator = type({
   "file?": "string",
   "users?": [
-    type(["string", "|>", (s) => s.split(",")]),
+    type([
+      "string",
+      "|>",
+      (s) =>
+        s
+          .split(",")
+          .map((e) => e.trim())
+          .filter((e) => e.length > 0),
+    ]),
     "|>",
-    type("1 <= uuid[] <= 50"),
+    type("0 <= uuid[] <= 50"),
   ],
   "page?": ["parsedInteger", "|>", type("integer>0")],
   "size?": ["parsedInteger", "|>", type("integer<=50")],
