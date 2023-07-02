@@ -220,29 +220,11 @@ const { pageCount } = useOffsetPagination({
         </FileButtonPermEditor>
       </template>
       <template #actions-data="{ row }">
-        <div
-          class="inline-flex h-8 w-min place-content-center place-items-center gap-x-1"
-        >
-          <FileButtonView :file-id="row.id" :aria-label="`view ${row.name}`" />
-          <FileButtonEdit :file-id="row.id" :aria-label="`edit ${row.name}`" />
-          <FileButtonUpload
-            :file-id="row.id"
-            :aria-label="`upload ${row.name}`"
-          />
-          <UButton
-            variant="ghost"
-            size="xl"
-            icon="i-heroicons-arrow-down-tray"
-            :aria-label="`download ${row.name}`"
-            :ui="{ rounded: 'rounded-full' }"
-            :to="`/file/download/${row.id}`"
-          />
-          <FileButtonDelete
-            :file-id="row.id"
-            :aria-label="`delete ${row.name}`"
-            @delete="refresh"
-          />
-        </div>
+        <FileButtonAction
+          class="h-8 w-8 inline-flex place-content-center place-items-center"
+          :file-id="row.id"
+          @delete="refresh"
+        />
       </template>
     </UTable>
     <PaginateNavigation v-model="page" :page-count="pageCount" />

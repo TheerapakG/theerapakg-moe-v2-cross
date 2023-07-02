@@ -1,14 +1,24 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 type Props = {
   fileId: string;
-  ariaLabel?: string;
+  modelValue: boolean;
 };
 
 const props = defineProps<Props>();
 const { fileId } = toRefs(props);
 
+type Emits = {
+  "update:modelValue": [boolean];
+};
+
+const emit = defineEmits<Emits>();
+
 const fileStore = useFileStore();
 const toast = useToast();
+
+const fileInfo = await fileStore.fetchFileComputed(fileId);
+
+const pending = ref(false);
 
 const files = ref<File[]>([]);
 const onFilesDropped = (droppedFiles: File[]) => {
@@ -35,6 +45,8 @@ const uploadFile = async () => {
     return;
   }
 
+  pending.value = true;
+
   const fileReader = new FileReader();
   fileReader.addEventListener("load", async (event) => {
     try {
@@ -47,12 +59,15 @@ const uploadFile = async () => {
         color: "red",
       });
       return;
+    } finally {
+      pending.value = false;
     }
     toast.add({
       title: "Upload Success",
       description: "Successfully uploaded",
       icon: "i-heroicons-exclaimation-circle",
     });
+    emit("update:modelValue", false);
   });
 
   fileReader.readAsDataURL(_files[0]);
@@ -60,34 +75,35 @@ const uploadFile = async () => {
 </script>
 
 <template>
-  <div class="relative">
-    <UPopover>
-      <slot>
-        <UButton
-          variant="ghost"
-          size="xl"
-          icon="i-heroicons-cloud-arrow-up"
-          :aria-label="ariaLabel"
-          :ui="{ rounded: 'rounded-full' }"
-        />
-      </slot>
+  <UModal
+    :model-value="modelValue"
+    @update:model-value="(value) => emit('update:modelValue', value)"
+  >
+    <UCard>
+      <template #header>
+        <div class="text-center text-2xl">upload {{ fileInfo.name }}</div>
+      </template>
 
-      <template #panel>
+      <div class="flex flex-col place-content-center place-items-center">
         <div
-          class="flex flex-col place-content-center place-items-center gap-y-4 p-4"
+          class="h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
         >
-          <div
-            class="mx-auto h-16 w-64 rounded-lg border-2 border-gray-500 dark:border-gray-400"
-          >
-            <DropZone @files="onFilesDropped" />
-          </div>
+          <DropZone @files="onFilesDropped" />
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex place-content-center place-items-center">
           <UButton
+            color="black"
+            size="xl"
             label="upload"
             :disabled="files.length !== 1"
+            :pending="pending"
             @click="uploadFile()"
           />
         </div>
       </template>
-    </UPopover>
-  </div>
+    </UCard>
+  </UModal>
 </template>
