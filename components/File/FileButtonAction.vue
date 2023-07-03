@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import MimeType from "whatwg-mimetype";
-
 type Props = {
   fileId: string;
   ariaLabel?: string;
@@ -18,49 +16,24 @@ const emit = defineEmits<Emits>();
 const openModalUploadReplace = ref(false);
 const openModalDelete = ref(false);
 
-const fileStore = useFileStore();
-
-const fileInfo = await fileStore.fetchFileComputed(fileId);
-
-const defaultMime = {
-  type: "text",
-  subtype: "plain",
-  parameters: undefined,
-};
-
-const mimeType = computed(() => {
-  if (!fileInfo.value.mime) return defaultMime;
-  try {
-    return new MimeType(fileInfo.value.mime);
-  } catch {
-    return defaultMime;
-  }
-});
+const viewTarget = await useFileTarget(fileId, "view");
+const editTarget = await useFileTarget(fileId, "edit");
 
 const items = computed(() => {
-  const mime = mimeType.value;
   return [
     [
       {
         label: "View",
         icon: "i-heroicons-eye",
-        to: {
-          path: `/file/view/mime/${mime.type}/${mime.subtype}/${fileId.value}`,
-          ...(mime.parameters && {
-            query: Object.fromEntries(mime.parameters),
-          }),
-        },
+        to: viewTarget.value,
       },
       {
         label: "Edit",
         icon: "i-heroicons-pencil",
-        to: {
-          path: `/file/edit/mime/${mime.type}/${mime.subtype}/${fileId.value}`,
-          ...(mime.parameters && {
-            query: Object.fromEntries(mime.parameters),
-          }),
-        },
+        to: editTarget.value,
       },
+    ],
+    [
       {
         label: "Upload ...",
         icon: "i-heroicons-cloud-arrow-up",
@@ -71,6 +44,8 @@ const items = computed(() => {
         icon: "i-heroicons-arrow-down-tray",
         to: `/file/download/${fileId.value}`,
       },
+    ],
+    [
       {
         label: "Delete ...",
         icon: "i-heroicons-minus",

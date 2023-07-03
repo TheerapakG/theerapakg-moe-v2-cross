@@ -16,6 +16,7 @@ const fileStore = useFileStore();
 const toast = useToast();
 
 const fileId = route.params.file as string;
+const viewTarget = await useFileTarget(fileId, "view");
 
 const fileInfo = await fileStore.fetchFile(fileId);
 
@@ -43,9 +44,7 @@ const startDownload = () => {
       <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
     </div>
     <div class="flex place-content-center place-items-center gap-2">
-      <FileButtonView v-slot="{ to }" :file-id="fileId">
-        <UButton size="xl" label="view online" :to="to" />
-      </FileButtonView>
+      <UButton size="xl" label="view online" :to="viewTarget" />
       <UButton
         color="black"
         size="xl"
