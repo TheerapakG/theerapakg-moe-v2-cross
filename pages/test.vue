@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import { UInput } from "#components";
-import VNodeTemplate from "~/components/VNodeTemplate.vue";
 
 definePageMeta({
   title: "theerapakg-moe-app",
@@ -27,13 +26,9 @@ onMounted(async () => {
 
   views[useUniqueId("test_view")] = {
     name: "some really long name 1",
-    node: (
-      <VNodeTemplate
-        renderNode={h(MonacoEditor, {
-          class: "h-64",
-        })}
-      />
-    ),
+    node: h(MonacoEditor, {
+      class: "h-64",
+    }),
     closable: true,
   };
   views[useUniqueId("test_view")] = {
@@ -43,13 +38,9 @@ onMounted(async () => {
   };
   views[useUniqueId("test_view")] = {
     name: "3",
-    node: (
-      <VNodeTemplate
-        renderNode={h(MonacoEditor, {
-          class: "h-64",
-        })}
-      />
-    ),
+    node: h(MonacoEditor, {
+      class: "h-64",
+    }),
     closable: true,
   };
   views[useUniqueId("test_view")] = {

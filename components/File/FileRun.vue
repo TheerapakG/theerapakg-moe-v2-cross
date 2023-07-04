@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 type Props = {
   fileId: string;
 };

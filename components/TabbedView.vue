@@ -105,17 +105,17 @@ watch(views, () => {
           </div>
         </TransitionGroup>
       </div>
-      <div v-for="(view, id) in views" :key="id" class="w-full">
+      <div class="w-full bg-gray-300 p-2 dark:bg-gray-600">
         <div
+          v-for="(view, id) in views"
           v-show="currentViewId === (id as string)"
-          class="w-full bg-gray-300 p-2 dark:bg-gray-600"
+          :key="id"
+          class="relative w-full bg-white p-2 dark:bg-black"
         >
           <KeepAlive>
             <VNodeTemplate
               v-if="currentViewId === (id as string)"
-              :render-node="view.node"
-              tag="div"
-              class="relative w-full bg-white p-2 dark:bg-black"
+              :node="view.node"
             />
           </KeepAlive>
         </div>

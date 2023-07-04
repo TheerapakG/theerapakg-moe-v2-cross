@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script setup lang="ts">
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
 
 type Props = {
