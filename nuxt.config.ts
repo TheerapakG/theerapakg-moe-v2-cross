@@ -4,6 +4,13 @@ export default defineNuxtConfig({
 
   app: {
     baseURL: "/",
+    pageTransition: {
+      enterFromClass: "opacity-0",
+      leaveToClass: "opacity-0",
+      enterActiveClass: "transition-opacity duration-300 ease-linear",
+      leaveActiveClass: "transition-opacity duration-300 ease-linear",
+      mode: "out-in",
+    },
   },
 
   runtimeConfig: {

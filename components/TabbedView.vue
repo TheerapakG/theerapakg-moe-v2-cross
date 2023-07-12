@@ -58,10 +58,17 @@ watch(views, () => {
     <ClientOnly>
       <div
         ref="tabBarElement"
-        class="thin-scrollbars tab-bar flex w-full place-items-center justify-start gap-x-[0.0625rem] overflow-x-scroll bg-gray-100 px-2 dark:bg-gray-800"
+        class="thin-scrollbars tab-bar flex w-full place-items-center justify-start gap-x-[1px] overflow-x-scroll bg-gray-100 px-2 dark:bg-gray-800 [&_.tab-inactive+.tab-inactive]:before:absolute [&_.tab-inactive+.tab-inactive]:before:-left-[1px] [&_.tab-inactive+.tab-inactive]:before:top-2 [&_.tab-inactive+.tab-inactive]:before:h-4 [&_.tab-inactive+.tab-inactive]:before:w-[1px] [&_.tab-inactive+.tab-inactive]:before:bg-gray-400 [&_.tab-inactive+.tab-inactive]:before:content-[''] [&_.tab-inactive+.tab-inactive]:before:dark:bg-gray-500"
         @wheel="onTabBarScroll"
       >
-        <TransitionGroup name="tab-bar">
+        <TransitionGroup
+          name="tab-bar"
+          move-class="transition-transform duration-300 ease-in-out"
+          enter-active-class="transition duration-300 ease-out"
+          leave-active-class="w-0 transition duration-300 ease-out"
+          enter-from-class="opacity-0"
+          leave-to-class="opacity-0"
+        >
           <div
             v-for="(view, id) in views"
             :key="id"
@@ -123,26 +130,3 @@ watch(views, () => {
     </ClientOnly>
   </div>
 </template>
-
-<style scoped>
-.tab-bar-move {
-  @apply transition-transform duration-300 ease-in-out;
-}
-
-.tab-bar-enter-active,
-.tab-bar-leave-active {
-  @apply transition duration-300 ease-out;
-}
-
-.tab-bar-leave-active {
-  @apply w-0;
-}
-
-.tab-bar-enter-from,
-.tab-bar-leave-to {
-  @apply opacity-0;
-}
-.tab-inactive + .tab-inactive {
-  @apply before:absolute before:-left-[0.0625rem] before:top-2 before:h-4 before:w-[0.0625rem] before:bg-gray-400 before:content-[''] before:dark:bg-gray-500;
-}
-</style>

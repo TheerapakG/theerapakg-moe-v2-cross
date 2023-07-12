@@ -76,7 +76,7 @@ const { pageCount } = useOffsetPagination({
 
 <template>
   <div class="relative">
-    <Transition name="fade">
+    <TransitionFade>
       <LoadingCircleOverlay v-if="pending" />
       <UContainer v-else class="thin-scrollbars overflow-x-auto">
         <UTable :columns="tableColumns" :rows="tableData">
@@ -89,7 +89,7 @@ const { pageCount } = useOffsetPagination({
           </template>
         </UTable>
       </UContainer>
-    </Transition>
+    </TransitionFade>
     <PaginateNavigation v-model="page" :page-count="pageCount" />
   </div>
 </template>

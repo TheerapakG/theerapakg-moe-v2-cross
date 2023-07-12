@@ -61,10 +61,10 @@ const links = computed(() =>
       </div>
     </div>
     <UNotifications />
-    <Transition name="fade">
+    <TransitionFade>
       <LoadingCircleOverlay v-if="routeStore.navigating" />
-    </Transition>
-    <Transition name="fade">
+    </TransitionFade>
+    <TransitionFade>
       <button
         v-if="menu?.open"
         class="absolute inset-0"
@@ -73,7 +73,7 @@ const links = computed(() =>
       >
         <InactiveOverlay />
       </button>
-    </Transition>
+    </TransitionFade>
     <SideBar
       ref="menu"
       class="pointer-events-none absolute left-0 top-0 h-full w-64"

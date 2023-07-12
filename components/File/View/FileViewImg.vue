@@ -53,7 +53,7 @@ const controlVisible = useAutoHideVisible(wrapper, control);
         role="img"
       />
     </div>
-    <Transition name="fade">
+    <TransitionFade>
       <div
         v-if="controlVisible"
         ref="control"
@@ -79,7 +79,7 @@ const controlVisible = useAutoHideVisible(wrapper, control);
           />
         </div>
       </div>
-    </Transition>
+    </TransitionFade>
   </div>
 </template>
 

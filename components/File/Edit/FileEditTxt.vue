@@ -113,7 +113,7 @@ if (process.client) {
         </div>
       </portal>
       <portal v-if="activatePortal" to="file-status">
-        <Transition name="pop" mode="out-in">
+        <TransitionPop mode="out-in">
           <div
             v-if="status.has('edited')"
             class="text-amber-600 dark:text-amber-300"
@@ -126,7 +126,7 @@ if (process.client) {
           >
             &nbsp;- saved
           </div>
-        </Transition>
+        </TransitionPop>
       </portal>
     </ClientOnly>
   </div>

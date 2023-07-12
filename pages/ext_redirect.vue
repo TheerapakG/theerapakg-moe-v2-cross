@@ -1,10 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
   title: "redirecting...",
-  pageTransition: {
-    name: "slide-left-uni",
-    mode: "out-in",
-  },
 });
 
 const route = useRoute();

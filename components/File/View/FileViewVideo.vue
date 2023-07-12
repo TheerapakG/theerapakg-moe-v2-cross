@@ -47,7 +47,7 @@ const controlVisible = useAutoHideVisible(wrapper, control);
     }"
   >
     <video ref="video" :class="{ 'w-full h-full': fullscreen }" />
-    <Transition name="fade">
+    <TransitionFade>
       <MediaControls
         v-if="!fullscreen || controlVisible"
         ref="control"
@@ -61,6 +61,6 @@ const controlVisible = useAutoHideVisible(wrapper, control);
         :fullscreen="fullscreen"
         @update:fullscreen="updateFullscreen"
       />
-    </Transition>
+    </TransitionFade>
   </div>
 </template>

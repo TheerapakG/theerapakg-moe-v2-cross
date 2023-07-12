@@ -40,7 +40,7 @@ defineExpose({
 
 <template>
   <div class="pointer-events-none">
-    <Transition name="slide-right">
+    <TransitionSlide>
       <div
         v-if="open"
         class="pointer-events-auto absolute inset-0 grid grid-cols-1 place-content-center place-items-center bg-white dark:bg-black"
@@ -49,12 +49,9 @@ defineExpose({
           <slot name="content" />
         </div>
       </div>
-    </Transition>
+    </TransitionSlide>
     <div class="pointer-events-auto absolute left-8 top-8 h-8 w-8">
-      <Transition
-        :name="open ? 'rotate-ccw-out' : 'rotate-cw-out'"
-        mode="out-in"
-      >
+      <TransitionPop mode="out-in">
         <UButton
           v-if="open"
           aria-label="close sidebar"
@@ -79,7 +76,7 @@ defineExpose({
           @click="toggle"
         >
         </UButton>
-      </Transition>
+      </TransitionPop>
     </div>
   </div>
 </template>

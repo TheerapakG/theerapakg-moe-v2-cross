@@ -3,10 +3,6 @@ import { UInput } from "#components";
 
 definePageMeta({
   title: "theerapakg-moe-app",
-  pageTransition: {
-    name: "slide-left-uni",
-    mode: "out-in",
-  },
   name: "Test",
 });
 

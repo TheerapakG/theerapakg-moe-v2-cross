@@ -3,10 +3,6 @@ import { formatPretty } from "~/utils/formatPretty";
 
 definePageMeta({
   title: "theerapakg-moe-app",
-  pageTransition: {
-    name: "slide-left-uni",
-    mode: "out-in",
-  },
   name: "Download",
 });
 

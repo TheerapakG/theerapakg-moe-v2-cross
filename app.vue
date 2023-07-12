@@ -1,4 +1,10 @@
 <script setup lang="ts">
+useHead({
+  bodyAttrs: {
+    class: "bg-white dark:bg-black",
+  },
+});
+
 const pageStore = usePageStore();
 
 const colorModeChange = ref(false);
@@ -24,7 +30,7 @@ onMounted(() => {
   <div
     id="app"
     class="fixed h-screen w-screen overflow-y-auto overflow-x-hidden overscroll-contain bg-white font-sans text-black dark:bg-black dark:text-white"
-    :class="{ 'color-mode-change': colorModeChange }"
+    :class="{ 'color-mode-change': 'transition-colors duration-300' }"
   >
     <NuxtLayout ref="layout">
       <div
@@ -45,9 +51,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style>
-#app.color-mode-change * {
-  @apply transition-colors duration-300;
-}
-</style>

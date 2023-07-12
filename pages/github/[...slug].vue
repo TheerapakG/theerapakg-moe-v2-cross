@@ -1,10 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
   title: "theerapakg-moe-app",
-  pageTransition: {
-    name: "slide-left-uni",
-    mode: "out-in",
-  },
   name: "GitHub",
 });
 
