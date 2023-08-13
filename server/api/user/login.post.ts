@@ -52,5 +52,5 @@ export default defineEventHandler(
     setCookie(event, "session_id", sessionId, { path: "/" });
 
     return {};
-  })
+  }),
 );

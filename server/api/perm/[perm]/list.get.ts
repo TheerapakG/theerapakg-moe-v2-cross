@@ -28,13 +28,13 @@ export default defineEventHandler(
       param: { perm },
     } = await validateEvent(
       { query: queryValidator, param: paramValidator },
-      event
+      event,
     );
     const { page, size, user: target } = defu(query, { page: 1, size: 10 });
     const start = (page - 1) * size;
 
     const { estimatedTotalHits: count, hits } = await useMeili(
-      useRuntimeConfig().meiliSearchKey
+      useRuntimeConfig().meiliSearchKey,
     )
       .index<typeof userDocument>("users")
       .search<typeof userDocument>(target, {
@@ -52,10 +52,10 @@ export default defineEventHandler(
         and(
           eq(
             userPermissionsTable.permission,
-            perm as (typeof UserPermission.enumValues)[number]
+            perm as (typeof UserPermission.enumValues)[number],
           ),
-          inArray(userPermissionsTable.user_id, users)
-        )
+          inArray(userPermissionsTable.user_id, users),
+        ),
       );
 
     const permsMap = useKeyBy(perms, "user_id");
@@ -69,5 +69,5 @@ export default defineEventHandler(
         };
       }),
     };
-  })
+  }),
 );

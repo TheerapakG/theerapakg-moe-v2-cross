@@ -18,7 +18,7 @@ export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
 };
 
 export const useRoutePerm = async (
-  route: MaybeRefOrGetter<RouteLocationNormalized>
+  route: MaybeRefOrGetter<RouteLocationNormalized>,
 ) => {
   const userPermStore = useUserPermStore();
   const perm = await userPermStore.fetchPermsComputed();

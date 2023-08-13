@@ -33,5 +33,5 @@ export default defineEventHandler(
     await fs.unlink(dir);
 
     return {};
-  })
+  }),
 );

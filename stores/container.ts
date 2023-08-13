@@ -54,19 +54,19 @@ export const useContainerStore = defineStore("container", () => {
   async function fetchContainers(
     ids: string[],
     force?: boolean,
-    ignoreError?: false
+    ignoreError?: false,
   ): Promise<Container[]>;
 
   async function fetchContainers(
     ids: string[],
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ): Promise<(Container | undefined)[]>;
 
   async function fetchContainers(
     ids: string[],
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) {
     const states = ids.map((id) => {
       const state = containerStates.value[id];
@@ -101,14 +101,14 @@ export const useContainerStore = defineStore("container", () => {
             if (ignoreError) return undefined;
             throw error;
           });
-      })
+      }),
     );
   }
 
   const fetchContainer = async (
     id: string,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     return (await fetchContainers([id], force, ignoreError))?.[0];
   };
@@ -116,7 +116,7 @@ export const useContainerStore = defineStore("container", () => {
   const fetchContainersComputed = async (
     ids: MaybeRefOrGetter<MaybeRefOrGetter<string | undefined>[]>,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     const flatIds = computed(() => useCompact(toValue(ids).map(toValue)));
     const fetcher = async () => {
@@ -130,7 +130,7 @@ export const useContainerStore = defineStore("container", () => {
   const fetchContainerComputed = async (
     id: MaybeRefOrGetter<string | undefined>,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     return (await fetchContainersComputed([id], force, ignoreError)).value[0];
   };

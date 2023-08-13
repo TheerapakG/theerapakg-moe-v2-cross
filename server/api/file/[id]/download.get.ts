@@ -54,12 +54,12 @@ export default defineEventHandler(
           if (trimmedRange.startsWith("-"))
             return [undefined, parseInt(s.slice(1).trim())] as [
               undefined,
-              number
+              number,
             ];
           if (trimmedRange.endsWith("-"))
             return [parseInt(s.slice(undefined, -1).trim()), undefined] as [
               number,
-              undefined
+              undefined,
             ];
           const [ret1, ret2] = trimmedRange
             .split("-", 2)
@@ -81,18 +81,18 @@ export default defineEventHandler(
         appendResponseHeader(
           event,
           "Content-Range",
-          `bytes ${retRange[0]}-${retRange[1]}/${length}`
+          `bytes ${retRange[0]}-${retRange[1]}/${length}`,
         );
         event.node.res.statusCode = 206;
 
         return sendStream(
           event,
-          fs.createReadStream(dir, { start: retRange[0], end: retRange[1] })
+          fs.createReadStream(dir, { start: retRange[0], end: retRange[1] }),
         );
       }
 
       appendResponseHeader(event, "Content-Length", length.toString());
       return sendStream(event, fs.createReadStream(dir));
     }
-  })
+  }),
 );

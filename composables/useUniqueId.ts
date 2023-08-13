@@ -3,7 +3,7 @@ export const useUniqueId = (prefix = "") => {
     `unique-id-${prefix}`,
     () => {
       return {};
-    }
+    },
   );
 
   if (!idCounter.value[prefix]) {

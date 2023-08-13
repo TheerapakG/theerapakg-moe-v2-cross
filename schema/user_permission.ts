@@ -29,10 +29,10 @@ export const userPermissions = pgTable(
       pk: primaryKey(table.user_id, table.permission),
       userIdIdx: index("user_permissions_user_id_idx").on(table.user_id),
       permissionIdx: index("user_permissions_permission_idx").on(
-        table.permission
+        table.permission,
       ),
     };
-  }
+  },
 );
 
 export { userPermissions as userPermissionsTable };

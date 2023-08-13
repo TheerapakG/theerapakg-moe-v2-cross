@@ -27,5 +27,5 @@ export default defineEventHandler(
       .where(eq(userPermissionsTable.permission, perm));
 
     return { count };
-  })
+  }),
 );

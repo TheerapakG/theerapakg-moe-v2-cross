@@ -32,7 +32,7 @@ export default defineEventHandler(
       param: { id, perm },
     } = await validateEvent(
       { query: queryValidator, param: paramValidator },
-      event
+      event,
     );
 
     await checkFilesUserPerm([id], user);
@@ -46,8 +46,8 @@ export default defineEventHandler(
         and(
           eq(fileUserPermissionsTable.file_id, id),
           eq(fileUserPermissionsTable.permission, `file!:${perm}`),
-          inArray(fileUserPermissionsTable.user_id, users)
-        )
+          inArray(fileUserPermissionsTable.user_id, users),
+        ),
       );
 
     const permsMap = useKeyBy(perms, "user_id");
@@ -58,5 +58,5 @@ export default defineEventHandler(
         perm: permsMap[id] ? true : false,
       };
     });
-  })
+  }),
 );

@@ -3,5 +3,5 @@ export default defineEventHandler(
     return {
       id: await getUser(event),
     };
-  })
+  }),
 );

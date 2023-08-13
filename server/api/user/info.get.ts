@@ -42,7 +42,7 @@ export default defineEventHandler(
           id,
           name: user.name,
         };
-      })
+      }),
     );
-  })
+  }),
 );

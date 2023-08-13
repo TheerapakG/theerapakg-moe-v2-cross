@@ -24,5 +24,5 @@ export default defineEventHandler(
     const value: { to: string } | undefined = _value[0];
 
     return { value: value?.to };
-  })
+  }),
 );

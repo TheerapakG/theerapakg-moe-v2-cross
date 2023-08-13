@@ -49,5 +49,5 @@ export default defineEventHandler(
 
       return { count: typeof _count === "string" ? parseInt(_count) : 0 };
     }
-  })
+  }),
 );

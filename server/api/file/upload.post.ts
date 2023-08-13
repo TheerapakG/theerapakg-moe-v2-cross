@@ -59,9 +59,9 @@ export default defineEventHandler(
             modified: insert.modified.getTime() / 1000,
           },
         ],
-        { primaryKey: "id" }
+        { primaryKey: "id" },
       );
 
     return { id: insert.id };
-  })
+  }),
 );

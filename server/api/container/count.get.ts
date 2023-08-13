@@ -13,5 +13,5 @@ export default defineEventHandler(
       .from(containerTable);
 
     return { count };
-  })
+  }),
 );

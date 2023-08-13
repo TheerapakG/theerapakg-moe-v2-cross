@@ -48,7 +48,7 @@ const login = async () => {
           color: "red",
         });
       } else throw error;
-    }
+    },
   );
 };
 </script>

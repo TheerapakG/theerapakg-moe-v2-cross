@@ -2,7 +2,7 @@ import { MaybeRefOrGetter } from "vue";
 
 export const useRefMap = <T, U>(
   arr: MaybeRefOrGetter<MaybeRefOrGetter<T>[] | null | undefined>,
-  f: (arg: MaybeRefOrGetter<T>) => Ref<U>
+  f: (arg: MaybeRefOrGetter<T>) => Ref<U>,
 ) => {
   const result = shallowRef<Ref<U>[]>([]);
 
@@ -17,7 +17,7 @@ export const useRefMap = <T, U>(
 
 export const useAsyncRefMap = async <T, U>(
   arr: MaybeRefOrGetter<MaybeRefOrGetter<T>[] | null | undefined>,
-  f: (arg: MaybeRefOrGetter<T>) => Promise<Ref<U>>
+  f: (arg: MaybeRefOrGetter<T>) => Promise<Ref<U>>,
 ) => {
   const result = shallowRef<Ref<U>[]>([]);
 

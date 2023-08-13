@@ -43,8 +43,8 @@ export default defineEventHandler(
               status,
             },
           };
-        })
+        }),
       ),
     };
-  })
+  }),
 );

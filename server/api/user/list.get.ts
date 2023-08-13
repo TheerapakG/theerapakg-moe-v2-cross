@@ -14,7 +14,7 @@ export default defineEventHandler(
     const start = (page - 1) * size;
 
     const { estimatedTotalHits: count, hits } = await useMeili(
-      useRuntimeConfig().meiliSearchKey
+      useRuntimeConfig().meiliSearchKey,
     )
       .index<typeof userDocument>("users")
       .search<typeof userDocument>(target, {
@@ -29,5 +29,5 @@ export default defineEventHandler(
       count: count ?? Infinity,
       users,
     };
-  })
+  }),
 );

@@ -20,7 +20,7 @@ export default defineEventHandler(
       param: { user: target },
     } = await validateEvent(
       { query: queryValidator, param: paramValidator },
-      event
+      event,
     );
     const { page, size } = defu(query, { page: 1, size: 10 });
     const start = (page - 1) * size;
@@ -58,8 +58,8 @@ export default defineEventHandler(
               status,
             },
           };
-        })
+        }),
       ),
     };
-  })
+  }),
 );

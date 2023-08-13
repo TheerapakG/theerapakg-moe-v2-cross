@@ -15,9 +15,9 @@ import type { FetchContext, FetchError, FetchOptions } from "ofetch";
 
 const $apiFetchCreate = (<
   T = unknown,
-  R extends NitroFetchRequest = NitroFetchRequest
+  R extends NitroFetchRequest = NitroFetchRequest,
 >(
-  defaults: FetchOptions
+  defaults: FetchOptions,
 ) => {
   const tryHandleCommonResponseError = async (ctx: FetchContext) => {
     if (!ctx.response?.ok) {
@@ -47,26 +47,26 @@ const $apiFetchCreate = (<
       headers: useRequestHeaders(["cookie"]),
       baseURL: config.public?.apiBaseURL ? config.public.apiBaseURL : "/",
       onResponseError: tryHandleCommonResponseError,
-    })
+    }),
   );
 }) as $Fetch["create"];
 
 export const $apiFetch = (<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
-  O extends NitroFetchOptions<R> = NitroFetchOptions<R>
+  O extends NitroFetchOptions<R> = NitroFetchOptions<R>,
 >(
   request: R,
-  options?: O
+  options?: O,
 ) => $apiFetchCreate({})<T, R, O>(request, options)) as $Fetch;
 
 const $apiFetchRaw = (<
   T = unknown,
   R extends NitroFetchRequest = NitroFetchRequest,
-  O extends NitroFetchOptions<R> = NitroFetchOptions<R>
+  O extends NitroFetchOptions<R> = NitroFetchOptions<R>,
 >(
   request: R,
-  options?: O
+  options?: O,
 ) => $apiFetchCreate({}).raw<T, R, O>(request, options)) as $Fetch["raw"];
 
 $apiFetch.raw = $apiFetchRaw;
@@ -84,15 +84,15 @@ export const useApiFetch = <
   _ResT = ResT extends void ? FetchResult<ReqT, Method> : ResT,
   DataT = _ResT,
   PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
-  DefaultT = null
+  DefaultT = null,
 >(
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: UseFetchOptions<_ResT, DataT, PickKeys, DefaultT, ReqT, Method>
+  opts?: UseFetchOptions<_ResT, DataT, PickKeys, DefaultT, ReqT, Method>,
 ): AsyncData<PickFrom<DataT, PickKeys> | DefaultT, ErrorT | null> => {
   return useFetch<ResT, ErrorT, ReqT, Method, _ResT, DataT, PickKeys, DefaultT>(
     request,
     defu(opts, {
       $fetch: $apiFetch,
-    })
+    }),
   );
 };

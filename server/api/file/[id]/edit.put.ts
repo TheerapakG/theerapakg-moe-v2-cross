@@ -67,10 +67,10 @@ export default defineEventHandler(
               modified: update.modified.getTime() / 1000,
             },
           ],
-          { primaryKey: "id" }
+          { primaryKey: "id" },
         );
 
       return {};
     }
-  })
+  }),
 );

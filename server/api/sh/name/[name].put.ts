@@ -23,7 +23,7 @@ export default defineEventHandler(
       param: { name },
     } = await validateEvent(
       { query: queryValidator, param: paramValidator },
-      event
+      event,
     );
 
     const [insert] = await useDrizzle()
@@ -46,5 +46,5 @@ export default defineEventHandler(
       .addDocuments([insert], { primaryKey: "name" });
 
     return {};
-  })
+  }),
 );

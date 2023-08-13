@@ -28,10 +28,10 @@ export default defineEventHandler(
         and(
           eq(fileUserPermissionsTable.file_id, id),
           eq(fileUserPermissionsTable.user_id, target),
-          eq(fileUserPermissionsTable.permission, `file!:${perm}`)
-        )
+          eq(fileUserPermissionsTable.permission, `file!:${perm}`),
+        ),
       );
 
     return {};
-  })
+  }),
 );

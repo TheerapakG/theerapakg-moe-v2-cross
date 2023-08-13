@@ -20,7 +20,7 @@ export default defineEventHandler(
       param: { id },
     } = await validateEvent(
       { query: queryValidator, param: paramValidator },
-      event
+      event,
     );
 
     const [
@@ -53,7 +53,7 @@ export default defineEventHandler(
               name: path.basename(dir),
             },
           ],
-          { primaryKey: "id" }
+          { primaryKey: "id" },
         );
 
       await useDrizzle()
@@ -63,5 +63,5 @@ export default defineEventHandler(
 
       return {};
     }
-  })
+  }),
 );

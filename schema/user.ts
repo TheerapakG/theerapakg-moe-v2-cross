@@ -12,7 +12,7 @@ export const user = pgTable(
     return {
       nameIdx: uniqueIndex("user_name_idx").on(table.name),
     };
-  }
+  },
 );
 
 export { user as userTable };

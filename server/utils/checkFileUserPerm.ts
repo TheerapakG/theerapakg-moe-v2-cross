@@ -21,8 +21,11 @@ export const checkFilesUserPerm = async (files: string[], user: string) => {
         .where(
           and(
             eq(userPermissionsTable.user_id, user),
-            inArray(userPermissionsTable.permission, ["file:view", "file:edit"])
-          )
+            inArray(userPermissionsTable.permission, [
+              "file:view",
+              "file:edit",
+            ]),
+          ),
         );
 
       const filePerms = await tx
@@ -34,12 +37,12 @@ export const checkFilesUserPerm = async (files: string[], user: string) => {
         .where(
           and(
             eq(fileUserPermissionsTable.user_id, user),
-            inArray(fileUserPermissionsTable.file_id, files)
-          )
+            inArray(fileUserPermissionsTable.file_id, files),
+          ),
         );
 
       return { fileOwner, userPerms, filePerms };
-    }
+    },
   );
 
   const fileOwnerMap = useKeyBy(fileOwner, "id");

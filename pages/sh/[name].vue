@@ -27,7 +27,7 @@ onMounted(async () => {
       },
       {
         replace: true,
-      }
+      },
     );
   }
 });

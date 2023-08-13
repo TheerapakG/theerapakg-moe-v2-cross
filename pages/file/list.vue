@@ -46,7 +46,7 @@ const params = computed(() => {
   return defu(
     { page: page.value, size: size.value },
     fileSearchDebounced.value ? { file: fileSearchDebounced.value } : {},
-    !isEmpty(users.value) ? { users: users.value.join(",") } : {}
+    !isEmpty(users.value) ? { users: users.value.join(",") } : {},
   );
 });
 
@@ -60,7 +60,7 @@ watch(params, async () => {
           size: params.value.size,
         },
         params.value.file ? { q: params.value.file } : {},
-        params.value.users ? { users: params.value.users } : {}
+        params.value.users ? { users: params.value.users } : {},
       ),
       replace: true,
     });
@@ -80,7 +80,7 @@ const fileList = computed(() => rawFileList.value?.files ?? []);
 
 const fileInfos = await fileStore.fetchFilesComputed(fileList);
 const permUserCountInfos = await filePermStore.fetchFilePermCountsComputed(
-  fileList
+  fileList,
 );
 
 const owners = computed(() => fileInfos.value.map((file) => file.value.owner));
@@ -88,7 +88,7 @@ const ownerInfos = await userStore.fetchUsersComputed(owners);
 
 const ownerFileList = computed(() =>
   [permUserCountInfos.value.length, ownerInfos.value.length].every(
-    (len) => len === fileInfos.value.length
+    (len) => len === fileInfos.value.length,
   )
     ? useZipWith(
         fileInfos.value,
@@ -111,9 +111,9 @@ const ownerFileList = computed(() =>
                 size: _fileInfo.size,
               },
             };
-          })
+          }),
       )
-    : []
+    : [],
 );
 
 const tableColumns = [
@@ -134,7 +134,7 @@ const tableData = computed(() =>
       perm: _file.info.perm,
       size: _file.info.size ? formatPretty(_file.info.size) : undefined,
     };
-  })
+  }),
 );
 
 const { pageCount } = useOffsetPagination({

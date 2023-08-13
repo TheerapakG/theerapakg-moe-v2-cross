@@ -9,7 +9,7 @@ const defaultMime = {
 
 export const useFileTarget = async (
   file: MaybeRefOrGetter<string>,
-  mode: MaybeRefOrGetter<"view" | "edit">
+  mode: MaybeRefOrGetter<"view" | "edit">,
 ) => {
   const fileStore = useFileStore();
 
@@ -32,7 +32,7 @@ export const useFileTarget = async (
 
     return {
       path: `/file/${toValue(mode)}/mime/${mime.type}/${mime.subtype}/${toValue(
-        file
+        file,
       )}`,
       query,
     };

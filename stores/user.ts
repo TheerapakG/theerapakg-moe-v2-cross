@@ -91,7 +91,7 @@ export const useUserStore = defineStore("user", () => {
         if (promise) return promise;
         const index = indicesMap[id];
         return pending.then((data) => data[index.index]);
-      })
+      }),
     );
   }
 
@@ -101,7 +101,7 @@ export const useUserStore = defineStore("user", () => {
 
   const fetchUsersComputed = async (
     ids: MaybeRefOrGetter<MaybeRefOrGetter<string | undefined>[]>,
-    force?: boolean
+    force?: boolean,
   ) => {
     const flatIds = computed(() => useCompact(toValue(ids).map(toValue)));
     const fetcher = async () => {
@@ -114,7 +114,7 @@ export const useUserStore = defineStore("user", () => {
 
   const fetchUserComputed = async (
     id: MaybeRefOrGetter<string | undefined>,
-    force?: boolean
+    force?: boolean,
   ) => {
     return (await fetchUsersComputed([id], force)).value[0];
   };

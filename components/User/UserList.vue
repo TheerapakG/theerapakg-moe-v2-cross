@@ -28,7 +28,7 @@ const userSearchDebounced = refDebounced(userSearch, 300);
 const userParams = computed(() => {
   return defu(
     userSearchDebounced.value ? { user: userSearchDebounced.value } : undefined,
-    { page: page.value, size: size.value }
+    { page: page.value, size: size.value },
   );
 });
 
@@ -36,11 +36,11 @@ const { pending: userListPending, data: rawUserList } = await useApiFetch(
   `/api/user/list`,
   {
     params: userParams,
-  }
+  },
 );
 
 const tablePending = computed(
-  () => propsPending.value || userListPending.value
+  () => propsPending.value || userListPending.value,
 );
 const queryUserCount = computed(() => rawUserList.value?.count ?? Infinity);
 const queryUserList = computed(() => rawUserList.value?.users ?? []);
@@ -57,7 +57,7 @@ const tableColumns = computed(() => [
 const tableData = computed(() =>
   useMap(userList.value, (user) => {
     return toValue(user);
-  })
+  }),
 );
 
 const { pageCount } = useOffsetPagination({

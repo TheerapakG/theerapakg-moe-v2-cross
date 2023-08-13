@@ -4,7 +4,7 @@ export const getFileName = (user: string, name: string) => {
   const config = useRuntimeConfig();
   const base = path.resolve(
     config.downloadPath ? config.downloadPath : "./.dist/files",
-    `./${user}`
+    `./${user}`,
   );
   const dir = path.resolve(base, name);
   const relative = path.relative(base, dir);

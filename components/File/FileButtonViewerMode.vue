@@ -7,7 +7,7 @@ const props = defineProps<Props>();
 const { fileId } = toRefs(props);
 
 const { data: perms } = useApiFetch(
-  `/api/file/${props.fileId}/user/current/perm`
+  `/api/file/${props.fileId}/user/current/perm`,
 );
 
 const viewFile = async (mode: "edit" | "view") => {

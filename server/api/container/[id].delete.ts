@@ -33,5 +33,5 @@ export default defineEventHandler(
     await useDrizzle().delete(containerTable).where(eq(containerTable.id, id));
 
     return {};
-  })
+  }),
 );

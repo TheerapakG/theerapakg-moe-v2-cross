@@ -53,7 +53,7 @@ export default defineEventHandler(
           mime: mime.getType(file.dir) ?? "",
           url: `/api/file/${id}/download`,
         };
-      })
+      }),
     );
-  })
+  }),
 );

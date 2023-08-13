@@ -46,5 +46,5 @@ export default defineEventHandler(
     return {
       container: id,
     };
-  })
+  }),
 );

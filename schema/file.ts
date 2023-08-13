@@ -17,7 +17,7 @@ export const file = pgTable(
     return {
       ownerIdx: index("file_owner_idx").on(table.owner),
     };
-  }
+  },
 );
 
 export { file as fileTable };

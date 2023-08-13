@@ -22,7 +22,7 @@ export const useFilePermStore = defineStore("filePerm", () => {
         const _fileId = toValue(fileId);
         return getPartialFilePerm(
           _fileId,
-          _fileId ? state[_fileId]?.data : undefined
+          _fileId ? state[_fileId]?.data : undefined,
         );
       });
   });
@@ -58,19 +58,19 @@ export const useFilePermStore = defineStore("filePerm", () => {
   async function fetchFilePermCounts(
     ids: string[],
     force?: boolean,
-    ignoreError?: false
+    ignoreError?: false,
   ): Promise<FilePerm[]>;
 
   async function fetchFilePermCounts(
     ids: string[],
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ): Promise<(FilePerm | undefined)[]>;
 
   async function fetchFilePermCounts(
     ids: string[],
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) {
     const states = ids.map((id) => {
       const state = filePermCountStates.value[id];
@@ -105,14 +105,14 @@ export const useFilePermStore = defineStore("filePerm", () => {
             if (ignoreError) return undefined;
             throw error;
           });
-      })
+      }),
     );
   }
 
   const fetchFilePermCount = async (
     id: string,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     return (await fetchFilePermCounts([id], force, ignoreError))?.[0];
   };
@@ -120,7 +120,7 @@ export const useFilePermStore = defineStore("filePerm", () => {
   const fetchFilePermCountsComputed = async (
     ids: MaybeRefOrGetter<MaybeRefOrGetter<string | undefined>[]>,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     const flatIds = computed(() => useCompact(toValue(ids).map(toValue)));
     const fetcher = async () => {
@@ -134,7 +134,7 @@ export const useFilePermStore = defineStore("filePerm", () => {
   const fetchFilePermCountComputed = async (
     id: MaybeRefOrGetter<string | undefined>,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     return (await fetchFilePermCountsComputed([id], force, ignoreError))
       .value[0];
@@ -143,7 +143,7 @@ export const useFilePermStore = defineStore("filePerm", () => {
   const addFilePermUser = async (
     file: string,
     perm: FilePermString,
-    user: string
+    user: string,
   ) => {
     await $apiFetch(`/api/file/${file}/perm/${perm}/user/${user}`, {
       method: "PUT",
@@ -154,7 +154,7 @@ export const useFilePermStore = defineStore("filePerm", () => {
   const removeFilePermUser = async (
     file: string,
     perm: FilePermString,
-    user: string
+    user: string,
   ) => {
     await $apiFetch(`/api/file/${file}/perm/${perm}/user/${user}`, {
       method: "DELETE",

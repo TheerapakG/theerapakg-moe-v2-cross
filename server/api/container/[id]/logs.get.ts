@@ -52,7 +52,7 @@ export default defineEventHandler(
     });
 
     const logStreamEnd = new Promise((resolve) =>
-      logStream.on("end", () => resolve(undefined))
+      logStream.on("end", () => resolve(undefined)),
     );
 
     useDocker().modem.demuxStream(logStream, stdoutStream, stderrStream);
@@ -61,5 +61,5 @@ export default defineEventHandler(
     await logStreamEnd;
 
     return logs;
-  })
+  }),
 );

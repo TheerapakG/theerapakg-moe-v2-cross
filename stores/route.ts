@@ -9,11 +9,11 @@ export interface RouteInfo extends RouteLocation {
 export const useRouteStore = defineStore("route", () => {
   const navigating = ref(true);
   const currentTitle = shallowRef<MaybeRefOrGetter<string> | undefined>(
-    undefined
+    undefined,
   );
 
   const title = computed(() =>
-    currentTitle.value ? toValue(currentTitle.value) : undefined
+    currentTitle.value ? toValue(currentTitle.value) : undefined,
   );
 
   const setTitle = (newTitle: MaybeRefOrGetter<string> | undefined) => {
@@ -34,7 +34,7 @@ export const useRouteStore = defineStore("route", () => {
           {
             routeName: route.meta.name,
           },
-          route
+          route,
         );
       } else if (!route.meta.name) {
         return route;
@@ -46,7 +46,7 @@ export const useRouteStore = defineStore("route", () => {
               {
                 routeName: name,
               },
-              route
+              route,
             );
             return true;
           }

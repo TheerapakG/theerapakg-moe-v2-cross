@@ -2,7 +2,7 @@ import { ContainerCreateOptions } from "dockerode";
 
 export const createContainer = async (
   user: string,
-  opts: ContainerCreateOptions
+  opts: ContainerCreateOptions,
 ) => {
   const dockerId = await new Promise<string>((resolve, reject) => {
     useDocker().createContainer(opts, (err, container) => {

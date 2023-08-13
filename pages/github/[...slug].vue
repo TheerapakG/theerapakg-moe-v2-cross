@@ -19,7 +19,7 @@ const query = isEmpty(route.query)
           ? key
           : Array.isArray(value)
           ? value.map((v) => `${key}=${v}`).join("&")
-          : `${key}=${value}`
+          : `${key}=${value}`,
       )
       .join("&")}`;
 
@@ -32,6 +32,6 @@ await navigateTo(
   },
   {
     replace: true,
-  }
+  },
 );
 </script>

@@ -4,15 +4,15 @@ type PrependNotEmpty<T extends string> = T extends "" ? "" : `|${T}`;
 
 type ArkTypeEnum<T extends string[]> = T extends [
   infer F extends string,
-  ...infer R extends string[]
+  ...infer R extends string[],
 ]
   ? `'${F}'${PrependNotEmpty<ArkTypeEnum<R>>}`
   : "";
 
 export const getArkTypeEnumFromDrizzleEnum = <
-  TValues extends [string, ...string[]]
+  TValues extends [string, ...string[]],
 >(
-  e: PgEnum<TValues>
+  e: PgEnum<TValues>,
 ) => {
   return e.enumValues.map((s) => `'${s}'`).join("|") as ArkTypeEnum<TValues>;
 };

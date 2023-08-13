@@ -33,7 +33,7 @@ const templateSelection = ref<keyof typeof templateSubroutes>();
 const subrouteSelection = computed(() =>
   templateSelection.value
     ? templateSubroutes[templateSelection.value]
-    : undefined
+    : undefined,
 );
 
 const run = async () => {
@@ -44,7 +44,7 @@ const run = async () => {
         `/api/container/run/file/${fileId.value}/${subrouteSelection.value}`,
         {
           method: "PUT",
-        }
+        },
       );
       return container;
     } catch {

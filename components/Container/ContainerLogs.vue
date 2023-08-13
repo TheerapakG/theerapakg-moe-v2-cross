@@ -6,7 +6,7 @@ type Props = {
 const props = defineProps<Props>();
 
 const { data: rawLogs } = useApiFetch(
-  `/api/container/${props.containerId}/logs`
+  `/api/container/${props.containerId}/logs`,
 );
 
 const utf8Logs = computedAsync(() =>
@@ -18,11 +18,11 @@ const utf8Logs = computedAsync(() =>
         msg: new TextDecoder().decode(
           await (
             await fetch(`data:application/octet-stream;base64,${msg}`)
-          ).arrayBuffer()
+          ).arrayBuffer(),
         ),
       };
-    }) ?? []
-  )
+    }) ?? [],
+  ),
 );
 </script>
 

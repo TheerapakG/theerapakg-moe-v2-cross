@@ -5,5 +5,5 @@ export default defineEventHandler(
     return {
       perms: await checkUserPerm(user),
     };
-  })
+  }),
 );

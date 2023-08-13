@@ -35,8 +35,8 @@ onMounted(async () => {
                       values.length > 1
                         ? values.map((value) => value[1])
                         : values[0][1],
-                    ]
-                  )
+                    ],
+                  ),
                 )
               : {},
             hash,
@@ -44,7 +44,7 @@ onMounted(async () => {
           {
             replace: true,
             external,
-          }
+          },
         );
       } catch (e) {
         if (e instanceof TypeError) {

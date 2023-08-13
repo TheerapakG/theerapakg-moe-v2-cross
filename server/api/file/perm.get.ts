@@ -40,7 +40,7 @@ export default defineEventHandler(
       .where(inArray(fileUserPermissionsTable.file_id, ids))
       .groupBy(
         fileUserPermissionsTable.file_id,
-        fileUserPermissionsTable.permission
+        fileUserPermissionsTable.permission,
       );
 
     const countMap = useGroupBy(counts, "id");
@@ -58,5 +58,5 @@ export default defineEventHandler(
         },
       };
     });
-  })
+  }),
 );

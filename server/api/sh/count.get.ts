@@ -11,5 +11,5 @@ export default defineEventHandler(
       .from(shTable);
 
     return { count };
-  })
+  }),
 );

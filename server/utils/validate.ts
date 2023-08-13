@@ -13,7 +13,7 @@ type EventValidator<
   B,
   TQ extends Type<Q> = Type<Q>,
   TP extends Type<P> = Type<P>,
-  TB extends Type<B> = Type<B>
+  TB extends Type<B> = Type<B>,
 > = Partial<{ query: TQ; param: TP; body: TB }>;
 
 async function _validateEvent<
@@ -21,11 +21,11 @@ async function _validateEvent<
   EventValidatorT extends EventValidator<Q, P, B>,
   Q,
   P,
-  B
+  B,
 >(
   key: K,
   validator: EventValidatorT,
-  data: () => Promise<unknown>
+  data: () => Promise<unknown>,
 ): Promise<
   EventValidatorT[K] extends Type ? EventValidatorT[K]["infer"] : undefined
 >;
@@ -35,14 +35,14 @@ async function _validateEvent<
   EventValidatorT extends EventValidator<Q, P, B>,
   Q,
   P,
-  B
+  B,
 >(key: K, validator: EventValidatorT, data: () => Promise<unknown>) {
   const v = validator[key];
   if (!v) return undefined;
   return validate(
     key,
     v as Type<NonNullable<EventValidatorT[K]>["infer"]>,
-    await data()
+    await data(),
   );
 }
 
@@ -50,24 +50,24 @@ export const validateEvent = async <
   EventValidatorT extends EventValidator<Q, P, B>,
   Q,
   P,
-  B
+  B,
 >(
   validator: EventValidatorT,
-  event: H3Event
+  event: H3Event,
 ) => {
   return {
     query: await _validateEvent("query", validator, async () =>
-      getQuery(event)
+      getQuery(event),
     ),
     param: await _validateEvent(
       "param",
       validator,
-      async () => event.context.params
+      async () => event.context.params,
     ),
     body: await _validateEvent(
       "body",
       validator,
-      async () => await readBody(event)
+      async () => await readBody(event),
     ),
   };
 };

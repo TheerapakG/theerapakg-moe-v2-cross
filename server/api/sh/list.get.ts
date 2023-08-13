@@ -19,7 +19,7 @@ export default defineEventHandler(
     const start = (page - 1) * size;
 
     const { estimatedTotalHits: count, hits } = await useMeili(
-      useRuntimeConfig().meiliSearchKey
+      useRuntimeConfig().meiliSearchKey,
     )
       .index<typeof shDocument>("shs")
       .search<typeof shDocument>(target, {
@@ -36,5 +36,5 @@ export default defineEventHandler(
         return { from, to };
       }),
     };
-  })
+  }),
 );

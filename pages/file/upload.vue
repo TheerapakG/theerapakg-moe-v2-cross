@@ -33,7 +33,7 @@ const upload = async () => {
       try {
         const upload = await fileStore.uploadFile(
           name,
-          event.target?.result as string
+          event.target?.result as string,
         );
         toast.add({
           title: "Upload Success",

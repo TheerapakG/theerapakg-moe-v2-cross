@@ -40,7 +40,7 @@ export default defineEventHandler(
     }
 
     const { estimatedTotalHits: count, hits } = await useMeili(
-      useRuntimeConfig().meiliSearchKey
+      useRuntimeConfig().meiliSearchKey,
     )
       .index<typeof fileDocument>("files")
       .search<typeof fileDocument>(targetFile, {
@@ -58,5 +58,5 @@ export default defineEventHandler(
       count: count ?? Infinity,
       files,
     };
-  })
+  }),
 );

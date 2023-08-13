@@ -21,7 +21,7 @@ const shSearchDebounced = refDebounced(shSearch, 300);
 const params = computed(() => {
   return defu(
     shSearchDebounced.value ? { sh: shSearchDebounced.value } : undefined,
-    { page: page.value, size: size.value }
+    { page: page.value, size: size.value },
   );
 });
 

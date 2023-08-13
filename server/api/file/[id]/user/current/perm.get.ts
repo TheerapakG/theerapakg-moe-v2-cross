@@ -15,5 +15,5 @@ export default defineEventHandler(
     const [{ perms }] = await checkFilesUserPerm([id], user);
 
     return perms;
-  })
+  }),
 );

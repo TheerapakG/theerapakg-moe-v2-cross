@@ -29,5 +29,5 @@ export default defineEventHandler(
     await useDocker().getContainer(dockerId).pause();
 
     return {};
-  })
+  }),
 );

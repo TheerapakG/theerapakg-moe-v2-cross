@@ -16,7 +16,7 @@ export const getUser = async (event: H3Event) => {
 
 export const getUserBySession = async (session?: string) => {
   const user = await useRedis().get(
-    session ? `session:${getSafeIdFromId(session)}` : "session:default"
+    session ? `session:${getSafeIdFromId(session)}` : "session:default",
   );
   if (!user) {
     throw createError({ statusMessage: "session expired" });

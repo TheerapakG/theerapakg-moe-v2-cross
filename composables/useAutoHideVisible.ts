@@ -3,7 +3,7 @@ import { useMove } from "@vueuse/gesture";
 
 export const useAutoHideVisible = (
   wrapper: MaybeRefOrGetter<MaybeElement>,
-  autohide: MaybeRefOrGetter<MaybeElement>
+  autohide: MaybeRefOrGetter<MaybeElement>,
 ) => {
   const _wrapper = toRef(wrapper);
   const _autohide = toRef(autohide);
@@ -32,13 +32,13 @@ export const useAutoHideVisible = (
     ({ moving }) => {
       if (moving) updateMoveTimeout();
     },
-    { domTarget: _wrapper }
+    { domTarget: _wrapper },
   );
 
   const { isOutside: isOutsideControl } = useMouseInElement(_autohide);
 
   const controlVisible = computed(
-    () => pointerMoving.value || !isOutsideControl.value
+    () => pointerMoving.value || !isOutsideControl.value,
   );
 
   return controlVisible;

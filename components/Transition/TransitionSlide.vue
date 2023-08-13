@@ -9,12 +9,12 @@ const { direction } = toRefs(props);
 const enterFromClass = computed(() =>
   useIncludes(["left", "left-uni"], direction.value)
     ? "translate-x-full"
-    : "-translate-x-full"
+    : "-translate-x-full",
 );
 const leaveToClass = computed(() =>
   useIncludes(["left", "right-uni"], direction.value)
     ? "translate-x-full"
-    : "-translate-x-full"
+    : "-translate-x-full",
 );
 </script>
 

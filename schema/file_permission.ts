@@ -24,13 +24,13 @@ export const fileUserPermissions = pgTable(
       pk: primaryKey(table.file_id, table.user_id, table.permission),
       fileIdUserIdIdx: index("file_user_permissions_file_id_user_id_idx").on(
         table.user_id,
-        table.file_id
+        table.file_id,
       ),
       fileIdpermissionIdx: index(
-        "file_user_permissions_file_id_permission_idx"
+        "file_user_permissions_file_id_permission_idx",
       ).on(table.file_id, table.permission),
     };
-  }
+  },
 );
 
 export { fileUserPermissions as fileUserPermissionsTable };

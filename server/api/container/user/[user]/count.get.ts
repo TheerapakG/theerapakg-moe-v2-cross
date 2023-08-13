@@ -26,5 +26,5 @@ export default defineEventHandler(
       .where(eq(containerTable.owner, target));
 
     return { count: typeof count === "string" ? parseInt(count) : 0 };
-  })
+  }),
 );

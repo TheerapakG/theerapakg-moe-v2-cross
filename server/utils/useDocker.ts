@@ -22,8 +22,8 @@ export const useDocker = () => {
           ? {
               port: config.dockerPort,
             }
-          : undefined
-      )
+          : undefined,
+      ),
     );
   }
 

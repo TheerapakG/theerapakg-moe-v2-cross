@@ -18,11 +18,11 @@ const rename = async (name: string) => {
   try {
     await $apiFetch(
       `/api/sh/name/${encodeURIComponent(
-        from.value
+        from.value,
       )}/rename/${encodeURIComponent(name)}`,
       {
         method: "POST",
-      }
+      },
     );
   } catch {
     toast.add({

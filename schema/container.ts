@@ -22,7 +22,7 @@ const container = pgTable(
       ownerIdx: index("container_owner_idx").on(table.owner),
       dockerIdIdx: uniqueIndex("container_docker_id_idx").on(table.dockerId),
     };
-  }
+  },
 );
 
 export { container as containerTable };

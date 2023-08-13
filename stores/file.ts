@@ -54,19 +54,19 @@ export const useFileStore = defineStore("file", () => {
   async function fetchFiles(
     ids: string[],
     force?: boolean,
-    ignoreError?: false
+    ignoreError?: false,
   ): Promise<File[]>;
 
   async function fetchFiles(
     ids: string[],
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ): Promise<(File | undefined)[]>;
 
   async function fetchFiles(
     ids: string[],
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) {
     const states = ids.map((id) => {
       const state = fileStates.value[id];
@@ -101,14 +101,14 @@ export const useFileStore = defineStore("file", () => {
             if (ignoreError) return undefined;
             throw error;
           });
-      })
+      }),
     );
   }
 
   const fetchFile = async (
     id: string,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     return (await fetchFiles([id], force, ignoreError))?.[0];
   };
@@ -116,7 +116,7 @@ export const useFileStore = defineStore("file", () => {
   const fetchFilesComputed = async (
     ids: MaybeRefOrGetter<MaybeRefOrGetter<string | undefined>[]>,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     const flatIds = computed(() => useCompact(toValue(ids).map(toValue)));
     const fetcher = async () => {
@@ -130,7 +130,7 @@ export const useFileStore = defineStore("file", () => {
   const fetchFileComputed = async (
     id: MaybeRefOrGetter<string | undefined>,
     force?: boolean,
-    ignoreError?: boolean
+    ignoreError?: boolean,
   ) => {
     return (await fetchFilesComputed([id], force, ignoreError)).value[0];
   };

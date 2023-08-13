@@ -26,5 +26,5 @@ export default defineEventHandler(
     await useDrizzle().delete(shTable).where(eq(shTable.from, name));
 
     return {};
-  })
+  }),
 );

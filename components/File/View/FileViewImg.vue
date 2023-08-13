@@ -16,7 +16,7 @@ const factorStr = computed(() => `${factor.value}%`);
 const offset = ref([0, 0]);
 const displayOffset = ref([0, 0]);
 const displayOffsetStr = computed(() =>
-  displayOffset.value.map((i) => `${i}px`).join(", ")
+  displayOffset.value.map((i) => `${i}px`).join(", "),
 );
 
 const drag = ref(false);
@@ -25,7 +25,7 @@ const dragHandler: Handler<"drag"> = ({ movement, dragging }) => {
   drag.value = dragging;
   displayOffset.value = addV(
     offset.value,
-    movement.map((i) => (i * 100) / factor.value)
+    movement.map((i) => (i * 100) / factor.value),
   );
   if (!dragging) {
     offset.value = displayOffset.value;

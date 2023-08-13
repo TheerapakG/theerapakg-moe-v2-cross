@@ -82,8 +82,10 @@ watch(views, () => {
               <div
                 class="relative flex h-8 flex-row-reverse place-items-center justify-start gap-x-2 rounded-t-lg px-2"
                 :class="{
-                  'hover:bg-gray-200 hover:transition-colors hover:duration-300 dark:hover:bg-gray-700': currentViewId !== (id as string),
-                  'bg-gray-300 dark:bg-gray-600': currentViewId === (id as string),
+                  'hover:bg-gray-200 hover:transition-colors hover:duration-300 dark:hover:bg-gray-700':
+                    currentViewId !== (id as string),
+                  'bg-gray-300 dark:bg-gray-600':
+                    currentViewId === (id as string),
                 }"
               >
                 <SVGPathInvertedRoundTL

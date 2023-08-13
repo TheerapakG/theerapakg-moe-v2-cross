@@ -19,7 +19,7 @@ const sideBarPaths = [
 ];
 
 const routeInfos = computed(() =>
-  sideBarPaths.map((path: string) => routeStore.info(path))
+  sideBarPaths.map((path: string) => routeStore.info(path)),
 );
 
 const routePerms = await useAsyncRefMap(routeInfos, async (routeInfo) => {
@@ -37,8 +37,8 @@ const filteredRouteInfos = computed(() =>
     routePerms.value.map((routePerm) => {
       const { route, perm } = routePerm.value;
       return perm.havePerm ? route : undefined;
-    })
-  )
+    }),
+  ),
 );
 
 const links = computed(() =>
@@ -47,7 +47,7 @@ const links = computed(() =>
       label: path.routeName ?? "<unknown route>",
       to: path.fullPath,
     };
-  })
+  }),
 );
 </script>
 

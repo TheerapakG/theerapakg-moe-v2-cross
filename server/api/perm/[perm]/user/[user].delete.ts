@@ -25,10 +25,10 @@ export default defineEventHandler(
       .where(
         and(
           eq(userPermissionsTable.user_id, target),
-          eq(userPermissionsTable.permission, perm)
-        )
+          eq(userPermissionsTable.permission, perm),
+        ),
       );
 
     return {};
-  })
+  }),
 );

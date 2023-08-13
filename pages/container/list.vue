@@ -64,7 +64,7 @@ const tableData = computed(() =>
       id: id,
       status: state.status,
     };
-  })
+  }),
 );
 
 const { pageCount } = useOffsetPagination({

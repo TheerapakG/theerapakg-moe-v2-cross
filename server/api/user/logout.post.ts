@@ -11,5 +11,5 @@ export default defineEventHandler(
     deleteCookie(event, "session_id");
 
     return {};
-  })
+  }),
 );

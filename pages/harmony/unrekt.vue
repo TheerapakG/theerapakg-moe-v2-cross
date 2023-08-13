@@ -8,6 +8,6 @@ await navigateTo(
   },
   {
     replace: true,
-  }
+  },
 );
 </script>
