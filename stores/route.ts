@@ -7,7 +7,6 @@ export interface RouteInfo extends RouteLocation {
 }
 
 export const useRouteStore = defineStore("route", () => {
-  let currentPath: string | undefined = undefined;
   const navigating = ref(true);
   const currentTitle = shallowRef<MaybeRefOrGetter<string> | undefined>(
     undefined
@@ -19,13 +18,12 @@ export const useRouteStore = defineStore("route", () => {
 
   const setTitle = (newTitle: MaybeRefOrGetter<string> | undefined) => {
     currentTitle.value = newTitle;
-    currentPath = useRoute().path;
   };
 
-  watch(navigating, () => {
-    const newRoute = useRoute();
-    if (currentPath === newRoute.path) return;
-    setTitle(newRoute.meta.title);
+  const { currentRoute } = useRouter();
+
+  watch(currentRoute, () => {
+    setTitle(currentRoute.value.meta.title);
   });
 
   const info = (path: MaybeRefOrGetter<string>) => {

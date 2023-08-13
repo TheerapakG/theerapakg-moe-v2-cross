@@ -20,7 +20,7 @@ onMounted(async () => {
   } else {
     await navigateTo(
       {
-        path: "/ext_redirect",
+        path: "/redirect",
         query: {
           path: encodeURIComponent(targetValue),
         },

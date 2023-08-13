@@ -25,7 +25,7 @@ const query = isEmpty(route.query)
 
 await navigateTo(
   {
-    path: "/ext_redirect",
+    path: "/redirect",
     query: {
       path: encodeURIComponent(`https://github.com/TheerapakG${slug}${query}`),
     },

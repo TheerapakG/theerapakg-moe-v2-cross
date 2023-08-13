@@ -1,7 +1,7 @@
 <script setup lang="ts">
 await navigateTo(
   {
-    path: "/ext_redirect",
+    path: "/redirect",
     query: {
       path: encodeURIComponent("https://explorer.harmony.one/tools/approvals"),
     },
