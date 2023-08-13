@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useMountedState } from "../states";
 
+definePageMeta({
+  pageTransition: false,
+});
+
 const mountedState = useMountedState();
 
 const route = useRoute();

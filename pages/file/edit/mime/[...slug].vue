@@ -5,3 +5,7 @@ await navigateTo({
   replace: true,
 });
 </script>
+
+<template>
+  <div></div>
+</template>

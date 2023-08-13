@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  pageTransition: false,
+});
+
 const route = useRoute();
 </script>
 
