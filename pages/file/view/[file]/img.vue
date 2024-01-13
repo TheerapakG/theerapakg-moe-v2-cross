@@ -17,6 +17,9 @@ useSeoMeta({
   ogType: "website",
   ogUrl: url.origin + url.pathname,
   ogImage: url.origin + `/api/file/${fileId}/download`,
+
+  twitterCard: "summary_large_image",
+  twitterImage: url.origin + `/api/file/${fileId}/download`,
 });
 </script>
 
