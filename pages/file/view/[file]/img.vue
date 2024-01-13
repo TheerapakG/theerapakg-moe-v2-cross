@@ -4,6 +4,20 @@ definePageMeta({
 });
 
 const route = useRoute();
+const fileStore = useFileStore();
+
+const fileId = route.params.file as string;
+
+const fileInfo = await fileStore.fetchFile(fileId);
+
+const url = useRequestURL();
+
+useSeoMeta({
+  ogTitle: fileInfo?.name,
+  ogType: "website",
+  ogUrl: url.origin + url.pathname,
+  ogImage: url.origin + `/api/file/${fileId}/download`,
+});
 </script>
 
 <template>
