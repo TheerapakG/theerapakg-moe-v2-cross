@@ -1,4 +1,3 @@
-import { InferModel } from "drizzle-orm";
 import {
   pgTable,
   index,
@@ -27,4 +26,4 @@ const container = pgTable(
 
 export { container as containerTable };
 
-export type ContainerInfo = InferModel<typeof container>;
+export type ContainerInfo = typeof container._.inferSelect;

@@ -1,4 +1,4 @@
-import { ContainerCreateOptions } from "dockerode";
+import type { ContainerCreateOptions } from "dockerode";
 
 export const createContainer = async (
   user: string,

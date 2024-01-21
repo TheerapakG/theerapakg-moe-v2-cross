@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import defu from "defu";
-import { LocationQueryValue } from "vue-router";
+import type { LocationQueryValue } from "vue-router";
 
 definePageMeta({
   title: "theerapakg-moe-app: shortener manager",

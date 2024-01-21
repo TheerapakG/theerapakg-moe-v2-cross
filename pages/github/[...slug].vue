@@ -18,8 +18,8 @@ const query = isEmpty(route.query)
         value === null
           ? key
           : Array.isArray(value)
-          ? value.map((v) => `${key}=${v}`).join("&")
-          : `${key}=${value}`,
+            ? value.map((v) => `${key}=${v}`).join("&")
+            : `${key}=${value}`,
       )
       .join("&")}`;
 

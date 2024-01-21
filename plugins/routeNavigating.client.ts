@@ -1,4 +1,4 @@
-import { Pinia } from "pinia";
+import type { Pinia } from "pinia";
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook("page:start", () => {

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { MaybeRefOrGetter } from "vue";
-import { RouteLocation } from "vue-router";
+import type { MaybeRefOrGetter } from "vue";
+import type { RouteLocation } from "vue-router";
 
 export interface RouteInfo extends RouteLocation {
   routeName?: string;
@@ -17,6 +17,8 @@ export const useRouteStore = defineStore("route", () => {
   );
 
   const setTitle = (newTitle: MaybeRefOrGetter<string> | undefined) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     currentTitle.value = newTitle;
   };
 

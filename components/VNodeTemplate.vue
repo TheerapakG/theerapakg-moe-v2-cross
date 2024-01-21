@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { cloneVNode, VNode } from "vue";
+import { cloneVNode, type VNode } from "vue";
 
 type Props = {
   node: VNode;

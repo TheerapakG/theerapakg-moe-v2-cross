@@ -1,7 +1,7 @@
 import defu from "defu";
-import { FetchResult } from "nuxt/app";
+import type { FetchResult } from "nuxt/app";
 import { defineStore } from "pinia";
-import { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter } from "vue";
 
 export type Container = FetchResult<`/api/container/info`, "get">[number];
 

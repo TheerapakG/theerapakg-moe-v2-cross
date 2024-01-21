@@ -1,4 +1,4 @@
-import { MaybeElement } from "@vueuse/core";
+import type { MaybeElement } from "@vueuse/core";
 import { useMove } from "@vueuse/gesture";
 
 export const useAutoHideVisible = (

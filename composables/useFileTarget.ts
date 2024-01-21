@@ -1,5 +1,5 @@
 import MimeType from "whatwg-mimetype";
-import { RouteLocationRaw } from "vue-router";
+import type { RouteLocationRaw } from "vue-router";
 
 const defaultMime = {
   type: "text",

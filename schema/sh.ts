@@ -1,4 +1,3 @@
-import { InferModel } from "drizzle-orm";
 import { pgTable, text } from "drizzle-orm/pg-core";
 
 export const sh = pgTable("sh", {
@@ -8,4 +7,4 @@ export const sh = pgTable("sh", {
 
 export { sh as shTable };
 
-export type ShInfo = InferModel<typeof sh>;
+export type ShInfo = typeof sh._.inferSelect;

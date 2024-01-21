@@ -1,4 +1,4 @@
-import { PgEnum } from "drizzle-orm/pg-core";
+import type { PgEnum } from "drizzle-orm/pg-core";
 
 type PrependNotEmpty<T extends string> = T extends "" ? "" : `|${T}`;
 

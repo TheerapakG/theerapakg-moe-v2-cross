@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import defu from "defu";
-import { LocationQueryValue } from "vue-router";
+import type { LocationQueryValue } from "vue-router";
 import { formatPretty } from "~/utils/formatPretty";
 
 definePageMeta({
@@ -79,9 +79,8 @@ const fileQueryCount = computed(() => rawFileList.value?.count ?? 0);
 const fileList = computed(() => rawFileList.value?.files ?? []);
 
 const fileInfos = await fileStore.fetchFilesComputed(fileList);
-const permUserCountInfos = await filePermStore.fetchFilePermCountsComputed(
-  fileList,
-);
+const permUserCountInfos =
+  await filePermStore.fetchFilePermCountsComputed(fileList);
 
 const owners = computed(() => fileInfos.value.map((file) => file.value.owner));
 const ownerInfos = await userStore.fetchUsersComputed(owners);

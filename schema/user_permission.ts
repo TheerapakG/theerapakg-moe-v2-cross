@@ -1,4 +1,3 @@
-import { InferModel } from "drizzle-orm";
 import { index, pgEnum, pgTable, primaryKey, uuid } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
@@ -37,4 +36,4 @@ export const userPermissions = pgTable(
 
 export { userPermissions as userPermissionsTable };
 
-export type UserPermissionsInfo = InferModel<typeof userPermissions>;
+export type UserPermissionsInfo = typeof userPermissions._.inferSelect;

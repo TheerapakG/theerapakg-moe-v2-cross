@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SideBar from "~/components/SideBar.vue";
-import { RouteInfo } from "~/stores/route";
+import type { RouteInfo } from "~/stores/route";
 
 const routeStore = useRouteStore();
 

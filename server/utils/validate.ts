@@ -1,4 +1,4 @@
-import { Type } from "arktype";
+import type { Type } from "arktype";
 import { H3Event } from "h3";
 
 export const validate = <V>(key: string, validator: Type<V>, data: unknown) => {

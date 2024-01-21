@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Handler, addV } from "@vueuse/gesture";
+import { type Handler, addV } from "@vueuse/gesture";
 
 type Props = {
   fileId: string;

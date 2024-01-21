@@ -1,4 +1,4 @@
-import { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter } from "vue";
 
 export const useRefMap = <T, U>(
   arr: MaybeRefOrGetter<MaybeRefOrGetter<T>[] | null | undefined>,

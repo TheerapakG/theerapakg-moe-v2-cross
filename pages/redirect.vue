@@ -27,18 +27,16 @@ onMounted(async () => {
         await navigateTo(
           {
             path: external ? target : pathname,
-            query: external
-              ? useFromPairs(
-                  useToPairs(useGroupBy([...searchParams.entries()], 0)).map(
-                    ([key, values]) => [
-                      key,
-                      values.length > 1
-                        ? values.map((value) => value[1])
-                        : values[0][1],
-                    ],
-                  ),
-                )
-              : {},
+            query: useFromPairs(
+              useToPairs(useGroupBy([...searchParams.entries()], 0)).map(
+                ([key, values]) => [
+                  key,
+                  values.length > 1
+                    ? values.map((value) => value[1])
+                    : values[0][1],
+                ],
+              ),
+            ),
             hash,
           },
           {

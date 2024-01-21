@@ -1,5 +1,5 @@
-import { MaybeRefOrGetter } from "vue";
-import { RouteLocationNormalized } from "vue-router";
+import type { MaybeRefOrGetter } from "vue";
+import type { RouteLocationNormalized } from "vue-router";
 
 export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
   if (!route.meta.perms)

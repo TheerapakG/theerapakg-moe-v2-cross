@@ -1,4 +1,3 @@
-import { InferModel } from "drizzle-orm";
 import { timestamp, index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { user } from "./user";
 
@@ -22,4 +21,4 @@ export const file = pgTable(
 
 export { file as fileTable };
 
-export type FileInfo = InferModel<typeof file>;
+export type FileInfo = typeof file._.inferSelect;

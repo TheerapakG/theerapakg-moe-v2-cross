@@ -1,4 +1,3 @@
-import { InferModel } from "drizzle-orm";
 import { pgTable, text, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const user = pgTable(
@@ -17,4 +16,4 @@ export const user = pgTable(
 
 export { user as userTable };
 
-export type UserInfo = InferModel<typeof user>;
+export type UserInfo = typeof user._.inferSelect;

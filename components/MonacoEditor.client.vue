@@ -24,9 +24,8 @@ const { width, height } = useElementSize(editerElement);
 
 const editor = shallowRef<_monaco.editor.IStandaloneCodeEditor | null>(null);
 
-watch(
-  [width, height],
-  () => editor.value?.layout({ width: width.value, height: height.value }),
+watch([width, height], () =>
+  editor.value?.layout({ width: width.value, height: height.value }),
 );
 
 defineExpose({ editor });
@@ -38,9 +37,8 @@ onMounted(async () => {
     ? monaco.editor.create(editerElement.value, props.options, props.override)
     : null;
 
-  props.commands.map(
-    ({ keybinding, handler, context }) =>
-      editor.value?.addCommand(keybinding, handler, context),
+  props.commands.map(({ keybinding, handler, context }) =>
+    editor.value?.addCommand(keybinding, handler, context),
   );
 });
 
