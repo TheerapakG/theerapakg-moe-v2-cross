@@ -244,6 +244,14 @@ onMounted(async () => {
 onUnmounted(() => {
   if (idleCallbackId.value) cancelIdleCallback(idleCallbackId.value);
 });
+
+const url = useRequestURL();
+
+useSeoMeta({
+  ogTitle: "theerapakg-moe-app: wish pieces gacha simulator",
+  ogType: "website",
+  ogUrl: url.origin + url.pathname,
+});
 </script>
 
 <template>
