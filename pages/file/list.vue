@@ -220,7 +220,7 @@ const { pageCount } = useOffsetPagination({
       </template>
       <template #actions-data="{ row }">
         <FileButtonAction
-          class="h-8 w-8 inline-flex place-content-center place-items-center"
+          class="inline-flex h-8 w-8 place-content-center place-items-center"
           :file-id="row.id"
           @delete="refresh"
         />

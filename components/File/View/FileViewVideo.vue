@@ -46,7 +46,7 @@ const controlVisible = useAutoHideVisible(wrapper, control);
         !fullscreen,
     }"
   >
-    <video ref="video" :class="{ 'w-full h-full': fullscreen }" />
+    <video ref="video" :class="{ 'h-full w-full': fullscreen }" />
     <TransitionFade>
       <MediaControls
         v-if="!fullscreen || controlVisible"

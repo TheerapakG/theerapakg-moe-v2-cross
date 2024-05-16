@@ -21,8 +21,8 @@ import { loadNuxtConfig } from "@nuxt/kit";
       : []),
     "-d",
     "-p",
-    `${type("parsedInteger")(config.postgresPort)?.data ?? 5432}:5432`,
-    "postgres",
+    `${type("number | parsedInteger")(config.postgresPort)?.data ?? 5432}:5432`,
+    "postgres:15",
   ]);
 
   proc.stdout.on("data", (data) => {

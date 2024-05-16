@@ -82,7 +82,7 @@ const { pageCount } = useOffsetPagination({
         <UTable :columns="tableColumns" :rows="tableData">
           <template #actions-data="{ row }">
             <ContainerButtonAction
-              class="h-8 w-8 inline-flex place-content-center place-items-center"
+              class="inline-flex h-8 w-8 place-content-center place-items-center"
               :container-id="row.id"
               @delete="refresh"
             />

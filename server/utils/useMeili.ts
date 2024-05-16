@@ -7,7 +7,7 @@ export const useMeili = (key: string) => {
     const config = useRuntimeConfig();
     meili[key] = new MeiliSearch({
       host: `http://127.0.0.1:${
-        type("parsedInteger")(config.redisPort)?.data ?? 7700
+        type("number | parsedInteger")(config.meiliPort)?.data ?? 7700
       }`,
       apiKey: key !== "" ? key : undefined,
     });

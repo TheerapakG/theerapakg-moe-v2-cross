@@ -17,7 +17,7 @@ import { loadNuxtConfig } from "@nuxt/kit";
       : []),
     "-d",
     "-p",
-    `${type("parsedInteger")(config.meiliPort)?.data ?? 7700}:7700`,
+    `${type("number | parsedInteger")(config.meiliPort)?.data ?? 7700}:7700`,
     "getmeili/meilisearch:v1.2",
     "meilisearch",
   ]);

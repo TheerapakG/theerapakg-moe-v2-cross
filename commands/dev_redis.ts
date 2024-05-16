@@ -17,7 +17,7 @@ import { loadNuxtConfig } from "@nuxt/kit";
       : []),
     "-d",
     "-p",
-    `${type("parsedInteger")(config.redisPort)?.data ?? 6379}:6379`,
+    `${type("number | parsedInteger")(config.redisPort)?.data ?? 6379}:6379`,
     "redis",
     "redis-server",
   ]);

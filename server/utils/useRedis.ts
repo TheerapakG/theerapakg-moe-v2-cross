@@ -11,7 +11,8 @@ export const useRedis = () => {
         {},
         config.redisPort
           ? {
-              port: type("parsedInteger")(config.redisPort)?.data ?? 6379,
+              port:
+                type("number | parsedInteger")(config.redisPort)?.data ?? 6379,
             }
           : undefined,
       ),

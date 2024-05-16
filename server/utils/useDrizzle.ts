@@ -9,7 +9,7 @@ export const useDrizzle = () => {
     const config = useRuntimeConfig();
     const sql = postgres({
       host: config.postgresHost,
-      port: type("parsedInteger")(config.postgresPort)?.data ?? 5432,
+      port: type("number | parsedInteger")(config.postgresPort)?.data ?? 5432,
       username: config.postgresUsername,
       password: config.postgresPassword,
       database: config.postgresDatabase,

@@ -33,6 +33,7 @@
     "@pinia/nuxt": "^0.4.11",
     "@rushstack/eslint-patch": "^1.7.0",
     "@tauri-apps/cli": "^1.5.9",
+    "@total-typescript/ts-reset": "^0.5.1",
     "@types/dockerode": "^3.3.23",
     "@types/mime": "^3.0.4",
     "@types/node": "^20.11.5",
