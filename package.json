@@ -64,6 +64,7 @@
     "nuxt": "^3.9.3",
     "nuxt-lodash": "^2.5.3",
     "pinia": "^2.1.7",
+    "plotly.js-dist": "^2.33.0",
     "postcss": "^8.4.33",
     "postcss-custom-properties": "^13.3.4",
     "postgres": "^3.4.3",

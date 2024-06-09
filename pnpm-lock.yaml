@@ -130,6 +130,9 @@ devDependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.3)(vue@3.4.15)
+  plotly.js-dist:
+    specifier: ^2.33.0
+    version: 2.33.0
   postcss:
     specifier: ^8.4.33
     version: 8.4.33
@@ -7130,6 +7133,10 @@ packages:
       jsonc-parser: 3.2.0
       mlly: 1.5.0
       pathe: 1.1.2
+    dev: true
+
+  /plotly.js-dist@2.33.0:
+    resolution: {integrity: sha512-Q995s9+9coO+5EStfCtlSW7HQXR14L3i/jTNXTZap7lt1v7r2QPuokAUkOHqMwmE1RsJJjtqnGRQH9JlEq8qPQ==}
     dev: true
 
   /portal-vue@3.0.0(vue@3.4.15):

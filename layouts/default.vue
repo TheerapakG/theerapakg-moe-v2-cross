@@ -16,6 +16,8 @@ const sideBarPaths = [
   "/file/list",
   "/container/list",
   "/sh/list",
+  "/pjsk/pull",
+  "/pjsk/event/honakana",
 ];
 
 const routeInfos = computed(() =>

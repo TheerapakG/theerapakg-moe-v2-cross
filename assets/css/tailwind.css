@@ -1,5 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito&family=Nunito+Sans&display=swap");
 
+@font-face {
+  font-family: YurukaStd;
+  src:
+    local("YurukaStd"),
+    url("https://st.ayaka.one//static/media/YurukaStd.e4589185c34a94a462b4.woff2")
+      format("woff2");
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -113,15 +113,20 @@ const totalPerPull = computed(() =>
 );
 const simulationResultArray = ref<number[]>([]);
 const simulationResultObject = ref<Map<number, number>>(new Map());
-const simulationResultKeys = computed(() => [
-  ...simulationResultObject.value.keys(),
-]);
-const simulationRangeStart = computed(() => min(simulationResultKeys.value));
-const simulationRangeEnd = computed(() => max(simulationResultKeys.value));
+const simulationRangeStart = computed(() =>
+  simulationResultArray.value.length > 0
+    ? simulationResultArray.value[0]
+    : undefined,
+);
+const simulationRangeEnd = computed(() =>
+  simulationResultArray.value.length > 0
+    ? simulationResultArray.value[simulationResultArray.value.length - 1]
+    : undefined,
+);
 const binSize = computed(() =>
   simulationRangeStart.value && simulationRangeEnd.value
     ? Math.ceil(
-        (simulationRangeEnd.value - simulationRangeStart.value + 1) / 256,
+        (simulationRangeEnd.value - simulationRangeStart.value + 1) / 128,
       )
     : 1,
 );
@@ -151,6 +156,9 @@ const percentileIndex = computed(() =>
   simulationRange.value && percentileResult.value
     ? sortedLastIndex(simulationRange.value, percentileResult.value) - 1
     : undefined,
+);
+const highlightIndex = computed(
+  () => hoverIndex.value ?? percentileIndex.value,
 );
 const graphResult = computed(() =>
   simulationRange.value?.map((i) => {
@@ -302,8 +310,8 @@ useSeoMeta({
       </div>
     </div>
     <div
-      v-if="simulationRange"
-      class="flex w-full px-10"
+      v-if="graphResult"
+      class="flex w-full px-12"
       @mouseleave="hoverIndex = undefined"
     >
       <TransitionGroup
@@ -337,10 +345,12 @@ useSeoMeta({
           </div>
           <div
             v-if="
-              simulationRange.length < 8 ||
-              index === 0 ||
-              index === simulationRange.length - 1 ||
-              index === (hoverIndex ?? percentileIndex)
+              graphResult.length < 4 ||
+              (index === 0 && highlightIndex && highlightIndex > 16) ||
+              (index === graphResult.length - 1 &&
+                highlightIndex &&
+                highlightIndex < graphResult.length - 17) ||
+              index === highlightIndex
             "
             class="flex w-0 flex-col place-content-center place-items-center overflow-visible"
           >
