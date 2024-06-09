@@ -672,6 +672,14 @@ onMounted(async () => {
   plotCharts();
   watch(colorMode, plotCharts);
 });
+
+const url = useRequestURL();
+
+useSeoMeta({
+  ogTitle: "theerapakg-moe-app: honakana event statistics",
+  ogType: "website",
+  ogUrl: url.origin + url.pathname,
+});
 </script>
 
 <template>
