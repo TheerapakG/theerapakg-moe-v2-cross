@@ -3,10 +3,7 @@ name: CI-web
 on:
   push:
     paths:
-      - "packages/theerapakg-moe-web/**"
-    branches: ["master"]
-  pull_request:
-    paths:
+      - ".github/workflows/ci-web.yml"
       - "packages/theerapakg-moe-web/**"
     branches: ["master"]
   workflow_dispatch:
@@ -160,7 +157,7 @@ jobs:
         run: doctl registry login --expiry-seconds 1200
       
       - name: Push image to DigitalOcean Container Registry
-        run: docker push ${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7)
+        run: docker push registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7)
 
       - name: Update deployment file
         run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:'${TAG}'|' $GITHUB_WORKSPACE/k8s/theerapakg-moe-web.yml
