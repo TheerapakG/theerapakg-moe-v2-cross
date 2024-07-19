@@ -3,7 +3,7 @@ name: CI-web
 on:
   push:
     paths:
-      - "packages/theerapakg-moe-web"
+      - "packages/theerapakg-moe-web/**"
     branches: ["master"]
   pull_request:
     branches: ["master"]
