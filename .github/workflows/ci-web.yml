@@ -149,7 +149,7 @@ jobs:
         run: pnpm nuxi build
       
       - name: Build container image
-        run: docker build -t ${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7) .
+        run: docker build -t registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7) .
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -163,7 +163,7 @@ jobs:
         run: docker push ${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7)
 
       - name: Update deployment file
-        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:'${TAG}'|' $GITHUB_WORKSPACE/k8s/theerapakg-moe-web.yml
+        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:'${TAG}'|' $GITHUB_WORKSPACE/k8s/theerapakg-moe-web.yml
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
