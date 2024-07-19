@@ -7,13 +7,9 @@ let _drizzle: PostgresJsDatabase | undefined = undefined;
 export const useDrizzle = () => {
   if (!_drizzle) {
     const config = useRuntimeConfig();
-    const sql = postgres({
-      host: config.postgresHost,
-      port: type("number | parsedInteger")(config.postgresPort)?.data ?? 5432,
-      username: config.postgresUsername,
-      password: config.postgresPassword,
-      database: config.postgresDatabase,
-    });
+    const sql = postgres(
+      `postgres://${config.postgresUsername}:${config.postgresPassword}@${config.postgresHost}:${type("number | parsedInteger")(config.postgresPort)?.data ?? 5432}/${config.postgresDatabase}`,
+    );
     _drizzle = drizzle(sql);
   }
 
