@@ -1,7 +1,9 @@
-name: CI
+name: CI-web
 
 on:
   push:
+    paths:
+      - "packages/theerapakg-moe-web"
     branches: ["master"]
   pull_request:
     branches: ["master"]
@@ -10,6 +12,9 @@ on:
 jobs:
   cache-dependencies:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/theerapakg-moe-web
 
     steps:
       - name: Checkout
@@ -32,6 +37,9 @@ jobs:
   format:
     needs: [cache-dependencies]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/theerapakg-moe-web
 
     steps:
       - name: Checkout
@@ -57,6 +65,9 @@ jobs:
   lint:
     needs: [cache-dependencies]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/theerapakg-moe-web
 
     steps:
       - name: Checkout
@@ -82,6 +93,9 @@ jobs:
   typecheck:
     needs: [cache-dependencies]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/theerapakg-moe-web
 
     steps:
       - name: Checkout
@@ -107,6 +121,9 @@ jobs:
   build:
     needs: [cache-dependencies, format, lint, typecheck]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/theerapakg-moe-web
 
     steps:
       - name: Checkout
@@ -128,12 +145,26 @@ jobs:
 
       - name: Run Build
         run: pnpm nuxi build
+      
+      - name: Build container image
+        run: docker build -t ${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7) .
 
-      - name: Tar Build
-        run: tar -czvf build.tar.gz .output
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          name: build
-          path: build.tar.gz
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+      
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Update deployment file
+        run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/theerapakg-moe-web:'${TAG}'|' $GITHUB_WORKSPACE/k8s/theerapakg-moe-web.yml
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/theerapakg-moe-web.yml

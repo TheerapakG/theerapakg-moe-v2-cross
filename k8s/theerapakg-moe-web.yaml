@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: theerapakg-moe-web
+  labels:
+    app: theerapakg-moe-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theerapakg-moe-web
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: theerapakg-moe-web
+    spec:
+      containers:
+        - name: theerapakg-moe-web
+          image: <IMAGE>
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: theerapakg-moe-web-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: theerapakg-moe-web

@@ -1,13 +1,2 @@
-node_modules
-*.log
-.dist
-.nuxt
-.redis
-.meili
-.postgres
 .vscode
-nuxt.d.ts
-.output
-.env
 
-src-tauri
