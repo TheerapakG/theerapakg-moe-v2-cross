@@ -4,7 +4,7 @@ metadata:
   name: theerapakg-moe-ingress
 spec:
   rules:
-    - host: theerapakg.moe
+    - host: do.theerapakg.moe
       http:
         paths:
           - pathType: Prefix
@@ -13,4 +13,4 @@ spec:
               service:
                 name: theerapakg-moe-web-service
                 port:
-                  number: 3000
+                  number: 30000

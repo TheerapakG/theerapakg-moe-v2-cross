@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/ci-web.yml"
+      - "k8s/theerapakg-moe-web.yaml"
       - "packages/theerapakg-moe-web/**"
     branches: ["master"]
   workflow_dispatch:
