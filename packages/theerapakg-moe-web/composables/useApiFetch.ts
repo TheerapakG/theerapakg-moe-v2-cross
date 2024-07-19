@@ -72,6 +72,8 @@ const $apiFetchRaw = (<
 $apiFetch.raw = $apiFetchRaw;
 $apiFetch.create = $apiFetchCreate;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const useApiFetch = <
   ResT = void,
   ErrorT = FetchError,

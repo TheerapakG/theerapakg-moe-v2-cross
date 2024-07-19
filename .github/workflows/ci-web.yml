@@ -6,6 +6,8 @@ on:
       - "packages/theerapakg-moe-web/**"
     branches: ["master"]
   pull_request:
+    paths:
+      - "packages/theerapakg-moe-web/**"
     branches: ["master"]
   workflow_dispatch:
 
