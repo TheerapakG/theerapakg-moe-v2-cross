@@ -2,7 +2,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: theerapakg-moe-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "nginx"
 spec:
+  tls:
+    - hosts:
+        - do.theerapakg.moe
+      secretName: theerapakg-moe-tls
   rules:
     - host: do.theerapakg.moe
       http:

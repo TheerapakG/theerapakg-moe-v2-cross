@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: theerapakg-moe-web
+  labels:
+    app: theerapakg-moe-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: theerapakg-moe-web
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: theerapakg-moe-web
+    spec:
+      containers:
+        - name: theerapakg-moe-web
+          image: <IMAGE>
+          ports:
+            - containerPort: 3000
+              name: web-svc
+          env:
+            - name: NUXT_DOWNLOAD_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: downloadPath
+            - name: NUXT_DOCKER_SOCKET_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: dockerSocketPath
+            - name: NUXT_REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: redisHost
+            - name: NUXT_REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: redisPort
+            - name: NUXT_MEILI_SEARCH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: meiliSearchKey
+            - name: NUXT_MEILI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: meiliApiKey
+            - name: NUXT_POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: postgresUrl
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: theerapakg-moe-web-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: web-svc
+  selector:
+    app: theerapakg-moe-web

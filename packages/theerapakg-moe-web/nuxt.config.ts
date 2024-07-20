@@ -15,23 +15,17 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      wsHost: process.env.NUXT_PUBLIC_WS_HOST ?? "",
-      wsPort: process.env.NUXT_PUBLIC_WS_PORT ?? "",
       apiBaseURL: process.env.NUXT_PUBLIC_API_BASE_URL ?? "",
     },
     downloadPath: process.env.NUXT_DOWNLOAD_PATH ?? "",
     dockerSocketPath: process.env.NUXT_DOCKER_SOCKET_PATH ?? "",
+    redisHost: process.env.NUXT_REDIS_HOST ?? "",
     redisPort: process.env.NUXT_REDIS_PORT ?? "",
     dockerHost: process.env.NUXT_DOCKER_HOST ?? "",
     dockerPort: process.env.NUXT_DOCKER_PORT ?? "",
     meiliPort: process.env.NUXT_MEILI_PORT ?? "",
     meiliSearchKey: process.env.NUXT_MEILI_SEARCH_KEY ?? "",
     meiliApiKey: process.env.NUXT_MEILI_API_KEY ?? "",
-    postgresHost: process.env.NUXT_POSTGRES_HOST ?? "",
-    postgresPort: process.env.NUXT_POSTGRES_PORT ?? "",
-    postgresUsername: process.env.NUXT_POSTGRES_USERNAME ?? "",
-    postgresPassword: process.env.NUXT_POSTGRES_PASSWORD ?? "",
-    postgresDatabase: process.env.NUXT_POSTGRES_DATABASE ?? "",
     postgresUrl: process.env.NUXT_POSTGRES_URL ?? "",
   },
 
