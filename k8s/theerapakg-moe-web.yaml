@@ -38,7 +38,7 @@ metadata:
 spec:
   ports:
     - protocol: TCP
-      port: 30000
+      port: 80
       targetPort: theerapakg-moe-web-svc
   selector:
     app: theerapakg-moe-web

@@ -13,4 +13,4 @@ spec:
               service:
                 name: theerapakg-moe-web-service
                 port:
-                  number: 30000
+                  number: 80

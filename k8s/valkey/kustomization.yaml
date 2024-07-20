@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+secretGenerator:
+configMapGenerator:
+  - files:
+      - ./valkey.conf
+    name: valkey-config
+resources:
+  - volume.yaml
+  - claim.yaml
+  - deployment.yaml

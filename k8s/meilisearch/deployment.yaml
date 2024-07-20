@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meilisearch
+  labels:
+    app: meilisearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meilisearch
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: meilisearch
+    spec:
+      containers:
+        - name: meilisearch
+          image: "getmeili/meilisearch:v1.9"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 7700
+              name: meilisearch-svc
+          env:
+            - name: MEILI_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: meilisearch-secret
+                  key: masterKey
+          volumeMounts:
+            - mountPath: /meili_data
+              name: meilisearchdata
+      volumes:
+        - name: meilisearchdata
+          persistentVolumeClaim:
+            claimName: meilisearch-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meilisearch-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 7700
+      targetPort: meilisearch-svc
+  selector:
+    app: meilisearch
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meilisearch-service-external
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 7700
+      targetPort: meilisearch-svc
+      nodePort: 31500
+  selector:
+    app: meilisearch

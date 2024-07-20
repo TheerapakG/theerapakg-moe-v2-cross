@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meilisync
+  labels:
+    app: meilisync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meilisync
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: meilisync
+    spec:
+      containers:
+        - name: meilisync
+          image: "long2ice/meilisync:sha-052c4de"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: "/meilisync/config.yml"
+              name: meilisyncconfig
+              subPath: config.yml
+      volumes:
+        - name: meilisyncconfig
+          configMap:
+            name: meilisync-config

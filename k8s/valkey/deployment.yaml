@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey
+  labels:
+    app: valkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valkey
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: valkey
+    spec:
+      containers:
+        - name: valkey
+          image: "valkey/valkey:7"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "valkey-server"
+            - "/valkey.conf"
+          ports:
+            - containerPort: 6379
+              name: valkey-svc
+          volumeMounts:
+            - mountPath: /data
+              name: valkeydata
+            - mountPath: "/valkey.conf"
+              name: valkeyconfig
+              subPath: valkey.conf
+      volumes:
+        - name: valkeydata
+          persistentVolumeClaim:
+            claimName: valkey-claim
+        - name: valkeyconfig
+          configMap:
+            name: valkey-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: valkey-svc
+  selector:
+    app: valkey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-service-external
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: valkey-svc
+      nodePort: 32000
+  selector:
+    app: valkey
