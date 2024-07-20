@@ -24,7 +24,7 @@ spec:
           image: <IMAGE>
           ports:
             - containerPort: 3000
-              name: theerapakg-moe-web-svc
+              name: web-svc
           resources:
             requests:
               cpu: 100m
@@ -39,6 +39,6 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: theerapakg-moe-web-svc
+      targetPort: web-svc
   selector:
     app: theerapakg-moe-web
