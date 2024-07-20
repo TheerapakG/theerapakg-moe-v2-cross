@@ -32,6 +32,7 @@ export default defineNuxtConfig({
     postgresUsername: process.env.NUXT_POSTGRES_USERNAME ?? "",
     postgresPassword: process.env.NUXT_POSTGRES_PASSWORD ?? "",
     postgresDatabase: process.env.NUXT_POSTGRES_DATABASE ?? "",
+    postgresUrl: process.env.NUXT_POSTGRES_URL ?? "",
   },
 
   typescript: {

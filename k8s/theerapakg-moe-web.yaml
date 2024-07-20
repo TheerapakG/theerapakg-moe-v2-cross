@@ -24,6 +24,7 @@ spec:
           image: <IMAGE>
           ports:
             - containerPort: 3000
+              name: theerapakg-moe-web-svc
           resources:
             requests:
               cpu: 100m
@@ -35,11 +36,9 @@ kind: Service
 metadata:
   name: theerapakg-moe-web-service
 spec:
-  type: LoadBalancer
   ports:
-    - name: http
-      protocol: TCP
+    - protocol: TCP
       port: 30000
-      targetPort: 3000
+      targetPort: theerapakg-moe-web-svc
   selector:
     app: theerapakg-moe-web
