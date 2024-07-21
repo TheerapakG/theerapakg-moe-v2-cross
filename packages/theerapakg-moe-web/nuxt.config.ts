@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     dockerSocketPath: process.env.NUXT_DOCKER_SOCKET_PATH ?? "",
     redisHost: process.env.NUXT_REDIS_HOST ?? "",
     redisPort: process.env.NUXT_REDIS_PORT ?? "",
+    redisPassword: process.env.NUXT_REDIS_PASSWORD ?? "",
     dockerHost: process.env.NUXT_DOCKER_HOST ?? "",
     dockerPort: process.env.NUXT_DOCKER_PORT ?? "",
     meiliPort: process.env.NUXT_MEILI_PORT ?? "",
