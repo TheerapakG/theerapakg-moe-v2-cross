@@ -1,6 +1,7 @@
 FROM node:22
 
-RUN apt-get install -y libargon2-1
+RUN apt update
+RUN apt install -y libargon2-1
 
 COPY ./.output ./.output
 
