@@ -23,7 +23,7 @@ export default defineEventHandler(
       .where(eq(userTable.name, body.user))
       .limit(1);
 
-    console.log("after SELECT");
+    console.log("after SELECT/before verify");
 
     const user: { id: string; phash: string | null } | undefined = _user[0];
 
@@ -35,15 +35,15 @@ export default defineEventHandler(
       });
     }
 
-    if (body.pass) {
-      if (!(user.phash && (await argon2.verify(user.phash, body.pass)))) {
-        console.log(`login attempt for user ${body.user}: FAIL`);
-        throw createError({
-          statusCode: 403,
-          statusMessage: "authentication failed",
-        });
-      }
+    if (!(user.phash && (await argon2.verify(user.phash, body.pass)))) {
+      console.log(`login attempt for user ${body.user}: FAIL`);
+      throw createError({
+        statusCode: 403,
+        statusMessage: "authentication failed",
+      });
     }
+
+    console.log("after verify");
 
     console.log(`login attempt for user ${body.user}: PASS`);
     const sessionId = crypto.randomUUID();
