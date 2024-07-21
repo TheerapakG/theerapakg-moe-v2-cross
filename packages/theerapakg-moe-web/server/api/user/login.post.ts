@@ -12,6 +12,8 @@ export default defineEventHandler(
   wrapHandler(async (event) => {
     const { body } = await validateEvent({ body: bodyValidator }, event);
 
+    console.log("before SELECT");
+
     const _user = await useDrizzle()
       .select({
         id: userTable.id,
@@ -20,6 +22,8 @@ export default defineEventHandler(
       .from(userTable)
       .where(eq(userTable.name, body.user))
       .limit(1);
+
+    console.log("after SELECT");
 
     const user: { id: string; phash: string | null } | undefined = _user[0];
 
