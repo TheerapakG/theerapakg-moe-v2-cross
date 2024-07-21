@@ -51,6 +51,16 @@ spec:
                 secretKeyRef:
                   name: theerapakg-moe-web-secret
                   key: redisPassword
+            - name: NUXT_MEILI_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: meiliHost
+            - name: NUXT_MEILI_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: meiliPort
             - name: NUXT_MEILI_SEARCH_KEY
               valueFrom:
                 secretKeyRef:

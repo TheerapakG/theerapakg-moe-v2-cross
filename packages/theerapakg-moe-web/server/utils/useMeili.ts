@@ -6,7 +6,7 @@ export const useMeili = (key: string) => {
   if (!(key in meili)) {
     const config = useRuntimeConfig();
     meili[key] = new MeiliSearch({
-      host: `http://127.0.0.1:${
+      host: `http://${config.meiliHost}:${
         type("number | parsedInteger")(config.meiliPort)?.data ?? 7700
       }`,
       apiKey: key !== "" ? key : undefined,
