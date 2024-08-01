@@ -37,7 +37,9 @@ const startDownload = () => {
     <div>
       <div>File Info:</div>
       <div>name: {{ fileInfo.name }}</div>
-      <div>size: {{ formatPretty(fileInfo.size) }} bytes</div>
+      <div v-if="fileInfo.size">
+        size: {{ formatPretty(fileInfo.size) }} bytes
+      </div>
     </div>
     <div class="flex place-content-center place-items-center gap-2">
       <UButton size="xl" label="view online" :to="viewTarget" />
