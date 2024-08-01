@@ -1,11 +1,11 @@
-import { sql } from "drizzle-orm";
+import { count } from "drizzle-orm";
 
 export default defineEventHandler(
   wrapHandler(async () => {
-    const [{ count }] = await useDrizzle()
-      .select({ count: sql<number>`count(*)` })
+    const [{ countValue }] = await useDrizzle()
+      .select({ countValue: count() })
       .from(userTable);
 
-    return { count };
+    return { count: countValue };
   }),
 );

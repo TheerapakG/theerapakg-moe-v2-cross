@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { count } from "drizzle-orm";
 
 export default defineEventHandler(
   wrapHandler(async (event) => {
@@ -6,12 +6,12 @@ export default defineEventHandler(
     if (!(await checkUserPerm(user)).includes("container:list"))
       throw createError({ statusMessage: "no permission" });
 
-    const [{ count }] = await useDrizzle()
+    const [{ countValue }] = await useDrizzle()
       .select({
-        count: sql<number>`count(*)`,
+        countValue: count(),
       })
       .from(containerTable);
 
-    return { count };
+    return { count: countValue };
   }),
 );

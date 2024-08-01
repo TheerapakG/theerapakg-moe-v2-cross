@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { eq, sql } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 const paramValidator = type({
   user: "uuid",
@@ -18,13 +18,13 @@ export default defineEventHandler(
         throw createError({ statusMessage: "no permission" });
     }
 
-    const [{ count }] = await useDrizzle()
+    const [{ countValue }] = await useDrizzle()
       .select({
-        count: sql`count(*)`,
+        countValue: count(),
       })
       .from(containerTable)
       .where(eq(containerTable.owner, target));
 
-    return { count: typeof count === "string" ? parseInt(count) : 0 };
+    return { count: countValue };
   }),
 );

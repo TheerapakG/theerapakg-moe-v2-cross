@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { inArray, sql } from "drizzle-orm";
+import { count, inArray } from "drizzle-orm";
 import { keyBy as useKeyBy, groupBy as useGroupBy, isEmpty } from "lodash-es";
 
 const queryValidator = type({
@@ -34,7 +34,7 @@ export default defineEventHandler(
       .select({
         id: fileUserPermissionsTable.file_id,
         perm: fileUserPermissionsTable.permission,
-        count: sql`count(*)`,
+        countValue: count(),
       })
       .from(fileUserPermissionsTable)
       .where(inArray(fileUserPermissionsTable.file_id, ids))
@@ -47,14 +47,12 @@ export default defineEventHandler(
 
     return ids.map((id) => {
       const permMap = useKeyBy(countMap[id], "perm");
-      const view = permMap["file!:view"]?.count;
-      const edit = permMap["file!:edit"]?.count;
 
       return {
         id,
         count: {
-          view: typeof view === "string" ? parseInt(view) : 0,
-          edit: typeof edit === "string" ? parseInt(edit) : 0,
+          view: permMap["file!:view"]?.countValue ?? 0,
+          edit: permMap["file!:edit"]?.countValue ?? 0,
         },
       };
     });

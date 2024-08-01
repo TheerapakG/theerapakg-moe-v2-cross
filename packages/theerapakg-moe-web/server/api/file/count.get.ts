@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { sql, inArray } from "drizzle-orm";
+import { count, inArray } from "drizzle-orm";
 import { isEqual, isEmpty } from "lodash-es";
 
 const paramValidator = type({
@@ -32,22 +32,22 @@ export default defineEventHandler(
     }
 
     if (!targets) {
-      const [{ count }] = await useDrizzle()
-        .select({ count: sql<number>`count(*)` })
+      const [{ countValue }] = await useDrizzle()
+        .select({ countValue: count() })
         .from(fileTable);
 
-      return { count };
+      return { count: countValue };
     } else if (isEmpty(targets)) {
       return { count: 0 };
     } else {
-      const [{ count: _count }] = await useDrizzle()
+      const [{ countValue }] = await useDrizzle()
         .select({
-          count: sql`count(*)`,
+          countValue: count(),
         })
         .from(fileTable)
         .where(inArray(fileTable.owner, targets));
 
-      return { count: typeof _count === "string" ? parseInt(_count) : 0 };
+      return { count: countValue };
     }
   }),
 );

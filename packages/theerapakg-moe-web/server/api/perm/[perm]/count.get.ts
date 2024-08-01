@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { eq, sql } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 const paramValidator = type({
   perm: [
@@ -19,13 +19,13 @@ export default defineEventHandler(
       param: { perm },
     } = await validateEvent({ param: paramValidator }, event);
 
-    const [{ count }] = await useDrizzle()
+    const [{ countValue }] = await useDrizzle()
       .select({
-        count: sql<number>`count(*)`,
+        countValue: count(),
       })
       .from(userPermissionsTable)
       .where(eq(userPermissionsTable.permission, perm));
 
-    return { count };
+    return { count: countValue };
   }),
 );
