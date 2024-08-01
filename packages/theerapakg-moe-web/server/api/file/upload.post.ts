@@ -19,7 +19,7 @@ export default defineEventHandler(
       body: { file, content },
     } = await validateEvent({ body: bodyValidator }, event);
 
-    const { name, dir } = getFileName(user, file);
+    const { name } = getFileName(file);
 
     const fileBody = (await fetch(content)).body;
 
@@ -30,6 +30,8 @@ export default defineEventHandler(
       });
 
     const config = useRuntimeConfig();
+
+    const dir = `/${user}/${crypto.randomUUID()}`;
 
     const upload = new Upload({
       client: useS3(),

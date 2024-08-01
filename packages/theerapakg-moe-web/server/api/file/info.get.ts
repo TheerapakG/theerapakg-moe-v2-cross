@@ -44,17 +44,16 @@ export default defineEventHandler(
       ids.map(async (id, i) => {
         const file = fileMap[id];
 
-        const info = await useS3().getObjectAttributes({
+        const info = await useS3().headObject({
           Bucket: config.s3Bucket,
           Key: `files${file.dir}`,
-          ObjectAttributes: ["ObjectSize"],
         });
 
         return {
           id,
           name: path.basename(file.name),
           owner: filePerms[i].owner,
-          size: info.ObjectSize!,
+          size: info.ContentLength,
           created: file.created,
           modified: file.modified,
           mime: mime.getType(file.name) ?? "",
