@@ -1,7 +1,7 @@
 import type { MaybeRefOrGetter } from "vue";
-import type { RouteLocationNormalized } from "vue-router";
+import type { RouteLocation } from "vue-router";
 
-export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
+export const fetchRoutePerm = async (route: RouteLocation) => {
   if (!route.meta.perms)
     return {
       requirePerm: false,
@@ -17,9 +17,7 @@ export const fetchRoutePerm = async (route: RouteLocationNormalized) => {
   };
 };
 
-export const useRoutePerm = async (
-  route: MaybeRefOrGetter<RouteLocationNormalized>,
-) => {
+export const useRoutePerm = async (route: MaybeRefOrGetter<RouteLocation>) => {
   const userPermStore = useUserPermStore();
   const perm = await userPermStore.fetchPermsComputed();
 

@@ -10,3 +10,12 @@ declare module "~/node_modules/nuxt/dist/pages/runtime/composables" {
     perms?: string[];
   }
 }
+
+import "vue-router";
+declare module "vue-router" {
+  interface RouteMeta {
+    title?: string;
+    name?: string | { [key: string]: { [key: string]: string } };
+    perms?: string[];
+  }
+}

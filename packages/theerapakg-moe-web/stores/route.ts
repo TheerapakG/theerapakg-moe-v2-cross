@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import type { MaybeRefOrGetter } from "vue";
-import type { RouteLocation } from "vue-router";
+import type { RouteLocationResolvedGeneric } from "vue-router";
 
-export interface RouteInfo extends RouteLocation {
+export interface RouteInfo extends RouteLocationResolvedGeneric {
   routeName?: string;
 }
 
@@ -41,7 +41,7 @@ export const useRouteStore = defineStore("route", () => {
       } else if (!route.meta.name) {
         return route;
       } else {
-        let routeWithData: RouteLocation | null = null;
+        let routeWithData: RouteLocationResolvedGeneric | null = null;
         useSome(useEntries(route.meta.name), ([name, data]) => {
           if (isEqual(data, route.params)) {
             routeWithData = useAssign(
