@@ -6,12 +6,11 @@ import type {
   $Fetch,
 } from "nitropack";
 import type { FetchResult, UseFetchOptions } from "nuxt/app";
-import type {
-  AsyncData,
-  KeysOf,
-  PickFrom,
-} from "nuxt/dist/app/composables/asyncData";
 import type { FetchContext, FetchError, FetchOptions } from "ofetch";
+
+type KeysOf<T> = Array<
+  T extends T ? (keyof T extends string ? keyof T : never) : never
+>;
 
 const $apiFetchCreate = (<
   T = unknown,
@@ -90,7 +89,7 @@ export const useApiFetch = <
 >(
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts?: UseFetchOptions<_ResT, DataT, PickKeys, DefaultT, ReqT, Method>,
-): AsyncData<PickFrom<DataT, PickKeys> | DefaultT, ErrorT | null> => {
+) => {
   return useFetch<ResT, ErrorT, ReqT, Method, _ResT, DataT, PickKeys, DefaultT>(
     request,
     defu(opts, {

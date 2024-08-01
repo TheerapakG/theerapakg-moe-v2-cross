@@ -1,6 +1,5 @@
 import { type } from "arktype";
 import crypto from "crypto";
-import path from "path";
 import fetch from "node-fetch";
 import { Upload } from "@aws-sdk/lib-storage";
 import { Readable } from "stream";
