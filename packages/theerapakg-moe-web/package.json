@@ -42,7 +42,6 @@
     "@types/node-fetch": "^2.6.11",
     "@types/request-ip": "^0.0.38",
     "@types/whatwg-mimetype": "^3.0.2",
-    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "@vue/eslint-config-typescript": "^11.0.3",
@@ -72,12 +71,11 @@
     "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "request-ip": "^3.3.0",
-    "typescript": "^5.5.3",
+    "typescript": "^5.5.4",
     "vite": "^5.3.5",
-    "vue": "^3.4.15",
-    "vue-tsc": "^2.0.26",
-    "whatwg-mimetype": "^3.0.0",
-    "ws": "^8.16.0"
+    "vue": "^3.4.35",
+    "vue-tsc": "^2.0.29",
+    "whatwg-mimetype": "^3.0.0"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.3",
