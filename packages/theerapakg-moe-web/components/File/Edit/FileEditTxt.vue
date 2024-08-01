@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MonacoEditor from "~/components/MonacoEditor.client.vue";
+import { ofetch } from "ofetch";
 
 type Props = {
   fileId: string;
@@ -10,14 +11,30 @@ type Props = {
 const props = defineProps<Props>();
 const { fileId } = toRefs(props);
 
-// TODO: reactive
-const data = await $apiFetch<string>(`/api/file/${fileId.value}/download`, {
-  responseType: "text",
-});
+const fileStore = useFileStore();
+
+const { data: fileInfo } = await useAsyncData(
+  () => fileStore.fetchFile(fileId.value),
+  {
+    watch: [fileId],
+  },
+);
+
+const { data } = await useAsyncData(
+  async () => {
+    const url = fileInfo.value?.url;
+    if (!url) return;
+    return await ofetch(url, {
+      responseType: "text",
+    });
+  },
+  {
+    watch: [fileInfo],
+  },
+);
 
 const status = ref(new Set<string>());
 
-const fileStore = useFileStore();
 const importStore = useImportStore();
 const toast = useToast();
 
@@ -88,7 +105,7 @@ if (process.client) {
 
 <template>
   <div class="relative">
-    <ClientOnly>
+    <ClientOnly v-if="data">
       <MonacoEditor
         ref="monacoEditor"
         class="absolute inset-0"

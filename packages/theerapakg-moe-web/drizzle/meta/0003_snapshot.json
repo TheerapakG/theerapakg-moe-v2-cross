@@ -1,10 +1,8 @@
 {
-  "version": "5",
-  "dialect": "pg",
-  "id": "cf0f6dc0-cdfc-4951-b3a4-33597eee18a7",
-  "prevId": "10dbd3cd-288e-4fe5-9f7e-72900c210d9b",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "container": {
+    "public.container": {
       "name": "container",
       "schema": "",
       "columns": {
@@ -30,38 +28,55 @@
       },
       "indexes": {
         "container_owner_idx": {
-          "name": "container_owner_idx",
           "columns": [
-            "owner"
+            {
+              "expression": "owner",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "container_owner_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "container_docker_id_idx": {
-          "name": "container_docker_id_idx",
           "columns": [
-            "docker_id"
+            {
+              "expression": "docker_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "container_docker_id_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "container_owner_user_id_fk": {
           "name": "container_owner_user_id_fk",
           "tableFrom": "container",
-          "tableTo": "user",
           "columnsFrom": [
             "owner"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
-    "file": {
+    "public.file": {
       "name": "file",
       "schema": "",
       "columns": {
@@ -99,31 +114,40 @@
       },
       "indexes": {
         "file_owner_idx": {
-          "name": "file_owner_idx",
           "columns": [
-            "owner"
+            {
+              "expression": "owner",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "file_owner_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "file_owner_user_id_fk": {
           "name": "file_owner_user_id_fk",
           "tableFrom": "file",
-          "tableTo": "user",
           "columnsFrom": [
             "owner"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
-    "file_user_permissions": {
+    "public.file_user_permissions": {
       "name": "file_user_permissions",
       "schema": "",
       "columns": {
@@ -148,48 +172,74 @@
       },
       "indexes": {
         "file_user_permissions_file_id_user_id_idx": {
-          "name": "file_user_permissions_file_id_user_id_idx",
           "columns": [
-            "user_id",
-            "file_id"
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "file_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "file_user_permissions_file_id_user_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "file_user_permissions_file_id_permission_idx": {
-          "name": "file_user_permissions_file_id_permission_idx",
           "columns": [
-            "file_id",
-            "permission"
+            {
+              "expression": "file_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "permission",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "file_user_permissions_file_id_permission_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "file_user_permissions_file_id_file_id_fk": {
           "name": "file_user_permissions_file_id_file_id_fk",
           "tableFrom": "file_user_permissions",
-          "tableTo": "file",
           "columnsFrom": [
             "file_id"
           ],
+          "tableTo": "file",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "file_user_permissions_user_id_user_id_fk": {
           "name": "file_user_permissions_user_id_user_id_fk",
           "tableFrom": "file_user_permissions",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -201,9 +251,10 @@
             "permission"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
-    "sh": {
+    "public.sh": {
       "name": "sh",
       "schema": "",
       "columns": {
@@ -222,9 +273,10 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
-    "user": {
+    "public.user": {
       "name": "user",
       "schema": "",
       "columns": {
@@ -250,17 +302,26 @@
       },
       "indexes": {
         "user_name_idx": {
-          "name": "user_name_idx",
           "columns": [
-            "name"
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "user_name_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {},
-      "compositePrimaryKeys": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
-    "user_permissions": {
+    "public.user_permissions": {
       "name": "user_permissions",
       "schema": "",
       "columns": {
@@ -279,33 +340,49 @@
       },
       "indexes": {
         "user_permissions_user_id_idx": {
-          "name": "user_permissions_user_id_idx",
           "columns": [
-            "user_id"
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "user_permissions_user_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "user_permissions_permission_idx": {
-          "name": "user_permissions_permission_idx",
           "columns": [
-            "permission"
+            {
+              "expression": "permission",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "user_permissions_permission_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "user_permissions_user_id_user_id_fk": {
           "name": "user_permissions_user_id_user_id_fk",
           "tableFrom": "user_permissions",
-          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -316,32 +393,35 @@
             "permission"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     }
   },
   "enums": {
-    "filepermission": {
+    "public.filepermission": {
       "name": "filepermission",
-      "values": {
-        "file!:view": "file!:view",
-        "file!:edit": "file!:edit"
-      }
+      "schema": "public",
+      "values": [
+        "file!:view",
+        "file!:edit"
+      ]
     },
-    "userpermission": {
+    "public.userpermission": {
       "name": "userpermission",
-      "values": {
-        "sh:list": "sh:list",
-        "sh:edit": "sh:edit",
-        "file:list": "file:list",
-        "file:view": "file:view",
-        "file:edit": "file:edit",
-        "container:list": "container:list",
-        "container:inspect": "container:inspect",
-        "container:manage": "container:manage",
-        "perm:list": "perm:list",
-        "perm:manage": "perm:manage",
-        "migrate": "migrate"
-      }
+      "schema": "public",
+      "values": [
+        "sh:list",
+        "sh:edit",
+        "file:list",
+        "file:view",
+        "file:edit",
+        "container:list",
+        "container:inspect",
+        "container:manage",
+        "perm:list",
+        "perm:manage",
+        "migrate"
+      ]
     }
   },
   "schemas": {},
@@ -349,5 +429,7 @@
     "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "cf0f6dc0-cdfc-4951-b3a4-33597eee18a7",
+  "prevId": "10dbd3cd-288e-4fe5-9f7e-72900c210d9b"
 }

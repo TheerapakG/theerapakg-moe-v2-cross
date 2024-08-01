@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ofetch } from "ofetch";
+
 type Props = {
   fileId: string;
   lang?: string;
@@ -8,15 +10,32 @@ type Props = {
 const props = defineProps<Props>();
 const { fileId } = toRefs(props);
 
-// TODO: reactive
-const data = await $apiFetch<string>(`/api/file/${fileId.value}/download`, {
-  responseType: "text",
-});
+const fileStore = useFileStore();
+
+const { data: fileInfo } = await useAsyncData(
+  () => fileStore.fetchFile(fileId.value),
+  {
+    watch: [fileId],
+  },
+);
+
+const { data } = await useAsyncData(
+  async () => {
+    const url = fileInfo.value?.url;
+    if (!url) return;
+    return await ofetch(url, {
+      responseType: "text",
+    });
+  },
+  {
+    watch: [fileInfo],
+  },
+);
 </script>
 
 <template>
   <div class="relative">
-    <ClientOnly>
+    <ClientOnly v-if="data">
       <MonacoEditor
         class="absolute inset-0"
         :options="{

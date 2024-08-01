@@ -1,8 +1,9 @@
 import { type } from "arktype";
 import crypto from "crypto";
-import fs from "fs/promises";
 import path from "path";
 import fetch from "node-fetch";
+import { Upload } from "@aws-sdk/lib-storage";
+import { Readable } from "stream";
 
 const bodyValidator = type({
   file: "string",
@@ -19,9 +20,7 @@ export default defineEventHandler(
       body: { file, content },
     } = await validateEvent({ body: bodyValidator }, event);
 
-    const { base, dir } = getFileName(user, file);
-
-    await fs.mkdir(base, { recursive: true });
+    const { name, dir } = getFileName(user, file);
 
     const fileBody = (await fetch(content)).body;
 
@@ -31,19 +30,29 @@ export default defineEventHandler(
         statusMessage: "invalid file body",
       });
 
-    await fs.writeFile(dir, fileBody, {
-      flag: "wx",
+    const config = useRuntimeConfig();
+
+    const upload = new Upload({
+      client: useS3(),
+      params: {
+        Bucket: config.s3Bucket,
+        Key: `files${dir}`,
+        Body: new Readable().wrap(fileBody),
+      },
     });
 
-    const stat = await fs.stat(dir);
+    await upload.done();
+
+    const date = new Date();
 
     const [insert] = await useDrizzle()
       .insert(fileTable)
       .values({
+        name,
         dir,
         owner: user,
-        created: stat.birthtime,
-        modified: stat.mtime,
+        created: date,
+        modified: date,
       })
       .returning();
 
@@ -53,7 +62,7 @@ export default defineEventHandler(
         [
           {
             id: insert.id as ReturnType<typeof crypto.randomUUID>,
-            name: path.basename(insert.dir),
+            name: insert.name,
             owner: insert.owner as ReturnType<typeof crypto.randomUUID>,
             created: insert.created.getTime() / 1000,
             modified: insert.modified.getTime() / 1000,

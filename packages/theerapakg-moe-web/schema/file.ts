@@ -6,6 +6,7 @@ export const file = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     dir: text("dir").notNull(),
+    name: text("name").notNull(),
     owner: uuid("owner")
       .references(() => user.id)
       .notNull(),

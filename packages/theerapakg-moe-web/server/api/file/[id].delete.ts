@@ -1,6 +1,5 @@
 import { type } from "arktype";
 import { eq } from "drizzle-orm";
-import fs from "fs/promises";
 
 const paramValidator = type({
   id: "uuid",
@@ -30,7 +29,12 @@ export default defineEventHandler(
       .where(eq(fileTable.id, id))
       .returning({ dir: fileTable.dir });
 
-    await fs.unlink(dir);
+    const config = useRuntimeConfig();
+
+    await useS3().deleteObject({
+      Bucket: config.s3Bucket,
+      Key: `files${dir}`,
+    });
 
     return {};
   }),

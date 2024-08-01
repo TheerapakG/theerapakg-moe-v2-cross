@@ -16,7 +16,7 @@ useSeoMeta({
   ogTitle: fileInfo?.name,
   ogType: "video.other",
   ogUrl: url.origin + url.pathname,
-  ogVideo: url.origin + `/api/file/${fileId}/download`,
+  ogVideo: fileInfo?.url,
 });
 </script>
 

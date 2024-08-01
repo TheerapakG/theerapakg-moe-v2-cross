@@ -29,6 +29,20 @@
       "when": 1688209272710,
       "tag": "0003_true_alice",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1722329738956,
+      "tag": "0004_late_sentry",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1722337873248,
+      "tag": "0005_chilly_earthquake",
+      "breakpoints": true
     }
   ]
 }

@@ -5,7 +5,17 @@ type Props = {
   fileId: string;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+const { fileId } = toRefs(props);
+
+const fileStore = useFileStore();
+
+const { data: fileInfo } = await useAsyncData(
+  () => fileStore.fetchFile(fileId.value),
+  {
+    watch: [fileId],
+  },
+);
 
 const wrapper = ref<HTMLElement>();
 const control = ref<HTMLElement>();
@@ -48,7 +58,7 @@ const controlVisible = useAutoHideVisible(wrapper, control);
     >
       <img
         class="image absolute"
-        :src="`/api/file/${fileId}/download`"
+        :src="fileInfo?.url"
         draggable="false"
         role="img"
       />

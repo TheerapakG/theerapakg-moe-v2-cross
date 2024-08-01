@@ -1,6 +1,5 @@
 import { type } from "arktype";
 import { inArray } from "drizzle-orm";
-import fs from "fs";
 import { keyBy as useKeyBy, isEmpty } from "lodash-es";
 import mime from "mime";
 import path from "path";
@@ -39,19 +38,29 @@ export default defineEventHandler(
       .where(inArray(fileTable.id, ids));
     const fileMap = useKeyBy(files, "id");
 
+    const config = useRuntimeConfig();
+
     return await Promise.all(
       ids.map(async (id, i) => {
         const file = fileMap[id];
 
+        const info = await useS3().getObjectAttributes({
+          Bucket: config.s3Bucket,
+          Key: `files${file.dir}`,
+          ObjectAttributes: ["ObjectSize"],
+        });
+
         return {
           id,
-          name: path.basename(file.dir),
+          name: path.basename(file.name),
           owner: filePerms[i].owner,
-          size: (await fs.promises.stat(file.dir)).size,
+          size: info.ObjectSize!,
           created: file.created,
           modified: file.modified,
-          mime: mime.getType(file.dir) ?? "",
-          url: `/api/file/${id}/download`,
+          mime: mime.getType(file.name) ?? "",
+          url: filePerms[i].perms.view
+            ? `${config.s3DomainEndpoint}/files${file.dir}`
+            : "",
         };
       }),
     );

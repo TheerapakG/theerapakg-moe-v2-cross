@@ -1,6 +1,5 @@
 import { type } from "arktype";
 import { eq } from "drizzle-orm";
-import fs from "fs";
 import path from "path";
 
 const queryValidator = type({
@@ -30,38 +29,23 @@ export default defineEventHandler(
     ] = await checkFilesUserPerm([id], user);
     if (!edit) throw createError({ statusMessage: "no permission" });
 
-    const { base, dir } = getFileName(user, name);
+    await useMeili(useRuntimeConfig().meiliApiKey)
+      .index("files")
+      .updateDocuments(
+        [
+          {
+            id,
+            name: path.basename(name),
+          },
+        ],
+        { primaryKey: "id" },
+      );
 
-    const _oldDir = await useDrizzle()
-      .select({ dir: fileTable.dir })
-      .from(fileTable)
-      .where(eq(fileTable.id, id))
-      .limit(1);
+    await useDrizzle()
+      .update(fileTable)
+      .set({ name })
+      .where(eq(fileTable.id, id));
 
-    const oldDir: string | undefined = _oldDir[0]?.dir;
-
-    if (oldDir) {
-      await fs.promises.mkdir(base, { recursive: true });
-      await fs.promises.rename(oldDir, dir);
-
-      await useMeili(useRuntimeConfig().meiliApiKey)
-        .index("files")
-        .updateDocuments(
-          [
-            {
-              id,
-              name: path.basename(dir),
-            },
-          ],
-          { primaryKey: "id" },
-        );
-
-      await useDrizzle()
-        .update(fileTable)
-        .set({ dir })
-        .where(eq(fileTable.id, id));
-
-      return {};
-    }
+    return {};
   }),
 );

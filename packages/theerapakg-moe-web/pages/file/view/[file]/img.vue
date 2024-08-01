@@ -16,10 +16,10 @@ useSeoMeta({
   ogTitle: fileInfo?.name,
   ogType: "website",
   ogUrl: url.origin + url.pathname,
-  ogImage: url.origin + `/api/file/${fileId}/download`,
+  ogImage: fileInfo?.url,
 
   twitterCard: "summary_large_image",
-  twitterImage: url.origin + `/api/file/${fileId}/download`,
+  twitterImage: fileInfo?.url,
 });
 </script>
 

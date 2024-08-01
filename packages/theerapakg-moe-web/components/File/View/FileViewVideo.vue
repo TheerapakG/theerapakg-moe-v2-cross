@@ -6,12 +6,21 @@ type Props = {
 const props = defineProps<Props>();
 const { fileId } = toRefs(props);
 
+const fileStore = useFileStore();
+
+const { data: fileInfo } = await useAsyncData(
+  () => fileStore.fetchFile(fileId.value),
+  {
+    watch: [fileId],
+  },
+);
+
 const wrapper = ref<HTMLElement>();
 const video = ref<HTMLAudioElement>();
 const control = ref<HTMLElement>();
 
 const { playing, currentTime, duration, volume } = useMediaControls(video, {
-  src: computed(() => `/api/file/${fileId.value}/download`),
+  src: computed(() => fileInfo.value?.url ?? ""),
 });
 
 const loop = customRef((track, trigger) => {

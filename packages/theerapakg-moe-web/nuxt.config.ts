@@ -29,6 +29,11 @@ export default defineNuxtConfig({
     redisHost: process.env.NUXT_REDIS_HOST ?? "",
     redisPort: process.env.NUXT_REDIS_PORT ?? "",
     redisPassword: process.env.NUXT_REDIS_PASSWORD ?? "",
+    s3OriginEndpoint: process.env.NUXT_S3_ORIGIN_ENDPOINT ?? "",
+    s3DomainEndpoint: process.env.NUXT_S3_DOMAIN_ENDPOINT ?? "",
+    s3Key: process.env.NUXT_S3_KEY ?? "",
+    s3Secret: process.env.NUXT_S3_SECRET ?? "",
+    s3Bucket: process.env.NUXT_S3_BUCKET ?? "",
   },
 
   typescript: {

@@ -76,6 +76,31 @@ spec:
                 secretKeyRef:
                   name: theerapakg-moe-web-secret
                   key: postgresUrl
+            - name: NUXT_S3_ORIGIN_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: s3OriginEndpoint
+            - name: NUXT_S3_DOMAIN_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: s3DomainEndpoint
+            - name: NUXT_S3_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: s3Key
+            - name: NUXT_S3_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: s3Secret
+            - name: NUXT_S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: theerapakg-moe-web-secret
+                  key: s3Bucket
 ---
 apiVersion: v1
 kind: Service

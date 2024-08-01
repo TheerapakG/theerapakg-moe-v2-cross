@@ -1,7 +1,8 @@
+import { Upload } from "@aws-sdk/lib-storage";
 import { type } from "arktype";
 import { eq } from "drizzle-orm";
-import fs from "fs/promises";
 import fetch from "node-fetch";
+import { Readable } from "stream";
 
 const paramValidator = type({
   id: "uuid",
@@ -42,15 +43,25 @@ export default defineEventHandler(
           statusMessage: "invalid file body",
         });
 
-      await fs.writeFile(dir, fileBody, {
-        flag: "w",
+      const config = useRuntimeConfig();
+
+      const upload = new Upload({
+        client: useS3(),
+        params: {
+          Bucket: config.s3Bucket,
+          Key: `files${dir}`,
+          Body: new Readable().wrap(fileBody),
+        },
       });
-      const stat = await fs.stat(dir);
+
+      await upload.done();
+
+      const date = new Date();
 
       const [update] = await useDrizzle()
         .update(fileTable)
         .set({
-          modified: stat.mtime,
+          modified: date,
         })
         .where(eq(fileTable.id, id))
         .returning({

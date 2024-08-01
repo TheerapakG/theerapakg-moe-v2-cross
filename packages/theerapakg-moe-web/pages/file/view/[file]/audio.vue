@@ -16,7 +16,7 @@ useSeoMeta({
   ogTitle: fileInfo?.name,
   ogType: "website",
   ogUrl: url.origin + url.pathname,
-  ogAudio: url.origin + `/api/file/${fileId}/download`,
+  ogAudio: fileInfo?.url,
 });
 </script>
 

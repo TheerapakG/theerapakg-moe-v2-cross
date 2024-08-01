@@ -9,8 +9,6 @@
     "dev:postgres": "pnpm dev:postgres:remove; pnpm jiti ./commands/dev_postgres.ts",
     "dev:postgres:chown": "sudo chown -R $(id -u -n):$(id -g -n) .postgres",
     "dev:psql": "docker exec -it theerapakg-moe-postgres psql -U postgres",
-    "dev:drizzle:generate": "drizzle-kit generate:pg --schema=schema",
-    "dev:drizzle:migrate": "pnpm jiti ./commands/drizzle_migrate.ts",
     "dev:meili:remove": "docker container stop theerapakg-moe-meili; docker container rm theerapakg-moe-meili",
     "dev:meili": "pnpm dev:meili:remove; pnpm jiti ./commands/dev_meili.ts",
     "dev:meili:chown": "sudo chown -R $(id -u -n):$(id -g -n) .meili",
@@ -26,6 +24,7 @@
     "start:site": "node .output/server/index.mjs"
   },
   "devDependencies": {
+    "@aws-sdk/lib-storage": "^3.621.0",
     "@iconify-json/heroicons": "^1.1.19",
     "@monaco-editor/loader": "^1.4.0",
     "@nuxt/devtools": "^0.8.5",
@@ -52,7 +51,7 @@
     "argon2": "^0.31.2",
     "arktype": "1.0.19-alpha",
     "dockerode": "^3.3.5",
-    "drizzle-kit": "^0.19.13",
+    "drizzle-kit": "^0.23.0",
     "drizzle-orm": "^0.32.0",
     "esbuild": "^0.23.0",
     "esbuild-register": "^3.5.0",
@@ -80,6 +79,7 @@
     "ws": "^8.16.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.620.1",
     "@tauri-apps/api": "^1.5.3",
     "portal-vue": "^3.0.0"
   }
