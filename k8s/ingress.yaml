@@ -8,10 +8,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - do.theerapakg.moe
+        - theerapakg.moe
       secretName: theerapakg-moe-tls
   rules:
-    - host: do.theerapakg.moe
+    - host: theerapakg.moe
       http:
         paths:
           - pathType: Prefix
